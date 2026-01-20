@@ -1,0 +1,45 @@
+import 'package:flutter/material.dart';
+
+import 'app_color.dart';
+
+class TCheckboxTheme {
+  TCheckboxTheme._();
+
+  /// Customizable Light Text Theme
+  static CheckboxThemeData lightCheckboxTheme = CheckboxThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    checkColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return Colors.white;
+      } else {
+        return Colors.black;
+      }
+    }),
+    fillColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return AppColor.primaryColor;
+      } else {
+        return Colors.transparent;
+      }
+    }),
+  );
+
+  /// Customizable Dark Text Theme
+  static CheckboxThemeData darkCheckboxTheme = CheckboxThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    checkColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return Colors.white;
+      } else {
+        return Colors.black;
+      }
+    }),
+    fillColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return AppColor.primaryColor;
+      } else {
+        return Colors.transparent;
+      }
+    }),
+  );
+}
