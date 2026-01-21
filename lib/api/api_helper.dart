@@ -48,7 +48,7 @@ class ApiHelper {
         if (data['candidates'] != null && data['candidates'].isNotEmpty) {
           return data['candidates'][0]['content']['parts'][0]['text'];
         } else {
-          return "AI No answer at this time🙏";
+          return "AI No answer at this time";
         }
       } else {
         return "AI Error: Unable to contact the server.";

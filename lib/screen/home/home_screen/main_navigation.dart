@@ -18,7 +18,7 @@ class _MainHolderState extends State<MainHolder> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    const ProfileScreen(),
+    const UnifiedLoginScreen(),
     const MenuScreen(),
   ];
 
@@ -27,13 +27,15 @@ class _MainHolderState extends State<MainHolder> {
     final themeManager = Provider.of<ThemeManager>(context);
     final bool isDark = themeManager.isDarkMode;
 
-    const Color primaryColor = Color(0xFF00AEEF);
+     const Color primaryColor = Color(0xFF81005B);
+     const Color accentColor = Color(0xFFFF005C);
     final Color navBarColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final Color fabBgColor = isDark ? const Color(0xFF2C2C2C) : Colors.white;
     final Color fabBorderColor = isDark ? Colors.white10 : Colors.grey.shade300;
+    final Color subTextColor = isDark ? Colors.white70 : Colors.black87;
 
     return Scaffold(
-
+      backgroundColor: navBarColor,
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: _selectedIndex,
@@ -56,7 +58,7 @@ class _MainHolderState extends State<MainHolder> {
           onPressed: () => setState(() => _selectedIndex = 1),
           child: Icon(
               Icons.person,
-              color: _selectedIndex == 1 ? primaryColor : Colors.grey,
+              color: _selectedIndex == 1 ? primaryColor : subTextColor,
               size: 28
           ),
         ),
@@ -71,36 +73,40 @@ class _MainHolderState extends State<MainHolder> {
         height: 50,
         child: Row(
           children: [
-          _buildNavItem(
-          index: 0,
-          isDark: isDark,
-          label: "home",
-          imagePath: 'assets/image/home_icon.png',
-        ),
+            _buildNavItem(
+              index: 0,
+              isDark: isDark,
+              label: "home",
+              imagePath: 'assets/image/home_icon.png',
+              subTextColor: subTextColor,
+            ),
 
-        const SizedBox(width: 70),
+            const SizedBox(width: 70),
 
-        _buildNavItem(
-          index: 2,
-          isDark: isDark,
-          label: "more",
-          imagePath: 'assets/image/menu_icon.png',
-        ),
+            _buildNavItem(
+              index: 2,
+              isDark: isDark,
+              label: "more",
+              imagePath: 'assets/image/menu_icon.png',
+              subTextColor: subTextColor,
+            ),
           ],
         ),
       ),
     );
   }
+
   Widget _buildNavItem({
     required int index,
     required bool isDark,
     required String label,
     IconData? icon,
     String? imagePath,
+    required Color subTextColor,
   }) {
     bool isActive = _selectedIndex == index;
-    final Color activeColor = const Color(0xFF00AEEF);
-    final Color inactiveColor = isDark ? Colors.white54 : Colors.black45;
+    final Color activeColor =  Color(0xFF81005B);
+    final Color inactiveColor = subTextColor;
 
     return Expanded(
       child: InkWell(

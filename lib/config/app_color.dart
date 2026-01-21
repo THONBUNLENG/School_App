@@ -27,5 +27,6 @@ class GoldGradient {
     Color(0xFFFFF3B0),
     Color(0xFFFFB300),
     Color(0xFFFF8F00),
+
   ];
 }

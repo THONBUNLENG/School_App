@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:school_app/api/api_helper.dart';
 
+
 class AIChatBotScreen extends StatefulWidget {
   const AIChatBotScreen({super.key});
   @override
@@ -67,7 +68,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
       backgroundColor: isDark ? Colors.black : const Color(0xFFF5F7F9),
       appBar: AppBar(
       title: const Text(
-        'BELTEI AI Assistant',
+        'NAN JING AI Assistant',
         style: TextStyle(
           fontFamily: 'Kantumruy Pro',
           fontSize: 18,
@@ -79,7 +80,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
         icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         onPressed: () => Navigator.pop(context),
       ),
-      backgroundColor: const Color(0xFF005696),
+      backgroundColor: const Color(0xFF81005B),
       centerTitle: true,
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.5),
@@ -145,7 +146,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: isUser
-                    ? const Color(0xFF00AEEF)
+                    ? const Color(0xFF81005B)
                     : (isDark ? const Color(0xFF2C2C2C) : Colors.white),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
@@ -223,7 +224,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
             ),
             const SizedBox(width: 8),
             CircleAvatar(
-              backgroundColor: const Color(0xFF005696),
+              backgroundColor: const Color(0xFF81005B),
               child: IconButton(
                 icon: const Icon(Icons.send, color: Colors.white, size: 20),
                 onPressed: _isLoading ? null : _sendMessage,

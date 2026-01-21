@@ -52,15 +52,24 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF121212) : Colors.grey.shade100,
       appBar: AppBar(
-        title: Text('select_language'.tr),
+        backgroundColor: const Color(0xFF81005B),
+        title: Text(
+          'select_language'.tr,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white), // back button color
+        elevation: 0,
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            _buildLanguageTile('km', '🇰🇭', 'khmer', isDark),
-            const SizedBox(height: 16),
             _buildLanguageTile('en', '🇺🇸', 'english', isDark),
             const SizedBox(height: 16),
             _buildLanguageTile('zh', '🇨🇳', 'chinese', isDark),
@@ -79,7 +88,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isSelected ? const Color(0xFF00AEEF) : Colors.transparent,
+          color: isSelected ? const  Color(0xFF81005B) : Colors.transparent,
           width: 2,
         ),
       ),
@@ -92,7 +101,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
         color: isDark ? Colors.white : Colors.black87,
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Color(0xFF00AEEF))
+          ? const Icon(Icons.check_circle, color: Color(0xFF81005B))
           : null,
       onTap: () {
         if (isSelected) {

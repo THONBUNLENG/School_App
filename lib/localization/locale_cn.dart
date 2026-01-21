@@ -42,10 +42,48 @@ final Map<String, dynamic> chinese = {
   'ima_program_desc': '马来西亚独家授权，通过珠心算技术帮助儿童开发智力和增强记忆力。',
   'faq_title': '常见问题',
   'search_hint': '在这里搜索问题...',
-  'faq_q1': '我该如何办理入学注册？',
-  'faq_a1': '您可以通过三种方式注册：1. 直接通过此应用程序的注册部分，2. 访问任何最近的贝尔蒂分校，或 3. 通过学校官方网站注册。',
-  'faq_q2': '贝尔蒂提供哪些课程？',
-  'faq_a2': '贝尔蒂提供主要课程：通用教育（1-12年级）、英语课程（ESL）、中文课程以及IMA智能心算。',
-  'faq_q3': '如果我忘记了应用程序密码该怎么办？',
-  'faq_a3': '请点击登录页面的“忘记密码”，输入您的注册手机号或电子邮件以获取重置验证码。',
+  "science_title": "自然科学",
+  "science_desc": "物理、化学、天文学与地球科学",
+
+  "engineering_title": "工程学",
+  "engineering_desc": "电气工程、机械工程、土木工程与材料工程",
+
+  "medicine_title": "医学",
+  "medicine_desc": "临床医学、药学与健康科学",
+
+  "computer_title": "计算机科学",
+  "computer_desc": "软件工程、数据科学与网络安全",
+
+  "math_title": "数学",
+  "math_desc": "基础数学、应用数学与统计学",
+
+  "biology_title": "生命科学",
+  "biology_desc": "生物学、生物技术与遗传学",
+
+  "environment_title": "环境科学",
+  "environment_desc": "气候科学、生态学与环境工程",
+
+  "humanities_title": "人文科学",
+  "humanities_desc": "哲学、文学与历史",
+
+  "law_title": "法学",
+  "law_desc": "国际法、民法与刑法",
+
+  "business_title": "商学与经济学",
+  "business_desc": "经济学、金融学与管理学",
+
+  "language_title": "语言与国际项目",
+  "language_desc": "汉语、英语及国际课程",
+
+  "psychology_title": "心理学",
+  "psychology_desc": "认知心理学、临床心理学与社会心理学",
+
+  "ai_title": "人工智能",
+  "ai_desc": "人工智能、机器学习与机器人技术",
+
+  "architecture_title": "建筑与城市规划",
+  "architecture_desc": "建筑设计与城市规划",
+
+  "history_title": "历史与文化",
+  "history_desc": "中国历史、世界历史与文化研究"
 };

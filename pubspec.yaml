@@ -1,5 +1,5 @@
 name: school_app
-description: "BELTEI INTERNATIONAL SCHOOL App"
+description: "NANJING UNIVERSITY"
 publish_to: "none"
 version: 1.0.0+1
 
@@ -40,7 +40,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
-# --- Fix conflicts ---
+# Fix conflicts
 dependency_overrides:
   flutter_inappwebview: ^6.1.5
 
@@ -48,11 +48,10 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/image/beltil_bok.png
-    - assets/image/
-    - assets/tottie/  # Ensure this folder exists
-    - assets/fonts/Battambang-Regular.ttf
-    - assets/fonts/Battambang-Bold.ttf
+    - assets/image/logo.png
+    - assets/image/       # Include all images in this folder
+    - assets/tottie/      # Ensure this folder exists
+    - assets/fonts/       # You can include entire fonts folder if needed
 
   fonts:
     - family: Battambang
@@ -60,3 +59,7 @@ flutter:
         - asset: assets/fonts/Battambang-Regular.ttf
         - asset: assets/fonts/Battambang-Bold.ttf
           weight: 700
+fonts:
+  - family: MaoTi
+    fonts:
+      - asset: assets/font/FZMaoti.ttf

@@ -38,10 +38,48 @@ final Map<String, dynamic> english = {
   'ima_program_desc': 'Exclusive license from Malaysia, helping children develop intelligence and memory through abacus techniques.',
   'faq_title': 'FAQ',
   'search_hint': 'Search questions here...',
-  'faq_q1': 'How can I register for enrollment?',
-  'faq_a1': 'You can register in 3 ways: 1. Directly via this App in the Register section, 2. Visit any nearest BELTEI branch, or 3. Register through the school\'s official website.',
-  'faq_q2': 'What are the programs offered at BELTEI?',
-  'faq_a2': 'BELTEI offers major programs: General Education (Grade 1-12), English as a Second Language (ESL), Chinese Language Program, and Intelligent Mental-Arithmetic (IMA).',
-  'faq_q3': 'What should I do if I forget my App password?',
-  'faq_a3': 'Click on "Forgot Password" on the Login page and enter your registered phone number or email to receive a password reset code.',
+  "science_title": "Natural Sciences",
+  "science_desc": "Physics, Chemistry, Astronomy, and Earth Sciences",
+
+  "engineering_title": "Engineering",
+  "engineering_desc": "Electrical, Mechanical, Civil, and Materials Engineering",
+
+  "medicine_title": "Medicine",
+  "medicine_desc": "Clinical Medicine, Pharmacy, and Health Sciences",
+
+  "computer_title": "Computer Science",
+  "computer_desc": "Software Engineering, Data Science, Cybersecurity",
+
+  "math_title": "Mathematics",
+  "math_desc": "Pure Mathematics, Applied Mathematics, Statistics",
+
+  "biology_title": "Life Sciences",
+  "biology_desc": "Biology, Biotechnology, Genetics",
+
+  "environment_title": "Environmental Science",
+  "environment_desc": "Climate Science, Ecology, Environmental Engineering",
+
+  "humanities_title": "Humanities",
+  "humanities_desc": "Philosophy, Literature, History",
+
+  "law_title": "Law",
+  "law_desc": "International Law, Civil Law, Criminal Law",
+
+  "business_title": "Business & Economics",
+  "business_desc": "Economics, Finance, Management",
+
+  "language_title": "Languages",
+  "language_desc": "Chinese, English, and International Programs",
+
+  "psychology_title": "Psychology",
+  "psychology_desc": "Cognitive, Clinical, and Social Psychology",
+
+  "ai_title": "Artificial Intelligence",
+  "ai_desc": "AI, Machine Learning, Robotics",
+
+  "architecture_title": "Architecture",
+  "architecture_desc": "Urban Planning, Architectural Design",
+
+  "history_title": "History & Culture",
+  "history_desc": "Chinese History, World History, Cultural Studies"
 };

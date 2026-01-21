@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -27,18 +29,19 @@ class _HomeScreenState extends State<HomeScreen> {
     };
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final themeManager = Provider.of<ThemeManager>(context);
     final bool isDark = themeManager.isDarkMode;
 
+    // Colors
     final Color bgColor = isDark ? const Color(0xFF121212) : Colors.white;
-    final Color textColor = isDark ? Colors.white : const Color(0xFF333333);
     final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final Color textColor = isDark ? Colors.white : const Color(0xFF333333);
     final Color subTextColor = isDark ? Colors.white70 : Colors.black87;
+    const Color nandaPurple = Color(0xFF81005B);
 
+    // Carousel images
     final List<String> imgList = [
       'https://media.gettyimages.com/id/81632904/photo/nanjing-china-doctoral-graduates-from-the-nanjing-university-pose-for-a-photo-during-the-degree.jpg?s=612x612&w=gi&k=20&c=CrVDHvm8GqmNeiWrJNGShfcUdrQSwNmJihgQDhNTeiU=',
       'https://wentchina.com/wp-content/uploads/2022/07/beb9a30caa486871c7e60ca07b881faf.png',
@@ -57,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF005696),
+        backgroundColor: nandaPurple,
         toolbarHeight: 60,
         elevation: 2,
         automaticallyImplyLeading: false,
@@ -65,22 +68,33 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/image/logo_beltel_school.png',
-              height: 40,
+              'assets/image/logo.png',
+              height: 60,
               errorBuilder: (context, error, stackTrace) =>
-              const Icon(Icons.school, color: Colors.white, size: 40),
+              const Icon(Icons.school, color:Colors.white, size: 40),
             ),
             const SizedBox(width: 10),
             const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('សាលា ប៊ែលធី អន្តរជាតិ',
-                    style: TextStyle(fontSize: 14, fontFamily: 'Battambang', fontWeight: FontWeight.bold, color: Colors.white)),
-                Text('BELTEI INTERNATIONAL SCHOOL',
-                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white)),
-                Text('贝  蒂   国  际   学   校',
-                    style: TextStyle(fontSize: 11, color: Colors.white, letterSpacing: 2)),
+                Text(
+                  '南京大學',
+                  style: TextStyle(
+                    fontFamily: 'MaoTi',
+                    fontSize: 24,
+                    color: Colors.white,
+                    letterSpacing: 8,
+                  ),
+                ),
+                Text(
+                  'NANJING  UNIVERSITY',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           ],
@@ -90,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
+            // Carousel Slider
             CarouselSlider(
               options: CarouselOptions(
                 height: 280.0,
@@ -102,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
@@ -137,18 +152,19 @@ class _HomeScreenState extends State<HomeScreen> {
               }).toList(),
             ),
 
+            // Marquee
             Container(
               height: 38,
               margin: const EdgeInsets.symmetric(vertical: 0),
               decoration: BoxDecoration(
-                color: const Color(0xFF005696),
+                color: nandaPurple,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Center(
                 child: Marquee(
-                  text: 'សាលា ប៊ែលធី អន្តរជាតិជាគុណភាពអប់រំល្អបំផុតនៅកម្ពុជា!  BELTEI, The Best Quality of Education in Cambodia!   BELTEI 柬埔寨最優質的教育！',
+                  text: 'Welcome to NANJING UNIVERSITY!  欢迎来到南京大学！',
                   style: const TextStyle(
-                    fontFamily: 'Battambang',
+                    fontFamily: 'MaoTi',
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -163,19 +179,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            //Language Selector
+            // Language Selector
             Padding(
               padding: const EdgeInsets.only(top: 8, right: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _langIcon(context, '🇰🇭', 'km', subTextColor),
                   _langIcon(context, '🇺🇸', 'en', subTextColor),
                   _langIcon(context, '🇨🇳', 'zh', subTextColor),
                 ],
               ),
             ),
 
+            // Grid Items
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -261,11 +277,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (isSelected) return;
 
         translator.translate(code);
-
         if (translator.onTranslatedLanguage != null) {
           translator.onTranslatedLanguage!(Locale(code));
         }
-
         setState(() {});
       },
       child: Padding(
@@ -274,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(flag, style: const TextStyle(fontSize: 22)),
             Text(
-              code == 'km' ? 'khmer'.tr : (code == 'en' ? 'english'.tr : 'chinese'.tr),
+               (code == 'en' ? 'english'.tr : 'chinese'.tr),
               style: TextStyle(
                 fontSize: 10,
                 color: isSelected ? const Color(0xFF00AEEF) : txtCol,
@@ -295,38 +309,40 @@ class _HomeScreenState extends State<HomeScreen> {
           Future<void> launchExternalURL(String url) async {
             final Uri uri = Uri.parse(url);
             if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-              debugPrint('មិនអាចបើក Link: $url');
+              debugPrint('Cannot open URL: $url');
             }
           }
 
-          if (labelKey == 'news') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));
-          }
-          else if (labelKey == 'admission') {
-            await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/admission');
-          }
-          else if (labelKey == 'fees') {
-            await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/tuition-fee');
-          }
-          else if (labelKey == 'history') {
-            await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/about-beltei/history');
-          }
-          else if (labelKey == 'contacts') {
-            await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/contact-us');
-          }
-          else if (labelKey == 'website') {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => const BelteiWebView(url: 'https://www.belteigroup.com.kh'),
-            ));
-          }
-          else if (labelKey == 'facebook') {
-            await launchExternalURL('https://www.facebook.com/belteiinternationalgroup');
-          }
-          else if (labelKey == 'youtube') {
-            await launchExternalURL('https://www.youtube.com/@belteigroup');
-          }
-          else if (labelKey == 'jobs') {
-            await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/job-announcement');
+          switch (labelKey) {
+            case 'news':
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));
+              break;
+            case 'admission':
+              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/admission');
+              break;
+            case 'fees':
+              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/tuition-fee');
+              break;
+            case 'history':
+              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/about-beltei/history');
+              break;
+            case 'contacts':
+              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/contact-us');
+              break;
+            case 'website':
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const BelteiWebView(url: 'https://www.belteigroup.com.kh'),
+              ));
+              break;
+            case 'facebook':
+              await launchExternalURL('https://www.facebook.com/belteiinternationalgroup');
+              break;
+            case 'youtube':
+              await launchExternalURL('https://www.youtube.com/@belteigroup');
+              break;
+            case 'jobs':
+              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/job-announcement');
+              break;
           }
         },
         child: Column(
@@ -345,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.contain,
-                  errorBuilder: (c, e, s) => const Icon(Icons.grid_view_rounded, color: Color(0xFF005696), size: 25),
+                  errorBuilder: (c, e, s) => const Icon(Icons.grid_view_rounded, color: Color(0xFF81005B), size: 25),
                 ),
               ),
             ),

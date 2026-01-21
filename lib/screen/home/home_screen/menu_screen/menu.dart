@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:school_app/extension/string_extension.dart';
-
 import 'package:school_app/screen/home/home_screen/change_language.dart';
 import 'package:school_app/screen/home/home_screen/menu_screen/about_app.dart';
 import 'package:school_app/screen/home/home_screen/menu_screen/faq_screen.dart';
@@ -21,6 +20,8 @@ class _MenuScreenState extends State<MenuScreen> {
   bool _isNotificationOn = true;
   final FlutterLocalization _localization = FlutterLocalization.instance;
 
+  static const Color nandaPurple = Color(0xFF81005B);
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +29,6 @@ class _MenuScreenState extends State<MenuScreen> {
       if (mounted) setState(() {});
     };
   }
-
 
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
@@ -46,21 +46,16 @@ class _MenuScreenState extends State<MenuScreen> {
     final themeManager = Provider.of<ThemeManager>(context);
     final bool isDark = themeManager.isDarkMode;
 
-    const Color primaryBlue = Color(0xFF005696);
-    const Color accentBlue = Color(0xFF00AEEF);
-
+    final Color scaffoldBgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA);
     final Color sectionColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color textColor = isDark ? const Color(0xFFEEEEEE) : Colors.black87;
+    final Color textColor = isDark ? Colors.white70 : Colors.black87;
     final Color dividerColor = isDark ? Colors.white10 : Colors.grey.shade200;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA),
+      backgroundColor: scaffoldBgColor,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
-        title: Text(
-          'more'.tr,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-        ),
+        backgroundColor: nandaPurple,
+        title: Text('more'.tr, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
         centerTitle: true,
         elevation: 0,
       ),
@@ -70,95 +65,32 @@ class _MenuScreenState extends State<MenuScreen> {
           children: [
             const SizedBox(height: 15),
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(
-                Icons.info_outline,
-                'about_app',
-                accentBlue,
-                textColor,
-                isDark,
-                dividerColor,
-                    () {
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AboutScreen()),
-                  );
-                },
-              ),
-              _buildMenuTile(Icons.chat_bubble_outline, 'faq', accentBlue, textColor, isDark, dividerColor, () {
-
-                  Navigator.push(
-                     context,
-                    MaterialPageRoute(builder: (context) => const AIChatBotScreen()),
-                  );
+              _buildMenuTile(Icons.info_outline, 'about_app', nandaPurple, textColor, dividerColor, () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen()));
               }),
-              _buildMenuTile(Icons.help_outline, 'how_to_use', accentBlue, textColor, isDark, dividerColor, () {}),
-              _buildMenuTile(Icons.description_outlined, 'terms_conditions', accentBlue, textColor, isDark, dividerColor, () {}, isLast: true),
+              _buildMenuTile(Icons.chat_bubble_outline, 'faq', nandaPurple, textColor, dividerColor, () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AIChatBotScreen()));
+              }),
+              _buildMenuTile(Icons.help_outline, 'how_to_use', nandaPurple, textColor, dividerColor, () {}),
+              _buildMenuTile(Icons.description_outlined, 'terms_conditions', nandaPurple, textColor, dividerColor, () {}, isLast: true),
             ]),
 
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.translate, 'change_language', accentBlue, textColor, isDark, dividerColor, () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChangeLanguageScreen()),
-                );
+              _buildMenuTile(Icons.translate, 'change_language', nandaPurple, textColor, dividerColor, () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangeLanguageScreen()));
               }),
-              _buildToggleTile(
-                _isNotificationOn ? Icons.notifications_active : Icons.notifications_off,
-                'notification',
-                _isNotificationOn,
-                accentBlue,
-                textColor,
-                isDark,
-                dividerColor,
-                    (val) => setState(() => _isNotificationOn = val),
-              ),
-              _buildToggleTile(
-                isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined,
-                'night_mode',
-                isDark,
-                isDark ? Colors.orangeAccent : accentBlue,
-                textColor,
-                isDark,
-                dividerColor,
-                    (val) => themeManager.toggleTheme(val),
-                isLast: true,
-              ),
+              _buildToggleTile(_isNotificationOn ? Icons.notifications_active : Icons.notifications_off, 'notification', _isNotificationOn, nandaPurple, textColor, dividerColor, (val) => setState(() => _isNotificationOn = val)),
+              _buildToggleTile(isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined, 'night_mode', isDark, isDark ? Colors.orangeAccent : nandaPurple, textColor, dividerColor, (val) => themeManager.toggleTheme(val), isLast: true),
             ]),
 
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.language, 'social_media', accentBlue, textColor, isDark, dividerColor, () {
-                _launchURL('https://www.facebook.com/belteigroups');
-              }),
-              _buildMenuTile(
-                null,
-                'share_app',
-                accentBlue,
-                textColor,
-                isDark,
-                dividerColor,
-                    () async {
-
-                  const String playStoreLink = 'https://play.google.com/store/apps/details?id=com.beltei.school';
-
-                  String shareTitle = 'share_title'.tr;
-
-                  await Share.share(
-                    '$shareTitle\n$playStoreLink',
-                    subject: 'BELTEI International School',
-                  );
-                },
-                leadingWidget: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.asset(
-                      '',
-                      width: 22,
-                      height: 22,
-                      errorBuilder: (context, error, stackTrace) => Icon(Icons.share, color: accentBlue)
-                  ),
-                ),
-              ),
-              _buildMenuTile(Icons.qr_code_scanner, 'qr_code', accentBlue, textColor, isDark, dividerColor, () {}, isLast: true),
+              _buildMenuTile(Icons.language, 'social_media', nandaPurple, textColor, dividerColor, () => _launchURL('https://www.facebook.com/belteigroups')),
+              _buildMenuTile(null, 'share_app', nandaPurple, textColor, dividerColor, () async {
+                const String playStoreLink = 'https://play.google.com/store/apps/details?id=com.beltei.school';
+                String shareTitle = 'share_title'.tr;
+                await Share.share('$shareTitle\n$playStoreLink', subject: 'BELTEI International School');
+              }, leadingWidget: ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.asset('', width: 22, height: 22, errorBuilder: (context, error, stackTrace) => Icon(Icons.share, color: nandaPurple)))),
+              _buildMenuTile(Icons.qr_code_scanner, 'qr_code', nandaPurple, textColor, dividerColor, () {}, isLast: true),
             ]),
 
             const SizedBox(height: 30),
@@ -184,13 +116,13 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  Widget _buildMenuTile(IconData? icon, String titleKey, Color iconColor, Color textColor, bool isDark, Color divColor, VoidCallback onTap, {bool isLast = false, Widget? leadingWidget}) {
+  Widget _buildMenuTile(IconData? icon, String titleKey, Color iconColor, Color textColor, Color divColor, VoidCallback onTap, {bool isLast = false, Widget? leadingWidget}) {
     return Column(
       children: [
         ListTile(
           leading: leadingWidget ?? Icon(icon, color: iconColor, size: 22),
           title: Text(titleKey.tr, style: TextStyle(fontFamily: 'Battambang', fontSize: 14, fontWeight: FontWeight.w500, color: textColor)),
-          trailing: Icon(Icons.arrow_forward_ios, size: 14, color: isDark ? Colors.white24 : Colors.black26),
+          trailing: Icon(Icons.arrow_forward_ios, size: 14, color: textColor.withOpacity(0.5)),
           onTap: onTap,
         ),
         if (!isLast) Divider(height: 1, thickness: 0.5, color: divColor, indent: 55),
@@ -198,7 +130,7 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  Widget _buildToggleTile(IconData icon, String titleKey, bool value, Color iconColor, Color textColor, bool isDark, Color divColor, Function(bool) onChanged, {bool isLast = false}) {
+  Widget _buildToggleTile(IconData icon, String titleKey, bool value, Color iconColor, Color textColor, Color divColor, Function(bool) onChanged, {bool isLast = false}) {
     return Column(
       children: [
         ListTile(

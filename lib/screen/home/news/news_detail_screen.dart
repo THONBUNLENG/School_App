@@ -1,8 +1,10 @@
-// news_detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:school_app/model/model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+
+
 
 class NewsDetailScreen extends StatefulWidget {
   final NewsModel newsItem;
@@ -15,12 +17,14 @@ class NewsDetailScreen extends StatefulWidget {
 
 class _NewsDetailScreenState extends State<NewsDetailScreen> {
   int _currentPage = 0;
-  final PageController _pageController = PageController(viewportFraction: 0.85);
+  late PageController _pageController;
   YoutubePlayerController? _youtubeController;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(viewportFraction: 0.9);
+
     if (widget.newsItem.category == 'Videos' && widget.newsItem.link.isNotEmpty) {
       final videoId = YoutubePlayer.convertUrlToId(widget.newsItem.link);
       if (videoId != null) {
@@ -39,7 +43,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     super.dispose();
   }
 
-  // ===== URL Launcher =====
   Future<void> _launchURL() async {
     final Uri url = Uri.parse(widget.newsItem.link);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -47,7 +50,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     }
   }
 
-  // ===== Image Zoom =====
   void _openImageZoom(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
@@ -56,18 +58,11 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
         onTap: () => Navigator.pop(context),
         child: Scaffold(
           backgroundColor: Colors.black,
-          body: SafeArea(
+          body: Center(
             child: InteractiveViewer(
               minScale: 1,
               maxScale: 4,
-              child: Center(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) =>
-                  const Icon(Icons.broken_image, color: Colors.white),
-                ),
-              ),
+              child: Image.network(imageUrl, fit: BoxFit.contain),
             ),
           ),
         ),
@@ -77,17 +72,13 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryBlue = Color(0xFF005696);
+    const Color nandaPurple = Color(0xFF81005B);
     final item = widget.newsItem;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryBlue,
-        elevation: 0,
-        title: const Text(
-          'News Detail',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        backgroundColor: nandaPurple,
+        title: const Text('News Detail', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -95,70 +86,22 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ===== Main Media (Image or Video) =====
-            _buildMainMedia(),
-
+            _buildMainMedia(item),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ===== Title =====
-                  Text(
-                    item.title,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // ===== Subtitle =====
-                  if (item.subtitle.isNotEmpty)
-                    _buildSubtitleBox(item.subtitle, primaryBlue),
-
-                  const SizedBox(height: 15),
-
-                  // ===== Metadata =====
+                  Text(item.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
                   _buildMetadata(item),
-
-                  const Divider(height: 40),
-
-                  // ===== Short Description =====
-                  Text(
-                    item.description,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.7,
-                      color: Colors.black87,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ===== Long Description (Optional) =====
-                  if (item.longDescription.isNotEmpty)
-                    Text(
-                      item.longDescription,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        height: 1.7,
-                        color: Colors.black87,
-                      ),
-                    ),
-
+                  const Divider(height: 30),
+                  Text(item.description, style: const TextStyle(fontSize: 16, height: 1.6)),
                   const SizedBox(height: 30),
-
-                  // ===== Swipe Gallery =====
                   _buildSwipeGallery(context, item),
-
-                  const SizedBox(height: 40),
-
-                  // ===== Action Button =====
-                  _buildActionButton(_launchURL, primaryBlue),
+                  const SizedBox(height: 30),
+                  _buildActionButton(_launchURL, nandaPurple),
                 ],
               ),
             ),
@@ -168,137 +111,88 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     );
   }
 
-  Widget _buildMainMedia() {
-    final item = widget.newsItem;
+  Widget _buildMetadata(NewsModel item) {
+    return Row(
+      children: [
+        const Icon(Icons.access_time, size: 14, color: Colors.grey),
+        const SizedBox(width: 4),
+        Text(item.date, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        const SizedBox(width: 15),
+        const Icon(Icons.remove_red_eye_outlined, size: 14, color: Colors.grey),
+        const SizedBox(width: 4),
+        Text('${item.views} views', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+      ],
+    );
+  }
 
-    // ===== Video =====
+  Widget _buildMainMedia(NewsModel item) {
     if (item.category == 'Videos' && _youtubeController != null) {
       return Hero(
         tag: 'news_${item.id}',
-        child: YoutubePlayer(
-          controller: _youtubeController!,
-          showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.blueAccent,
-        ),
+        child: YoutubePlayer(controller: _youtubeController!, showVideoProgressIndicator: true),
       );
     }
 
-    // ===== Image fallback =====
+    String mainImageUrl = '';
+    if (item.images.isNotEmpty) {
+      bool isFirstItemVideo = item.images.first.contains('youtu.be') || item.images.first.contains('youtube.com');
+      if (isFirstItemVideo && item.images.length > 1) {
+        mainImageUrl = item.images[1];
+      } else {
+        mainImageUrl = item.images.first;
+      }
+    }
+
     return Hero(
       tag: 'news_${item.id}',
       child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-        ),
+        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
         child: Image.network(
-          item.images.isNotEmpty ? item.images.first : '',
+          mainImageUrl,
           width: double.infinity,
           height: 250,
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => Container(
-            height: 250,
-            color: Colors.grey[300],
-            child: const Icon(Icons.broken_image, size: 50),
+            height: 250, color: Colors.grey[300],
+            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSubtitleBox(String subtitle, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8),
-        border: Border(left: BorderSide(color: color, width: 4)),
-      ),
-      child: Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: color,
-          height: 1.5,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMetadata(NewsModel item) {
-    return Row(
-      children: [
-        const Icon(Icons.access_time, size: 16, color: Colors.grey),
-        const SizedBox(width: 5),
-        Text(item.date, style: const TextStyle(color: Colors.grey)),
-        const SizedBox(width: 20),
-        const Icon(Icons.remove_red_eye_outlined, size: 16, color: Colors.grey),
-        const SizedBox(width: 5),
-        Text('${item.views} views', style: const TextStyle(color: Colors.grey)),
-      ],
-    );
-  }
-
   Widget _buildSwipeGallery(BuildContext context, NewsModel item) {
-    if (item.images.length <= 1) return const SizedBox.shrink();
-    final galleryList = item.images.sublist(1);
+    final List<String> onlyImages = item.images.where((url) {
+      return !url.toLowerCase().contains('youtube.com') && !url.toLowerCase().contains('youtu.be');
+    }).toList();
+
+    if (onlyImages.length <= 1) return const SizedBox.shrink();
+    final galleryList = onlyImages.skip(1).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Gallery",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
+        const Text("Gallery", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         const SizedBox(height: 12),
         SizedBox(
-          height: 240,
+          height: 220,
           child: PageView.builder(
             controller: _pageController,
             itemCount: galleryList.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-            },
+            onPageChanged: (i) => setState(() => _currentPage = i),
             itemBuilder: (context, index) {
               final imageUrl = galleryList[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: GestureDetector(
-                  onTap: () => _openImageZoom(context, imageUrl),
+              return GestureDetector(
+                onTap: () => _openImageZoom(context, imageUrl),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Stack(
-                      children: [
-                        Image.network(
-                          imageUrl,
-                          width: double.infinity,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              Container(height: 200, color: Colors.grey[200]),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            color: Colors.black.withOpacity(0.5),
-                            child: Text(
-                              item.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (_, __, ___) => Container(color: Colors.grey[200], child: const Icon(Icons.broken_image, color: Colors.grey)),
                     ),
                   ),
                 ),
@@ -306,22 +200,19 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
             },
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            galleryList.length,
-                (index) => AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: _currentPage == index ? 12 : 8,
-              height: _currentPage == index ? 12 : 8,
-              decoration: BoxDecoration(
-                color: _currentPage == index ? Colors.blue : Colors.grey,
-                shape: BoxShape.circle,
-              ),
+          children: List.generate(galleryList.length, (index) => AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: _currentPage == index ? 10 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: _currentPage == index ? const Color(0xFF005696) : Colors.grey[300],
+              borderRadius: BorderRadius.circular(4),
             ),
-          ),
+          )),
         ),
       ],
     );
@@ -330,21 +221,14 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   Widget _buildActionButton(VoidCallback onPressed, Color color) {
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: 50,
       child: ElevatedButton.icon(
         onPressed: onPressed,
-        icon: const Icon(Icons.language),
-        label: const Text(
-          "View on Website",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+        icon: const Icon(Icons.language, color: Colors.white),
+        label: const Text("Read More on Website", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
     );
