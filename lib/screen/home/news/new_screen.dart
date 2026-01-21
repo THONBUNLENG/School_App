@@ -271,12 +271,11 @@ class NewsScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              // បន្ថែម Overlay ពណ៌ខ្មៅស្រាល និង Icon Play នៅចំកណ្តាល
               Container(
                 width: 130,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: Colors.black26, // ធ្វើឱ្យរូបភាពងងឹតបន្តិចដើម្បីឱ្យឃើញ Icon ច្បាស់
+                  color: Colors.black26,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
@@ -285,7 +284,7 @@ class NewsScreen extends StatelessWidget {
                 child: const Icon(
                   Icons.play_circle_fill,
                   color: Colors.white,
-                  size: 40, // ទំហំ Icon Play
+                  size: 40,
                 ),
               ),
             ],

@@ -44,10 +44,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    const Color belteiSkyBlue = Color(0xFF4FC3F7);
+    const Color nandaPurple = Color(0xFF81005B);
 
     return Scaffold(
-      backgroundColor: belteiSkyBlue,
+      backgroundColor:  nandaPurple,
       body: FadeTransition(
         opacity: _animation,
         child: Center(
@@ -58,35 +58,50 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ScaleTransition(
                   scale: _animation,
                   child: Image.asset(
-                    'assets/image/logo_beltel_school.png',
+                    'assets/image/logo.png',
                     height: 180,
                   ),
                 ),
                 const SizedBox(height: 25),
 
                 const Text(
-                  'សាលា ប៊ែលធី អន្តរជាតិ',
-                  style: TextStyle(fontFamily: 'Battambang', fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                  '南  京   国  际   学   校',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      letterSpacing: 2.0
+                  ),
                 ),
                 const Text(
-                  'BELTEI INTERNATIONAL SCHOOL',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white, letterSpacing: 0.5),
+                  'NANJING INTERNATIONAL SCHOOL',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      letterSpacing: 0.5
+                  ),
                 ),
-                const Text(
-                  '贝  蒂   国  际   学   校',
-                  style: TextStyle(fontSize: 16, color: Colors.white, letterSpacing: 2.0),
-                ),
+
                 const SizedBox(height: 30),
 
+
                 const Text(
-                  'គុណភាព ប្រសិទ្ធភាព ឧត្តមភាព សីលធម៌ គុណធម៌',
+                  '繁榮、創造力和倫理',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: 'Battambang', fontSize: 13, color: Color(0xFFFFF176)),
+                  style: TextStyle(
+                      fontFamily: 'MaoTi',
+                      fontSize: 13,
+                      color: Color(0xFFFFF176)
+                  ),
                 ),
                 const Text(
-                  'Quality, Efficiency, Excellence, Morality, Virtue',
+                  'Prosperity, Innovation, and Integrity',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Color(0xFFFFF176)),
+                  style: TextStyle(
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                      color: Color(0xFFFFF176)
+                  ),
                 ),
 
                 const SizedBox(height: 50),

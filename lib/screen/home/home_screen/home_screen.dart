@@ -253,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 15),
                   Row(
                     children: [
-                      _gridItem(context, 'website', 'assets/image/logo_beltel_group.png', cardColor, textColor),
+                      _gridItem(context, 'website', 'assets/image/login_school.png', cardColor, textColor),
                       _gridItem(context, 'facebook', 'assets/image/fb_icon.png', cardColor, textColor),
                       _gridItem(context, 'youtube', 'assets/image/youtube_icon.png', cardColor, textColor),
                       _gridItem(context, 'jobs', 'assets/image/jobs.png', cardColor, textColor),
