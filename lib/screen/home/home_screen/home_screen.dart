@@ -40,16 +40,18 @@ class _HomeScreenState extends State<HomeScreen> {
     final Color subTextColor = isDark ? Colors.white70 : Colors.black87;
 
     final List<String> imgList = [
-      'https://www.beltei.edu.kh/storage/app/posters/2/wNckAuLNVvILHTuRjPZA5RK0Mv3wDMjn9FBjQ3fN.jpg',
-      'https://www.beltei.edu.kh/storage/app/posters/2/ZjnHN5q8iuTz97HhGwr0v4eZjk2JLdmUZxpCbh0A.jpg',
-      'https://www.beltei.edu.kh/storage/app/posters/2/7xBuoScsqs10cFnVLgQxGdgd1czZfzRwxAk7Q7er.jpg',
-      'https://www.beltei.edu.kh/storage/app/posters/2/PtUGAevEWZ3xdcYMnN7o2ICxis00XRlGUugGw1FY.jpg',
-      'https://www.beltei.edu.kh/uploaded/university/news/images/482/681a3edc-a.jpg',
-      'https://scontent.fpnh19-1.fna.fbcdn.net/v/t39.30808-6/489884761_1087968210037789_5723458033536820815_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=J3ziCV9GQQYQ7kNvwHkOB04&_nc_oc=Adk0QOilBFKnYka3o9RPc3KZDn4u8XQdTY6ikN94_wRcRlY4FLtOAPijqD-ggaULnxE&_nc_zt=23&_nc_ht=scontent.fpnh19-1.fna&_nc_gid=5gtrS3rraISW6T7UqoD8kQ&oh=00_Afr_6-_zN_vdUzJSyCUHh1Bky-tl9rtD9Cj0F4ERQgrA6w&oe=697262E8',
-      'https://scontent.fpnh19-1.fna.fbcdn.net/v/t39.30808-6/596204014_1302377595261586_4224572311210693712_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=SZOw-VpftnIQ7kNvwGzaMH8&_nc_oc=AdmVQxEq1NrCkXfWu5HCaV165eD_PIAocEa-xm4V_MMya1E3q_I2ZG9eD6LbeKTiWfU&_nc_zt=23&_nc_ht=scontent.fpnh19-1.fna&_nc_gid=XrcOJGFigyA9LmM4VWqi7w&oh=00_Afo1_I4BbglzbhFBBRrQRqe3O-BAhYUISVAxpb4rW66b0w&oe=69726470',
-      'https://scontent.fpnh19-1.fna.fbcdn.net/v/t39.30808-6/586598395_1276119004556041_3596077203540924878_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=A82UMZJdbc4Q7kNvwEGRzyN&_nc_oc=Adlsjolf1CNxMfTtK75QEJEhVzbK6e7qvEhsvcyzfexvg8tLMuZ7nGGzns7Km7eSrx4&_nc_zt=23&_nc_ht=scontent.fpnh19-1.fna&_nc_gid=9XGQn8VWaiMa0fFnvBESzw&oh=00_AfpSiN5iNNfbOKp30h0PJwbaSHl2w4kl7RF8pRsDOf9PMQ&oe=697271A8',
-      'https://www.beltei.edu.kh/asset/img/school/campus/school-B3.jpg',
-      'https://www.beltei.edu.kh/asset/img/school/campus/school-B30.jpg',
+      'https://media.gettyimages.com/id/81632904/photo/nanjing-china-doctoral-graduates-from-the-nanjing-university-pose-for-a-photo-during-the-degree.jpg?s=612x612&w=gi&k=20&c=CrVDHvm8GqmNeiWrJNGShfcUdrQSwNmJihgQDhNTeiU=',
+      'https://wentchina.com/wp-content/uploads/2022/07/beb9a30caa486871c7e60ca07b881faf.png',
+      'https://math.nju.edu.cn/DFS//file/2020/05/09/20200509142906141v5f1ac.jpg',
+      'https://www.fu-berlin.de/studium/international/studium_ausland/direkt/Programme-und-Ausschreibungen/da_china_taiwan/nanjing_university/2024_excursion.jpg?width=4000',
+      'https://www.nju.edu.cn/__local/9/0E/EE/95C31227EECC4145D027BCF2847_5F93343F_C6F8.jpg',
+      'https://media.istockphoto.com/id/1313715567/photo/the-front-gate-of-nanjing-university.jpg?s=612x612&w=0&k=20&c=UqYE5vszLsCVoBv_yL4DuHLJUF4Kms8faM1mmaiLkGo=',
+      'https://www.nju.edu.cn/__local/5/D2/7A/7AB17C9E383016E6CB6BF5E7E43_5857A471_903FE.jpg',
+      'https://hwxy.nju.edu.cn/DFS//file/2024/12/06/20241206165052607t3mzi4.jpg?iid=89352',
+      'https://scholarshipsfuture.com/wp-content/uploads/2025/10/Nanjing-University-CSC-Scholarship-2026-in-China-Fully-Funded-1024x576.jpg',
+      'https://studyinchinas.com/wp-content/uploads/2019/05/Nanjing-University.jpg',
+      'https://cscguideofficials.com/wp-content/uploads/2021/09/Nanjing-university-professors-emails-csc-guide-official.png',
+      'https://es.nju.edu.cn/_upload/article/images/8b/f0/2aee4ff9413e88bb07e1985d2311/c58589f0-fb50-47b1-92a1-0b70992d90c9.jpg',
     ];
 
     return Scaffold(

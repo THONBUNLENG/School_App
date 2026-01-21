@@ -1,39 +1,59 @@
 name: school_app
-description: "BELTEL IS"
+description: "BELTEI INTERNATIONAL SCHOOL App"
 publish_to: "none"
-
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.8.1
+  sdk: ">=3.8.1 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+
+  # UI & Animations
   marquee: ^2.2.3
   lottie: ^3.1.0
+  carousel_slider: ^5.0.0
+  cupertino_icons: ^1.0.8
+  cached_network_image: ^3.4.1
+
+  # Video & YouTube
+  youtube_player_flutter: ^9.1.3
+  video_player: ^2.9.1
+
+  # Web & URL
+  flutter_inappwebview: ^6.1.5
+  webview_flutter: ^4.10.0
+  url_launcher: ^6.3.1
+  share_plus: ^12.0.1
+
+  # State & Storage
+  provider: ^6.1.1
+  shared_preferences: ^2.3.5
+
+  # AI & Localization
   google_generative_ai: ^0.4.4
   flutter_localization: ^0.3.3
-  webview_flutter: ^4.10.0
-  cupertino_icons: ^1.0.8
-  carousel_slider: ^5.0.0
-  cached_network_image: ^3.4.1
-  shared_preferences: ^2.3.5
-  url_launcher: ^6.3.0
-  share_plus: ^10.1.0
-  provider: ^6.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
+
+# --- Fix conflicts ---
+dependency_overrides:
+  flutter_inappwebview: ^6.1.5
 
 flutter:
   uses-material-design: true
 
   assets:
+    - assets/image/beltil_bok.png
     - assets/image/
-    - assets/tottie/robot.json
-    - assets/tottie/user_robot.json
+    - assets/tottie/  # Ensure this folder exists
+    - assets/fonts/Battambang-Regular.ttf
+    - assets/fonts/Battambang-Bold.ttf
+
   fonts:
     - family: Battambang
       fonts:
