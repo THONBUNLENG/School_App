@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Center(
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF005696)),
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF81005B)),
                           ),
                         ),
                       ),
@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 110,
                             margin: const EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0086C2),
+                              color: const Color(0xFF81005B),
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
@@ -253,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 15),
                   Row(
                     children: [
-                      _gridItem(context, 'website', 'assets/image/login_school.png', cardColor, textColor),
+                      _gridItem(context, 'website', 'assets/image/logo_school.png', cardColor, textColor),
                       _gridItem(context, 'facebook', 'assets/image/fb_icon.png', cardColor, textColor),
                       _gridItem(context, 'youtube', 'assets/image/youtube_icon.png', cardColor, textColor),
                       _gridItem(context, 'jobs', 'assets/image/jobs.png', cardColor, textColor),
@@ -331,14 +331,14 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
             case 'website':
               Navigator.push(context, MaterialPageRoute(
-                builder: (context) => const BelteiWebView(url: 'https://www.belteigroup.com.kh'),
+                builder: (context) => const NanjingWebView(url: 'https://www.nju.edu.cn/en/'),
               ));
               break;
             case 'facebook':
               await launchExternalURL('https://www.facebook.com/belteiinternationalgroup');
               break;
             case 'youtube':
-              await launchExternalURL('https://www.youtube.com/@belteigroup');
+              await launchExternalURL('https://www.youtube.com/@njusters5239');
               break;
             case 'jobs':
               await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/job-announcement');

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
-
-class BelteiWebView extends StatefulWidget {
+const Color nandaPurple = Color(0xFF81005B);
+class NanjingWebView extends StatefulWidget {
   final String url;
-  const BelteiWebView({super.key, required this.url});
+  const NanjingWebView({super.key, required this.url});
 
   @override
-  State<BelteiWebView> createState() => _BelteiWebViewState();
+  State<NanjingWebView> createState() => _NanjingWebViewState();
 }
 
-class _BelteiWebViewState extends State<BelteiWebView> {
+class _NanjingWebViewState extends State<NanjingWebView> {
   late final WebViewController controller;
   double loadingProgress = 0;
 
@@ -47,7 +47,7 @@ class _BelteiWebViewState extends State<BelteiWebView> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFF005696),
+          backgroundColor: Color(0xFF81005B),
           toolbarHeight: 70,
           elevation: 0,
           centerTitle: true,
@@ -80,7 +80,7 @@ class _BelteiWebViewState extends State<BelteiWebView> {
               LinearProgressIndicator(
                 value: loadingProgress,
                 backgroundColor: Colors.white,
-                color: const Color(0xFF00AEEF),
+                color: const Color(0xFF81005B),
                 minHeight: 3,
               ),
             Expanded(
@@ -91,20 +91,33 @@ class _BelteiWebViewState extends State<BelteiWebView> {
       ),
     );
   }
-
   Widget _buildAppTitle() {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.asset('assets/image/logo_beltel_school.png', height: 38,
-            errorBuilder: (c, e, s) => const Icon(Icons.school, color: Colors.white)),
+        // Image.asset('assets/image/.png', height: 38,
+        //     errorBuilder: (c, e, s) => const Icon(Icons.school, color: Colors.white)),
         const SizedBox(width: 8),
-        Column(
-          mainAxisSize: MainAxisSize.min,
+        const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('សាលា ប៊ែលធី អន្តរជាតិ', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white)),
-            Text('BELTEI INTERNATIONAL SCHOOL', style: TextStyle(fontSize: 7, color: Colors.white)),
+          children: [
+            Text(
+              '南京大學',
+              style: TextStyle(
+                fontFamily: 'MaoTi',
+                fontSize: 22,
+                color: Colors.white,
+                letterSpacing: 4,
+              ),
+            ),
+            Text(
+              'NANJING UNIVERSITY',
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.white70,
+              ),
+            ),
           ],
         ),
       ],

@@ -10,13 +10,13 @@ class ThemeManager with ChangeNotifier {
     _loadTheme();
   }
 
-  _loadTheme() async {
+  Future<void> _loadTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _isDarkMode = prefs.getBool('isDarkMode') ?? false;
     notifyListeners();
   }
 
-  toggleTheme(bool value) async {
+  Future<void> toggleTheme(bool value) async {
     _isDarkMode = value;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isDarkMode', value);

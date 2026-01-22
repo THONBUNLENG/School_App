@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/model/model.dart';
-// Ensure this path is correct based on your project structure
 import 'package:school_app/model/sever_url_model/sever_url_model.dart';
 import '../home_screen/change_notifier.dart';
 import 'news_detail_screen.dart';
