@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_app/screen/home_profile/home_profile_screen/home_screen.dart';
+import 'package:school_app/screen/home_profile/home_profile_screen/detail_screen.dart';
+
+import 'man_screen_user.dart';
 
 
 class HomeProfileScreen extends StatefulWidget {

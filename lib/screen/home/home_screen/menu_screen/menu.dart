@@ -7,6 +7,7 @@ import 'package:school_app/screen/home/home_screen/menu_screen/faq_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
+import '../../../profile_login/qr_login.dart';
 import '../change_notifier.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -90,7 +91,9 @@ class _MenuScreenState extends State<MenuScreen> {
                 String shareTitle = 'share_title'.tr;
                 await Share.share('$shareTitle\n$playStoreLink', subject: 'BELTEI International School');
               }, leadingWidget: ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.asset('', width: 22, height: 22, errorBuilder: (context, error, stackTrace) => Icon(Icons.share, color: nandaPurple)))),
-              _buildMenuTile(Icons.qr_code_scanner, 'qr_code', nandaPurple, textColor, dividerColor, () {}, isLast: true),
+              _buildMenuTile(Icons.qr_code_scanner, 'qr_code', nandaPurple, textColor, dividerColor, () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const QRCodeScreen ()));
+              }, isLast: true),
             ]),
 
             const SizedBox(height: 30),
