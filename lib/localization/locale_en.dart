@@ -26,7 +26,7 @@ final Map<String, dynamic> english = {
   'social_media': 'Social Media',
   'share_app': 'Share App',
   'qr_code': 'QR Code',
-  'copyright': 'Copyright © 2026 BELTEI Group.',
+  'copyright': 'Copyright © 2026 NANJING University.',
   'version': 'Version',
   'general_education_title': 'General Education',
   'general_education_desc': 'Studying according to the Ministry of Education, Youth and Sport program from Grade 1 to 12 and essential lessons for national exams.',

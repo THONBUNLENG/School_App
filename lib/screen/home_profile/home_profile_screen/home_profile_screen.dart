@@ -1,24 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:school_app/screen/home_profile/home_profile_screen/detail_screen.dart';
 
+import '../courese.dart';
+import '../profile_student.dart';
 import 'man_screen_user.dart';
-
 
 class HomeProfileScreen extends StatefulWidget {
   const HomeProfileScreen({super.key});
 
   @override
-  State<HomeProfileScreen> createState() => _MainNavigationHolderState();
+  State<HomeProfileScreen> createState() => _HomeProfileScreenState();
 }
 
-class _MainNavigationHolderState extends State<HomeProfileScreen> {
+class _HomeProfileScreenState extends State<HomeProfileScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
-    ManScreenUser(),
-    Center(child: Text("Messages Screen", style: TextStyle(fontSize: 24))),
-    Center(child: Text("Profile Screen", style: TextStyle(fontSize: 24))),
-  ];
+  // Toggle dark mode as needed
+  bool isDarkMode = false;
+
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const ManScreenUser(),
+      CoursePageFix(),
+      const StudentProfilePage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +47,18 @@ class _MainNavigationHolderState extends State<HomeProfileScreen> {
         color: const Color(0xFFD1C4E9),
         borderRadius: BorderRadius.circular(35),
         boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 15, offset: Offset(0, 8)),
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 15,
+            offset: Offset(0, 8),
+          ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _navItem("Home", 0),
-          _navItem("Messages", 1),
+          _navItem("Course", 1),
           _navItem("Profile", 2),
         ],
       ),
@@ -73,5 +87,3 @@ class _MainNavigationHolderState extends State<HomeProfileScreen> {
     );
   }
 }
-
-

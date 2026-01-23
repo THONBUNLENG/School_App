@@ -28,7 +28,7 @@ dependencies:
   webview_flutter: ^4.10.0
   url_launcher: ^6.3.1
   share_plus: ^12.0.1
-
+  image_picker: ^1.0.7
   # State & Storage
   provider: ^6.1.1
   shared_preferences: ^2.3.5
@@ -42,18 +42,13 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
-# Fix conflicts
-dependency_overrides:
-  flutter_inappwebview: ^6.1.5
-
 flutter:
   uses-material-design: true
 
   assets:
     - assets/image/logo.png
-    - assets/image/       # Include all images in this folder
-    - assets/tottie/      # Ensure this folder exists
-    - assets/fonts/       # You can include entire fonts folder if needed
+    - assets/image/
+    - assets/tottie/
 
   fonts:
     - family: Battambang
@@ -61,7 +56,4 @@ flutter:
         - asset: assets/fonts/Battambang-Regular.ttf
         - asset: assets/fonts/Battambang-Bold.ttf
           weight: 700
-fonts:
-  - family: MaoTi
-    fonts:
-      - asset: assets/font/FZMaoti.ttf
+

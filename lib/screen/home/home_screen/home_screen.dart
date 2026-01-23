@@ -10,7 +10,7 @@ import 'package:school_app/screen/home/home_screen/change_language.dart';
 import 'package:school_app/screen/home/website/website_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'change_notifier.dart';
+import '../../../extension/change_notifier.dart';
 import '../news/new_screen.dart';
 
 class HomeScreen extends StatefulWidget {

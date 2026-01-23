@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_app/screen/home/home_screen/change_notifier.dart';
+import 'package:school_app/extension/change_notifier.dart';
 
 import '../home_profile/home_profile_screen/home_profile_screen.dart'; // ប្រើ ThemeManager របស់អ្នក
 

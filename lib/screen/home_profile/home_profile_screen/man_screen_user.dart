@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:school_app/screen/home/home_screen/main_holder.dart';
+import 'package:school_app/screen/home_profile/home_profile_screen/setting.dart' hide nandaPurple;
 import 'package:shimmer/shimmer.dart';
 
+import '../../../extension/change_notifier.dart';
 import 'list_item.dart';
 import 'new.dart';
-// កុំភ្លេច Import file ទាំង ២ ខាងលើ និង MainHolder / DetailScreen របស់អ្នក
-// import 'news_model.dart';
-// import 'custom_widgets.dart';
+
 
 class ManScreenUser extends StatefulWidget {
   const ManScreenUser({super.key});
@@ -17,7 +18,7 @@ class ManScreenUser extends StatefulWidget {
 
 class _ManScreenUserState extends State<ManScreenUser> {
   bool _isLoading = true;
-  bool _isDarkMode = false;
+  final bool _isDarkMode = false;
 
   @override
   void initState() {
@@ -31,44 +32,45 @@ class _ManScreenUserState extends State<ManScreenUser> {
     if (mounted) setState(() => _isLoading = false);
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final Color bgColor = _isDarkMode ? const Color(0xFF121212) : const Color(0xFFF8F9FA);
-    final Color textColor = _isDarkMode ? Colors.white : Colors.black87;
-    final Color cardColor = _isDarkMode ? const Color(0xFF1E1E1E) : Colors.white;
+    final themeManager = Provider.of<ThemeManager>(context);
+    final bool isDarkMode = themeManager.isDarkMode;
 
-    return Theme(
-      data: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      child: Scaffold(
-        backgroundColor: bgColor,
-        body: RefreshIndicator(
-          color: nandaPurple,
-          onRefresh: _fetchNews,
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            slivers: [
-              _buildSliverAppBar(),
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildOrientationBanner(),
-                    _section("Campus Life", textColor),
-                    _campusLife(context, _isDarkMode),
-                    _section("Quick Access", textColor),
-                    _quickAccess(textColor),
-                    _section("Announcements", textColor),
-                    _announcements(context, cardColor, textColor),
-                    _section("News Updates", textColor),
-                  ],
-                ),
+    final Color bgColor = isDarkMode ? const Color(0xFF121212) : const Color(0xFFF8F9FA);
+    final Color textColor = isDarkMode ? Colors.white : Colors.black87;
+    final Color cardColor = isDarkMode ? const Color(0xFF1E1E1E) : Colors.white;
+
+    return Scaffold(
+      backgroundColor: bgColor,
+      body: RefreshIndicator(
+        color: nandaPurple,
+        onRefresh: _fetchNews,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          slivers: [
+            _buildSliverAppBar(isDarkMode),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildOrientationBanner(),
+                  _section("Campus Life", textColor),
+                  _campusLife(context, isDarkMode),
+                  _section("Quick Access", textColor),
+                  _quickAccess(textColor),
+                  _section("Announcements", textColor),
+                  _announcements(context, cardColor, textColor),
+                  _section("News Updates", textColor),
+                ],
               ),
-              _isLoading
-                  ? _buildSliverShimmer(_isDarkMode)
-                  : _buildSliverNewsList(newsList, cardColor, textColor),
-              const SliverToBoxAdapter(child: SizedBox(height: 50)),
-            ],
-          ),
+            ),
+            _isLoading
+                ? _buildSliverShimmer(isDarkMode)
+                : _buildSliverNewsList(newsList, cardColor, textColor),
+            const SliverToBoxAdapter(child: SizedBox(height: 50)),
+          ],
         ),
       ),
     );
@@ -76,25 +78,39 @@ class _ManScreenUserState extends State<ManScreenUser> {
 
   // --- Widget Functions ---
 
-  Widget _buildSliverAppBar() {
+  Widget _buildSliverAppBar(bool isDarkMode) {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 80.0,
       backgroundColor: nandaPurple,
       centerTitle: true,
-      title: const Text('南京大學', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      title: const Text(
+          '南京大學',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+      ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-        onPressed: () =>     Navigator.push(context, MaterialPageRoute(builder: (context) => const MainHolder())),
+        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+        onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainHolder())
+        ),
       ),
       actions: [
         IconButton(
-          icon: Icon(_isDarkMode ? Icons.light_mode : Icons.dark_mode, color: Colors.white),
-          onPressed: () => setState(() => _isDarkMode = !_isDarkMode),
+          icon: const Icon(Icons.search, color: Colors.white),
+          onPressed: () {
+
+          },
         ),
         IconButton(
-          icon: Icon( Icons.search, color: Colors.white),
-          onPressed:  () => Navigator,
+          icon: Icon(
+              isDarkMode ? Icons.settings_rounded : Icons.settings_outlined,
+              color: Colors.white
+          ),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingApp()),
+          ),
         ),
       ],
     );

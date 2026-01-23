@@ -1,13 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:school_app/screen/home/home_screen/change_notifier.dart';
+import 'package:school_app/extension/change_notifier.dart';
 import 'package:school_app/screen/home_profile/home_profile_screen/home_profile_screen.dart';
 import 'package:school_app/screen/profile_login/qr_login.dart';
 import 'package:school_app/screen/profile_login/wechat_login.dart';
+
+import '../../api/api_sms.dart';
 
 const Color nandaPurple = Color(0xFF81005B);
 
@@ -129,22 +129,21 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
 
   Future<void> _handleLogin() async {
     FocusScope.of(context).unfocus();
+
     setState(() {
       if (_currentTab == 0) {
         _userErr = _usernameController.text.isEmpty;
         String pass = _passwordController.text;
         if (pass.isEmpty) {
           _passErr = true;
-          _passSubHint = "请输入密码 ";
+          _passSubHint = "请输入密码 (សូមបញ្ចូលពាក្យសម្ងាត់)";
         } else if (!_isPasswordValid(pass)) {
           _passErr = true;
-          _passSubHint =
-          "Password8位以上且含大小写字母 ";
+          _passSubHint = "Password 8位以上且含大小写字母";
         } else {
           _passErr = false;
         }
-        _capErr = _captchaController.text.trim().toLowerCase() !=
-            _currentCaptcha.toLowerCase();
+        _capErr = _captchaController.text.trim().toLowerCase() != _currentCaptcha.toLowerCase();
       } else {
         _phoneErr = _phoneController.text.length < 9;
         _smsErr = _smsController.text.isEmpty;
@@ -153,44 +152,36 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
 
     if (_userErr || _passErr || _capErr || _phoneErr || _smsErr) {
       if (_capErr) {
-        _showError("验证码错误");
+        _showError("验证码错误 (Captcha មិនត្រឹមត្រូវ)");
         _generateRandomCaptcha();
       }
       return;
     }
 
     setState(() => _isLoading = true);
+
     try {
-      final response = await http.post(
-        Uri.parse('https://your-api-endpoint.com/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'username': _currentTab == 0
-              ? _usernameController.text.trim()
-              : _phoneController.text.trim(),
-          'password': _currentTab == 0
-              ? _passwordController.text
-              : _smsController.text,
-          'type': _currentTab == 0 ? 'account' : 'sms',
-        }),
-      ).timeout(const Duration(seconds: 10));
+
+      final result = await loginWithApi(
+        _currentTab == 0 ? _usernameController.text.trim() : _phoneController.text.trim(),
+        _currentTab == 0 ? _passwordController.text : _smsController.text,
+        isTestMode: true, // do  false pel brer API pit
+      );
 
       if (!mounted) return;
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['token'] != null) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-              builder: (context) => const HomeProfileScreen()), (
-              route) => false);
-        } else {
-          _showError(data['message'] ?? "登录失败");
-          _generateRandomCaptcha();
-        }
+
+      if (result == "success") {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeProfileScreen()),
+              (route) => false,
+        );
       } else {
-        _showError("Server Error: ${response.statusCode}");
+        _showError(result);
+        _generateRandomCaptcha();
       }
     } catch (e) {
-      _showError("网络连接失败");
+      _showError("网络连接失败 (បរាជ័យក្នុងការតភ្ជាប់)");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -397,7 +388,6 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
           Expanded(
               child: TextField(
                   controller: _captchaController,
-                  // បន្ថែម textInputAction ដើម្បីឱ្យងាយស្រួលចុច Done
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _handleLogin(),
                   style: TextStyle(color: isDark ? Colors.white : Colors.black,
@@ -413,10 +403,10 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: nandaPurple.withOpacity(0.1), // ដូរពណ៌ឱ្យប្លែកបន្តិច
+                    color: nandaPurple.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                        color: nandaPurple.withOpacity(0.3)), // ថែមរង្វង់ជុំវិញ
+                        color: nandaPurple.withOpacity(0.3)),
                   ),
                   child: Text(
                       _currentCaptcha,
@@ -425,7 +415,6 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
                         fontStyle: FontStyle.italic,
                         letterSpacing: 2,
                         color: isDark ? Colors.white : nandaPurple,
-                        // ឱ្យអក្សរពណ៌ស្វាយងាយមើល
                         fontSize: 16,
                       )
                   )

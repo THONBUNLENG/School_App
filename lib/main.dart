@@ -4,8 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:school_app/extension/navigator_extension.dart';
 import 'package:school_app/localization/locale_cn.dart';
 import 'package:school_app/localization/locale_en.dart';
-import 'package:school_app/localization/locale_km.dart';
-import 'package:school_app/screen/home/home_screen/change_notifier.dart';
+import 'package:school_app/extension/change_notifier.dart';
 import 'package:school_app/screen/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +35,6 @@ class _MyAppState extends State<MyApp> {
     _localization.init(
       mapLocales: [
         MapLocale('en', english, fontFamily: 'Roboto'),
-        MapLocale('km', khmer, fontFamily: 'Battambang'),
         MapLocale('zh', chinese, fontFamily: 'ZCOOL_XiaoWei'),
       ],
       initLanguageCode: 'en',

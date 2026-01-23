@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_app/screen/home/home_screen/change_notifier.dart';
+import 'package:school_app/extension/change_notifier.dart';
 
 import 'package:school_app/screen/home/home_screen/home_screen.dart';
 import 'package:school_app/screen/profile_login/profile_page.dart';

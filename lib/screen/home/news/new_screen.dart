@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/model/model.dart';
 import 'package:school_app/model/sever_url_model/sever_url_model.dart';
-import '../home_screen/change_notifier.dart';
+import '../../../extension/change_notifier.dart';
 import 'news_detail_screen.dart';
 
 class NewsScreen extends StatelessWidget {

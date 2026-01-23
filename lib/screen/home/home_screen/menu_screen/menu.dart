@@ -8,7 +8,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import '../../../profile_login/qr_login.dart';
-import '../change_notifier.dart';
+import '../../../../extension/change_notifier.dart';
+import 'logout.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -81,7 +82,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangeLanguageScreen()));
               }),
               _buildToggleTile(_isNotificationOn ? Icons.notifications_active : Icons.notifications_off, 'notification', _isNotificationOn, nandaPurple, textColor, dividerColor, (val) => setState(() => _isNotificationOn = val)),
-              _buildToggleTile(isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined, 'night_mode', isDark, isDark ? Colors.orangeAccent : nandaPurple, textColor, dividerColor, (val) => themeManager.toggleTheme(val), isLast: true),
+              _buildToggleTile(isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined, 'Dark_Mode', isDark, isDark ? Colors.orangeAccent : nandaPurple, textColor, dividerColor, (val) => themeManager.toggleTheme(val), isLast: true),
             ]),
 
             _buildSection(sectionColor, isDark, [
@@ -89,7 +90,7 @@ class _MenuScreenState extends State<MenuScreen> {
               _buildMenuTile(null, 'share_app', nandaPurple, textColor, dividerColor, () async {
                 const String playStoreLink = 'https://play.google.com/store/apps/details?id=com.beltei.school';
                 String shareTitle = 'share_title'.tr;
-                await Share.share('$shareTitle\n$playStoreLink', subject: 'BELTEI International School');
+                await Share.share('$shareTitle\n$playStoreLink', subject: 'NANJING International University');
               }, leadingWidget: ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.asset('', width: 22, height: 22, errorBuilder: (context, error, stackTrace) => Icon(Icons.share, color: nandaPurple)))),
               _buildMenuTile(Icons.qr_code_scanner, 'qr_code', nandaPurple, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const QRCodeScreen ()));
@@ -97,9 +98,9 @@ class _MenuScreenState extends State<MenuScreen> {
             ]),
 
             const SizedBox(height: 30),
-            Text('copyright'.tr, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45, fontFamily: 'Battambang')),
+            Text('copyright'.tr, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45, fontFamily: 'MaoTi')),
             const SizedBox(height: 8),
-            Text('${'version'.tr} 4.0.9', style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
+            Text('${'version'.tr} 1.0.0', style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
           ],
         ),
