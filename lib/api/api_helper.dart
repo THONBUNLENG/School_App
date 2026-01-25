@@ -8,7 +8,6 @@ class Urls {
 }
 
 class ApiHelper {
-  /// Sends the chat messages to Gemini AI and returns the AI's response.
   Future<String?> sendMsgApi({required List<Map<String, String>> messages}) async {
     try {
       // Filter out empty messages
@@ -20,7 +19,6 @@ class ApiHelper {
 
       final fullUrl = "${Urls.geminiBaseUrl}?key=${Urls.apikey}";
 
-      // Prepare request body
       final body = jsonEncode({
         "contents": filteredMessages.map((m) {
           return {

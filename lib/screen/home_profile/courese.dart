@@ -115,13 +115,6 @@ class _CoursePageFixState extends State<CoursePageFix> {
                               color: _isDark ? Colors.white : Colors.black87,
                             ),
                           ),
-                          IconButton(
-                            onPressed: () => setState(() => _isDark = !_isDark),
-                            icon: Icon(
-                              _isDark ? Icons.nightlight_round : Icons.wb_sunny,
-                              color: _isDark ? Colors.white : Colors.black54,
-                            ),
-                          ),
                         ],
                       ),
                     ),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/campus_life/canteen/canteen_screen.dart';
+import 'package:school_app/campus_life/library_screen.dart' hide nandaPurple;
+import 'package:school_app/campus_life/timetable_screen.dart' hide nandaPurple;
+import 'package:school_app/campus_life/wifi_screen.dart' hide nandaPurple;
 import 'package:school_app/screen/home/home_screen/main_holder.dart';
 import 'package:school_app/screen/home_profile/home_profile_screen/setting.dart' hide nandaPurple;
 import 'package:shimmer/shimmer.dart';
@@ -219,10 +223,65 @@ class _ManScreenUserState extends State<ManScreenUser> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          LifeItem(icon: Icons.access_time, label: "Timetable", isDark: isDark, onTap: () {}),
-          LifeItem(icon: Icons.restaurant, label: "Canteen", isDark: isDark, onTap: () {}),
-          LifeItem(icon: Icons.book, label: "Library", isDark: isDark, onTap: () {}),
-          LifeItem(icon: Icons.wifi, label: "WiFi", isDark: isDark, onTap: () {}),
+          LifeItem(
+            icon: Icons.access_time,
+            label: "Timetable",
+            isDark: isDark,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NanjingTimetable(
+                    url: 'https://hwxy.nju.edu.cn/English/Academics/AcademicCalendar/Timetables/index.html',
+                  ),
+                ),
+              );
+            },
+          ),
+          LifeItem(
+            icon: Icons.restaurant,
+            label: "Canteen",
+            isDark: isDark,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MenuScreen(
+                  ),
+                ),
+              );
+            },
+          ),
+          LifeItem(
+            icon: Icons.book,
+            label: "Library",
+            isDark: isDark,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NanjingLibrary(
+                    url: 'https://njunju.nju.edu.cn/EN/5073/list.htm',
+                  ),
+                ),
+              );
+            },
+          ),
+          LifeItem(
+            icon: Icons.wifi,
+            label: "WiFi",
+            isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NanjingWifi(
+                      url: 'https://stuex.nju.edu.cn/en_/NJUAPPwSingleSignwonAccount/list.htm',
+                    ),
+                  ),
+                );
+              },
+          ),
         ],
       ),
     );

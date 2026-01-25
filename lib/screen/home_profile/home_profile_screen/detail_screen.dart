@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/model/food.dart';
 import 'man_screen_user.dart';
 import 'new.dart';
 
@@ -8,7 +9,7 @@ const Color nandaPurple = Color(0xFF81005B);
 
 class DetailScreen extends StatelessWidget {
   final String title;
-  const DetailScreen({super.key, required this.title});
+  const DetailScreen({super.key, required this.title, required Food food, required int cartCount, required void Function(newItem) onAddToCart});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,6 +17,9 @@ class DetailScreen extends StatelessWidget {
       body: Center(child: Text("Welcome to $title Page")),
     );
   }
+}
+
+class newItem {
 }
 
 class NewsDetailScreen extends StatelessWidget {

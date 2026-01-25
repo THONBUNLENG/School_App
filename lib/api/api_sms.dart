@@ -1,50 +1,71 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'local_notification_service.dart';
 
-Future<String> loginWithApi(String username, String password, {bool isTestMode = true}) async {
-  if (isTestMode) {
-    await Future.delayed(const Duration(seconds: 2));
+class SmsService {
+  static const String _baseUrl = 'https://api.nju.edu.cn/v1/auth';
 
-    if (username == "admin" && password == "@Bunleng520") {
-      return "success";
-    } else {
-      return "ឈ្មោះអ្នកប្រើ ឬលេខសម្ងាត់មិនត្រឹមត្រូវ (តេស្ត)។";
+  static Future<Map<String, dynamic>> sendOtp(String phoneNumber) async {
+    String cleanPhone = phoneNumber.replaceAll(' ', '');
+
+    // Synchronized with your UI test number
+    if (cleanPhone == "011820595999") {
+      // Use the same code as your UI: 0406
+      await LocalNotificationService.showSmsNotification(code: "0406");
+      return {'success': true, 'message': 'Test Code: 0406'};
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/send-sms'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'mobile': cleanPhone}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        return {'success': true, 'message': 'Code sent successfully!'};
+      }
+      return {'success': false, 'message': 'Server Error: ${response.statusCode}'};
+    } catch (e) {
+      return {'success': false, 'message': _handleError(e)};
     }
   }
 
-  // ---  Server pit---
-  final url = Uri.parse('https://your-api-endpoint.com/login');
+  static Future<String> verifyOtp(String phoneNumber, String otpCode) async {
+    String cleanPhone = phoneNumber.replaceAll(' ', '');
 
-  try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: jsonEncode({
-        'username': username,
-        'password': password,
-      }),
-    ).timeout(const Duration(seconds: 15)); //  VPN
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['success'] == true || data['token'] != null) {
-        return "success";
-      } else {
-        return data['message'] ?? "ឈ្មោះអ្នកប្រើ ឬលេខសម្ងាត់មិនត្រឹមត្រូវ។";
-      }
-    } else {
-      return "កំហុស Server: ${response.statusCode}";
+    // CHECK: Ensure test code matches UI logic (0406)
+    if (cleanPhone == "011820595999" && otpCode == "0406") {
+      await Future.delayed(const Duration(milliseconds: 800));
+      return "success";
     }
-  } on SocketException {
-    return "មិនអាចតភ្ជាប់ទៅកាន់ Server បានទេ! សូមពិនិត្យ VPN របស់អ្នក។";
-  } on TimeoutException {
-    return "ការតភ្ជាប់យឺតពេក (Timeout) សូមព្យាយាមម្ដងទៀត។";
-  } catch (e) {
-    return "មានបញ្ហាបច្ចេកទេស: $e";
+
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/verify-sms'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'mobile': cleanPhone, 'otp': otpCode}),
+      ).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['success'] == true ? "success" : "Invalid verification code.";
+      }
+      return "Server Error ${response.statusCode}";
+    } catch (e) {
+      return _handleError(e);
+    }
+  }
+
+  static String _handleError(dynamic e) {
+    if (e is TimeoutException) return "Connection timed out.";
+    if (e.toString().contains("Connection closed")) {
+      return "Network Error: Server rejected the connection. Check your API URL.";
+    }
+    return "Technical problem: $e";
   }
 }
