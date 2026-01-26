@@ -1,5 +1,3 @@
-import 'food.dart';
-
 class Food {
   final String name, des, img, category;
   final double price, rating;
@@ -32,7 +30,6 @@ class Food {
   );
 }
 
-
 class CartItem {
   final Food food;
   final String size;
@@ -48,7 +45,10 @@ class CartItem {
     required this.finalTotalPrice,
   });
 
-  CartItem copyWith({int? quantity, double? finalTotalPrice}) {
+  CartItem copyWith({
+    int? quantity,
+    double? finalTotalPrice,
+  }) {
     return CartItem(
       food: food,
       size: size,

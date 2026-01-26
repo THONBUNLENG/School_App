@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:school_app/campus_life/canteen/payment_confirmation_screen.dart';
+import '../../extension/change_notifier.dart';
+import '../../extension/string_extension.dart';
 import '../../model/food.dart';
-
 
 class OrderScreen extends StatefulWidget {
   final List<CartItem> cartItems;
@@ -13,29 +16,36 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   final double deliveryFee = 1.00;
   final double commonImageSize = 60.0;
-  bool _isProcessing = false;
-
 
   void _clearCart() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
+        final themeManager = context.watch<ThemeManager>();
+        final isDark = themeManager.isDarkMode;
+
         return AlertDialog(
+          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: const Text("Clear Cart"),
-          content: const Text("តើអ្នកពិតជាចង់លុបទំនិញទាំងអស់ចេញពីកន្ត្រកមែនទេ?"),
+          title: Text("Clear Cart".tr),
+          content: Text("Are you sure you want to remove all items from the cart?".tr),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("បោះបង់", style: TextStyle(color: Colors.grey)),
+              child: Text(
+                "Cancel".tr,
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
             TextButton(
               onPressed: () {
                 setState(() => widget.cartItems.clear());
                 Navigator.pop(context);
               },
-              child: const Text("លុបទាំងអស់",
-                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+              child: Text(
+                "Clear All".tr,
+                style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
@@ -45,28 +55,38 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeManager = context.watch<ThemeManager>();
+    final isDark = themeManager.isDarkMode;
+
     double subtotal = widget.cartItems.fold<double>(0.0, (sum, item) => sum + item.finalTotalPrice);
     double total = subtotal + deliveryFee;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFBFBFB),
+      backgroundColor: isDark ? Colors.grey[900] : const Color(0xFFFBFBFB),
       appBar: AppBar(
-        title: const Text("Confirm Order",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
+        title: Text(
+          "Confirm Order".tr,
+          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: isDark ? Colors.grey[850] : Colors.white,
         elevation: 0,
         centerTitle: true,
         actions: [
           if (widget.cartItems.isNotEmpty)
             TextButton(
               onPressed: _clearCart,
-              child: const Text("Clear", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+              child: Text(
+                "Clear".tr,
+                style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
             ),
         ],
       ),
-      body: widget.cartItems.isEmpty ? _buildEmptyCart() : Column(
+      body: widget.cartItems.isEmpty
+          ? _buildEmptyCart(isDark)
+          : Column(
         children: [
-          _buildAddMoreHeader(),
+          _buildAddMoreHeader(isDark),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.only(bottom: 20),
@@ -74,29 +94,35 @@ class _OrderScreenState extends State<OrderScreen> {
               itemBuilder: (context, index) {
                 final item = widget.cartItems[index];
                 return Dismissible(
-                  key: UniqueKey(),
+                  key: ValueKey(item.hashCode),
                   direction: DismissDirection.endToStart,
                   onDismissed: (_) => setState(() => widget.cartItems.removeAt(index)),
                   background: _buildDeleteBackground(),
-                  child: _buildCartTile(item),
+                  child: _buildCartTile(item, isDark),
                 );
               },
             ),
           ),
-          _buildCheckoutSection(subtotal, total),
+          _buildCheckoutSection(subtotal, total, isDark),
         ],
       ),
     );
   }
 
-  Widget _buildCartTile(CartItem item) {
+  Widget _buildCartTile(CartItem item, bool isDark) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
       ),
       child: Column(
         children: [
@@ -105,107 +131,142 @@ class _OrderScreenState extends State<OrderScreen> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(item.food.img, width: commonImageSize, height: commonImageSize, fit: BoxFit.cover),
+                child: Image.network(
+                  item.food.img,
+                  width: commonImageSize,
+                  height: commonImageSize,
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.food.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(item.food.name,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: isDark ? Colors.white : Colors.black)),
                     const SizedBox(height: 5),
-                    Text("Size: ${item.size} | Qty: ${item.quantity}", style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+                    Text(
+                      "Size: ${item.size} | Qty: ${item.quantity}".tr,
+                      style: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey.shade600,
+                          fontSize: 13),
+                    ),
                   ],
                 ),
               ),
-              Text("\$${item.finalTotalPrice.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFFD85D22))),
+              Text(
+                "¥${item.finalTotalPrice.toStringAsFixed(2)}",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Color(0xFFD85D22),
+                ),
+              ),
             ],
           ),
           if (item.sides.isNotEmpty) ...[
-            const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Color(0xFFF5F5F5), thickness: 1.5)),
-            ...item.sides.map((side) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(side['img'], width: commonImageSize, height: commonImageSize, fit: BoxFit.cover),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(side['name'], style: TextStyle(color: Colors.grey.shade800, fontSize: 14)),
-                        const Text("Extra side", style: TextStyle(color: Colors.grey, fontSize: 11)),
-                      ],
+            Divider(color: isDark ? Colors.grey[700] : const Color(0xFFF5F5F5), thickness: 1.5),
+            ...item.sides.map((side) {
+              final price = (side['price'] as num).toDouble();
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        side['img'],
+                        width: commonImageSize,
+                        height: commonImageSize,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  Text("+\$${(side['price'] as double).toStringAsFixed(2)}", style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
-                ],
-              ),
-            )).toList(),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(side['name'],
+                              style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.grey.shade800,
+                                  fontSize: 14)),
+                          Text("Extra side".tr,
+                              style: TextStyle(
+                                  color: isDark ? Colors.grey[400] : Colors.grey,
+                                  fontSize: 11)),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      "+¥${price.toStringAsFixed(2)}",
+                      style: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey.shade500,
+                          fontSize: 14),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildCheckoutSection(double subtotal, double total) {
+  Widget _buildCheckoutSection(double subtotal, double total, bool isDark) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(25, 20, 25, 35),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 20)],
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[850] : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _priceRow("Subtotal", "\$${subtotal.toStringAsFixed(2)}"),
-          const SizedBox(height: 10),
-          _priceRow("Delivery Fee", "\$${deliveryFee.toStringAsFixed(2)}"),
-          const Divider(height: 30, thickness: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Total Payment", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Text("\$${total.toStringAsFixed(2)}", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFD85D22))),
+              Text("Total Payment".tr,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black)),
+              Text(
+                "¥${total.toStringAsFixed(2)}",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFD85D22),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             height: 55,
             child: ElevatedButton(
-              onPressed: _isProcessing ? null : () async {
-                setState(() => _isProcessing = true);
-                await Future.delayed(const Duration(seconds: 1));
-                if (!mounted) return;
-                setState(() => _isProcessing = false);
-               // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentConfirmationScreen(cartItems: widget.cartItems)));
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PaymentConfirmationScreen(cartItems: widget.cartItems),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFD85D22),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              ),
-              child: _isProcessing
-                  ? const SizedBox(height: 25, width: 25, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Text("Confirm & Pay", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  backgroundColor: const Color(0xFFD85D22)),
+              child: Text("Confirm & Pay".tr,
+                  style: const TextStyle(color: Colors.white, fontSize: 18)),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _priceRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 15)),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-      ],
     );
   }
 
@@ -214,27 +275,34 @@ class _OrderScreenState extends State<OrderScreen> {
       alignment: Alignment.centerRight,
       padding: const EdgeInsets.only(right: 20),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-      decoration: BoxDecoration(color: Colors.red.shade400, borderRadius: BorderRadius.circular(15)),
+      decoration: BoxDecoration(
+          color: Colors.red.shade400, borderRadius: BorderRadius.circular(15)),
       child: const Icon(Icons.delete_sweep, color: Colors.white, size: 30),
     );
   }
 
-  Widget _buildEmptyCart() {
+  Widget _buildEmptyCart(bool isDark) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.shopping_basket_outlined, size: 100, color: Colors.grey.shade300),
+          Icon(Icons.shopping_basket_outlined,
+              size: 100, color: isDark ? Colors.grey[700] : Colors.grey.shade300),
           const SizedBox(height: 20),
-          const Text("Your cart is empty!", style: TextStyle(color: Colors.grey, fontSize: 18)),
+          Text("Your cart is empty!".tr,
+              style: TextStyle(
+                  color: isDark ? Colors.white : Colors.grey, fontSize: 18)),
           const SizedBox(height: 30),
-          ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("Browse Menu")),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Browse Menu".tr),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildAddMoreHeader() {
+  Widget _buildAddMoreHeader(bool isDark) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
       child: InkWell(
@@ -242,16 +310,21 @@ class _OrderScreenState extends State<OrderScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFD85D22).withOpacity(0.08),
+            color: (const Color(0xFFD85D22).withOpacity(0.08)),
             borderRadius: BorderRadius.circular(15),
             border: Border.all(color: const Color(0xFFD85D22).withOpacity(0.3)),
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.add_circle_outline, color: Color(0xFFD85D22), size: 20),
-              SizedBox(width: 10),
-              Text("Add New Menu Items", style: TextStyle(color: Color(0xFFD85D22), fontWeight: FontWeight.bold)),
+              Icon(Icons.add_circle_outline,
+                  color: const Color(0xFFD85D22), size: 20),
+              const SizedBox(width: 10),
+              Text(
+                "Add New Menu Items".tr,
+                style: const TextStyle(
+                    color: Color(0xFFD85D22), fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),

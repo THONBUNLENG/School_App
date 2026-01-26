@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_app/campus_life/canteen/canteen_screen.dart';
+import 'package:school_app/campus_life/canteen/detail_screen.dart';
 import 'package:school_app/campus_life/library_screen.dart' hide nandaPurple;
 import 'package:school_app/campus_life/timetable_screen.dart' hide nandaPurple;
 import 'package:school_app/campus_life/wifi_screen.dart' hide nandaPurple;
@@ -8,6 +8,7 @@ import 'package:school_app/screen/home/home_screen/main_holder.dart';
 import 'package:school_app/screen/home_profile/home_profile_screen/setting.dart' hide nandaPurple;
 import 'package:shimmer/shimmer.dart';
 
+import '../../../campus_life/canteen/menu_screen.dart';
 import '../../../extension/change_notifier.dart';
 import 'list_item.dart';
 import 'new.dart';
