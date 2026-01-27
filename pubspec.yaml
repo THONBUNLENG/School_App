@@ -10,17 +10,28 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Internationalization
+  intl: ^0.20.2
+
   # UI & Animations
   marquee: ^2.2.3
   lottie: ^3.1.0
   carousel_slider: ^5.0.0
   cupertino_icons: ^1.0.8
   cached_network_image: ^3.4.1
-  # API
-  flutter_secure_storage: ^9.0.0
+  google_fonts: ^8.0.0
+  fl_chart: ^1.1.1
+  mobile_scanner: ^7.1.4
   shimmer: ^3.0.0
   audioplayers: ^6.1.0
-  flutter_local_notifications: ^17.0.0
+  flutter_local_notifications: ^20.0.0
+  qr_flutter: ^4.0.0
+
+  # API / Storage
+  flutter_secure_storage: ^10.0.0
+  provider: ^6.1.1
+  shared_preferences: ^2.3.5
+
   # Video & YouTube
   youtube_player_flutter: ^9.1.3
   video_player: ^2.9.1
@@ -31,9 +42,6 @@ dependencies:
   url_launcher: ^6.3.1
   share_plus: ^12.0.1
   image_picker: ^1.0.7
-  # State & Storage
-  provider: ^6.1.1
-  shared_preferences: ^2.3.5
 
   # AI & Localization
   google_generative_ai: ^0.4.4
@@ -49,8 +57,9 @@ flutter:
 
   assets:
     - assets/image/logo.png
-    - assets/image/
+    - assets/image/background_login.png
     - assets/tottie/
+    - assets/fonts/
 
   fonts:
     - family: Battambang
@@ -58,4 +67,3 @@ flutter:
         - asset: assets/fonts/Battambang-Regular.ttf
         - asset: assets/fonts/Battambang-Bold.ttf
           weight: 700
-

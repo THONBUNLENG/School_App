@@ -9,9 +9,8 @@ class SmsService {
   static Future<Map<String, dynamic>> sendOtp(String phoneNumber) async {
     String cleanPhone = phoneNumber.replaceAll(' ', '');
 
-    // Synchronized with your UI test number
+    // Synchronized with your UI test logic
     if (cleanPhone == "011820595999") {
-      // Use the same code as your UI: 0406
       await LocalNotificationService.showSmsNotification(code: "0406");
       return {'success': true, 'message': 'Test Code: 0406'};
     }
@@ -26,10 +25,17 @@ class SmsService {
         body: jsonEncode({'mobile': cleanPhone}),
       ).timeout(const Duration(seconds: 10));
 
+      // 201 is often used for 'Created' resources, but checking for 200 is standard
       if (response.statusCode == 200) {
         return {'success': true, 'message': 'Code sent successfully!'};
       }
-      return {'success': false, 'message': 'Server Error: ${response.statusCode}'};
+
+      // Attempt to parse server error message if available
+      final errorData = jsonDecode(response.body);
+      return {
+        'success': false,
+        'message': errorData['message'] ?? 'Server Error: ${response.statusCode}'
+      };
     } catch (e) {
       return {'success': false, 'message': _handleError(e)};
     }
@@ -38,7 +44,6 @@ class SmsService {
   static Future<String> verifyOtp(String phoneNumber, String otpCode) async {
     String cleanPhone = phoneNumber.replaceAll(' ', '');
 
-    // CHECK: Ensure test code matches UI logic (0406)
     if (cleanPhone == "011820595999" && otpCode == "0406") {
       await Future.delayed(const Duration(milliseconds: 800));
       return "success";
@@ -53,7 +58,7 @@ class SmsService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['success'] == true ? "success" : "Invalid verification code.";
+        return data['success'] == true ? "success" : (data['message'] ?? "Invalid verification code.");
       }
       return "Server Error ${response.statusCode}";
     } catch (e) {
@@ -62,10 +67,8 @@ class SmsService {
   }
 
   static String _handleError(dynamic e) {
-    if (e is TimeoutException) return "Connection timed out.";
-    if (e.toString().contains("Connection closed")) {
-      return "Network Error: Server rejected the connection. Check your API URL.";
-    }
+    if (e is TimeoutException) return "Connection timed out. Please try again.";
+    if (e.toString().contains("SocketException")) return "No Internet connection.";
     return "Technical problem: $e";
   }
 }

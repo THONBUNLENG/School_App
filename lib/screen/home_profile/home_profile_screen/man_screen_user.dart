@@ -10,6 +10,12 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../campus_life/canteen/menu_screen.dart';
 import '../../../extension/change_notifier.dart';
+import '../../../quick_access/ net_transfer_page/net_transfer_page.dart';
+import '../../../quick_access/campus_code/campus_code_page.dart';
+import '../../../quick_access/email_edit/email_edit_page.dart';
+import '../../../quick_access/topup/net_topup_page.dart';
+import '../../../quick_access/wallet/top_up_wallet.dart';
+import '../../../quick_access/wallet/wallet_add_card.dart';
 import 'list_item.dart';
 import 'new.dart';
 
@@ -290,16 +296,16 @@ class _ManScreenUserState extends State<ManScreenUser> {
 
   Widget _quickAccess(Color textColor) {
     final List<Map<String, dynamic>> itemsList = [
-      {"icon": Icons.swap_horiz, "label": "Net Transfer", "color": Colors.blue},
-      {"icon": Icons.account_balance_wallet, "label": "Net Balance", "color": Colors.orange},
-      {"icon": Icons.add_circle, "label": "Net Top-up", "color": Colors.green},
-      {"icon": Icons.email, "label": "Email Edit", "color": Colors.purple},
-      {"icon": Icons.qr_code_scanner, "label": "Campus Code", "color": Colors.red},
-      {"icon": Icons.event_available, "label": "Empty Rooms", "color": Colors.teal},
-      {"icon": Icons.electric_bolt, "label": "Electricity", "color": Colors.amber},
-      {"icon": Icons.assignment, "label": "GPA/Grades", "color": Colors.indigo},
-      {"icon": Icons.support_agent, "label": "Repair Hub", "color": Colors.pink},
-      {"icon": Icons.directions_bus, "label": "Campus Bus", "color": Colors.cyan},
+      {"icon": Icons.swap_horiz, "label": "Net Transfer", "color": Colors.blue, "page": NetTransferPage()},
+      {"icon": Icons.account_balance_wallet, "label": "Net Balance", "color": Colors.orange, "page": WalletScreen (title: '',)},
+      {"icon": Icons.add_circle, "label": "Net Top-up", "color": Colors.green, "page": NetTopUpPage()},
+      {"icon": Icons.email, "label": "Email Edit", "color": Colors.purple, "page": EmailEditPage()},
+      {"icon": Icons.qr_code_scanner, "label": "Campus Code", "color": Colors.red, "page": CampusCodePage()},
+      // {"icon": Icons.event_available, "label": "Empty Rooms", "color": Colors.teal, "page": EmptyRoomsPage()},
+      // {"icon": Icons.electric_bolt, "label": "Electricity", "color": Colors.amber, "page": ElectricityPage()},
+      // {"icon": Icons.assignment, "label": "GPA/Grades", "color": Colors.indigo, "page": GPAGradesPage()},
+      // {"icon": Icons.support_agent, "label": "Repair Hub", "color": Colors.pink, "page": RepairHubPage()},
+      // {"icon": Icons.directions_bus, "label": "Campus Bus", "color": Colors.cyan, "page": CampusBusPage()},
     ];
 
     return GridView.builder(
@@ -313,19 +319,37 @@ class _ManScreenUserState extends State<ManScreenUser> {
         childAspectRatio: 0.8,
       ),
       itemCount: itemsList.length,
-      itemBuilder: (context, i) => Column(
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: (itemsList[i]['color'] as Color).withOpacity(0.1),
-            child: Icon(itemsList[i]['icon'], color: itemsList[i]['color'], size: 20),
+      itemBuilder: (context, i) {
+        final item = itemsList[i];
+        return GestureDetector(
+          onTap: () {
+            if (item['page'] != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => item['page']),
+              );
+            }
+          },
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: (item['color'] as Color).withOpacity(0.1),
+                child: Icon(item['icon'], color: item['color'], size: 20),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                item['label'],
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 9, color: textColor),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(itemsList[i]['label'], textAlign: TextAlign.center, style: TextStyle(fontSize: 9, color: textColor)),
-        ],
-      ),
+        );
+      },
     );
   }
+
 
   Widget _announcements(BuildContext context, Color cardColor, Color textColor) {
     return SizedBox(

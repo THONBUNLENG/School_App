@@ -2,31 +2,34 @@ import 'package:flutter/material.dart';
 
 mixin AppColor {
 
-  static const int _primary = 0xFFE5B94C;
-  static const Map<int, Color> _swatch = {
-    50: primaryColor,
-    100: primaryColor,
-    200: primaryColor,
-    300: primaryColor,
-    400: primaryColor,
-    500: primaryColor,
-    600: primaryColor,
-    700: primaryColor,
-    800: primaryColor,
-    900: primaryColor,
-  };
-  static const MaterialColor primarySwatch = MaterialColor(_primary, _swatch);
+  // MAIN BRAND COLOR
+  static const Color primaryColor = Color(0xFF81005B);
 
-  static const Color primaryColor = Color(_primary);
+  // BACKGROUND
   static const Color backgroundColor = Color(0xFF1B1B1B);
+
+  // MATERIAL SWATCH
+  static const MaterialColor primarySwatch = MaterialColor(
+    0xFF81005B,
+    <int, Color>{
+      50: Color(0xFFFFE6F0),
+      100: Color(0xFFFFB3D2),
+      200: Color(0xFFFF80B4),
+      300: Color(0xFFFF4D96),
+      400: Color(0xFFFF1A78),
+      500: Color(0xFF81005B),
+      600: Color(0xFF720051),
+      700: Color(0xFF630047),
+      800: Color(0xFF54003D),
+      900: Color(0xFF3D002B),
+    },
+  );
 }
 
-class GoldGradient {
-  static const List<Color> colors = [
-    Color(0xFFFFD54F),
-    Color(0xFFFFF3B0),
-    Color(0xFFFFB300),
-    Color(0xFFFF8F00),
-
+class BrandGradient {
+  static const List<Color> primary = [
+    Color(0xFF8B2682),
+    Color(0xFF81005B),
+    Color(0xFFFF005C),
   ];
 }

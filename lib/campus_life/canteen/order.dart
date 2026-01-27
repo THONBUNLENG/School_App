@@ -14,7 +14,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  final double deliveryFee = 1.00;
+  final double deliveryFee = 0.00;
   final double commonImageSize = 60.0;
 
   void _clearCart() {
@@ -158,13 +158,30 @@ class _OrderScreenState extends State<OrderScreen> {
                   ],
                 ),
               ),
-              Text(
-                "¥${item.finalTotalPrice.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Color(0xFFD85D22),
-                ),
+              Column(
+                children: [
+                  Text(
+                    "¥${item.finalTotalPrice.toStringAsFixed(2)}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Color(0xFFD85D22),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // --- DELETE BUTTON ---
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.grey),
+                    onPressed: () {
+                      setState(() {
+                        widget.cartItems.remove(item);
+                      });
+                    },
+                    tooltip: "Delete Item".tr,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -217,6 +234,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
+
   Widget _buildCheckoutSection(double subtotal, double total, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(25),
@@ -260,7 +278,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD85D22)),
+                  backgroundColor: const Color(0xFF8B2682)),
               child: Text("Confirm & Pay".tr,
                   style: const TextStyle(color: Colors.white, fontSize: 18)),
             ),
@@ -301,7 +319,6 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
     );
   }
-
   Widget _buildAddMoreHeader(bool isDark) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -310,20 +327,26 @@ class _OrderScreenState extends State<OrderScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: (const Color(0xFFD85D22).withOpacity(0.08)),
+            color: const Color(0xFF8B2682).withOpacity(0.08),
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: const Color(0xFFD85D22).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFF8B2682).withOpacity(0.3)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.add_circle_outline,
-                  color: const Color(0xFFD85D22), size: 20),
+              Icon(
+                Icons.add_circle_outline,
+                color: isDark ? Colors.white : const Color(0xFF8B2682),
+                size: 20,
+              ),
               const SizedBox(width: 10),
               Text(
                 "Add New Menu Items".tr,
-                style: const TextStyle(
-                    color: Color(0xFFD85D22), fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: isDark ? Colors.white : const Color(0xFF8B2682),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18, // Fixed property name
+                ),
               ),
             ],
           ),
@@ -331,4 +354,5 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
     );
   }
+
 }

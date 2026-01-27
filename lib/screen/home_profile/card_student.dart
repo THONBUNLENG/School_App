@@ -5,13 +5,13 @@ class CampusCardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ពណ៌ Brand របស់សាលា ឬ Purple តាមការចង់បានរបស់អ្នក
+
     const Color cardColor = Color(0xFF81005B);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       padding: const EdgeInsets.all(20),
-      height: 200, // កំណត់កម្ពស់ឱ្យសមរម្យសម្រាប់កាត
+      height: 200,
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
@@ -26,14 +26,13 @@ class CampusCardHeader extends StatelessWidget {
           image: NetworkImage(
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZNIyvggDhiIM7pCEnNZMFUq9XC5cLjcNehg&s",
           ),
-          opacity: 0.12, // បន្ថែមភាពច្បាស់បន្តិចលើ Watermark
+          opacity: 0.12,
           fit: BoxFit.cover,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ផ្នែក Header ខាងលើ (ឈ្មោះសាកលវិទ្យាល័យ និងប្រភេទកាត)
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,10 +71,8 @@ class CampusCardHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          // ផ្នែកខាងក្រោម (រូបថត និងព័ត៌មានសិស្ស)
           Row(
             children: [
-              // រូបថតសិស្ស
               Container(
                 width: 65,
                 height: 80,
@@ -92,7 +89,6 @@ class CampusCardHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 15),
-              // ព័ត៌មានអត្ថបទ
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
