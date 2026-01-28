@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/string_extension.dart';
 import 'package:school_app/screen/home/home_screen/change_language.dart';
 import 'package:school_app/screen/home/website/website_screen.dart';
@@ -39,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final Color textColor = isDark ? Colors.white : const Color(0xFF333333);
     final Color subTextColor = isDark ? Colors.white70 : Colors.black87;
-    const Color nandaPurple = Color(0xFF81005B);
 
     // Carousel images
     final List<String> imgList = [
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: nandaPurple,
+        backgroundColor:AppColor.primaryColor,
         toolbarHeight: 60,
         elevation: 2,
         automaticallyImplyLeading: false,
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Center(
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF81005B)),
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4A2A73)),
                           ),
                         ),
                       ),
@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 38,
               margin: const EdgeInsets.symmetric(vertical: 0),
               decoration: BoxDecoration(
-                color: nandaPurple,
+                color: AppColor.primaryColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Center(
@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 110,
                             margin: const EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF81005B),
+                              color: const Color(0xFF4A2A73),
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/config/app_color.dart';
 
 class CampusCardHeader extends StatelessWidget {
   const CampusCardHeader({super.key});
@@ -6,14 +7,14 @@ class CampusCardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    const Color cardColor = Color(0xFF81005B);
+
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       padding: const EdgeInsets.all(20),
       height: 200,
       decoration: BoxDecoration(
-        color: cardColor,
+        color: AppColor.primarySwatch,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(

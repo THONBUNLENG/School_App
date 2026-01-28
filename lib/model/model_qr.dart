@@ -1,54 +1,45 @@
-import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class QrScannerOverlayShape extends ShapeBorder {
+class QrScannerOverlayPainter extends CustomPainter {
   final Color borderColor;
-  final double borderWidth;
   final double borderRadius;
   final double borderLength;
+  final double borderWidth;
   final double cutOutSize;
 
-  const QrScannerOverlayShape({
-    this.borderColor = Colors.white,
-    this.borderWidth = 1.0,
-    this.borderRadius = 0,
-    this.borderLength = 40,
-    this.cutOutSize = 250,
+  QrScannerOverlayPainter({
+    required this.borderColor,
+    required this.borderRadius,
+    required this.borderLength,
+    required this.borderWidth,
+    required this.cutOutSize,
   });
 
   @override
-  EdgeInsetsGeometry get dimensions => const EdgeInsets.all(10);
+  void paint(Canvas canvas, Size size) {
+    final double width = size.width;
+    final double height = size.height;
 
-  @override
-  Path getInnerPath(Rect rect, {TextDirection? textDirection}) => Path();
-
-  @override
-  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => Path()..addRect(rect);
-
-  @override
-  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
-    final width = rect.width;
-    final height = rect.height;
-    final cutOutRect = Rect.fromCenter(
+    // 1. Create a darkened background with a hole
+    final backgroundPaint = Paint()..color = Colors.black.withOpacity(0.5);
+    final cutoutRect = Rect.fromCenter(
       center: Offset(width / 2, height / 2),
       width: cutOutSize,
       height: cutOutSize,
     );
 
-    // ១. គូសផ្ទៃងងឹតខាងក្រោយ
-    final backgroundPaint = Paint()
-      ..color = Colors.black.withOpacity(0.6)
-      ..style = PaintingStyle.fill;
+    // This creates the "hole" effect
+    canvas.drawPath(
+      Path.combine(
+        PathOperation.difference,
+        Path()..addRect(Rect.fromLTWH(0, 0, width, height)),
+        Path()..addRRect(RRect.fromRectAndRadius(cutoutRect, Radius.circular(borderRadius))),
+      ),
+      backgroundPaint,
+    );
 
-    final cutOutPath = Path()
-      ..addRect(rect)
-      ..addRRect(RRect.fromRectAndRadius(cutOutRect, Radius.circular(borderRadius)))
-      ..fillType = PathFillType.evenOdd;
-
-    canvas.drawPath(cutOutPath, backgroundPaint);
-
-    // ២. គូសតែជ្រុងទាំង ៤ (Corners)
+    // 2. Draw the corner borders
     final borderPaint = Paint()
       ..color = borderColor
       ..style = PaintingStyle.stroke
@@ -56,34 +47,36 @@ class QrScannerOverlayShape extends ShapeBorder {
       ..strokeCap = StrokeCap.round;
 
     final path = Path();
+    final double r = borderRadius;
+    final double l = borderLength;
 
-    // ជ្រុងលើឆ្វេង
-    path.moveTo(cutOutRect.left, cutOutRect.top + borderLength);
-    path.lineTo(cutOutRect.left, cutOutRect.top + borderRadius);
-    path.arcToPoint(Offset(cutOutRect.left + borderRadius, cutOutRect.top), radius: Radius.circular(borderRadius));
-    path.lineTo(cutOutRect.left + borderLength, cutOutRect.top);
+    // Top Left
+    path.moveTo(cutoutRect.left, cutoutRect.top + l);
+    path.lineTo(cutoutRect.left, cutoutRect.top + r);
+    path.arcToPoint(Offset(cutoutRect.left + r, cutoutRect.top), radius: Radius.circular(r));
+    path.lineTo(cutoutRect.left + l, cutoutRect.top);
 
-    // ជ្រុងលើស្តាំ
-    path.moveTo(cutOutRect.right - borderLength, cutOutRect.top);
-    path.lineTo(cutOutRect.right - borderRadius, cutOutRect.top);
-    path.arcToPoint(Offset(cutOutRect.right, cutOutRect.top + borderRadius), radius: Radius.circular(borderRadius));
-    path.lineTo(cutOutRect.right, cutOutRect.top + borderLength);
+    // Top Right
+    path.moveTo(cutoutRect.right - l, cutoutRect.top);
+    path.lineTo(cutoutRect.right - r, cutoutRect.top);
+    path.arcToPoint(Offset(cutoutRect.right, cutoutRect.top + r), radius: Radius.circular(r));
+    path.lineTo(cutoutRect.right, cutoutRect.top + l);
 
-    // ជ្រុងក្រោមឆ្វេង
-    path.moveTo(cutOutRect.left, cutOutRect.bottom - borderLength);
-    path.lineTo(cutOutRect.left, cutOutRect.bottom - borderRadius);
-    path.arcToPoint(Offset(cutOutRect.left + borderRadius, cutOutRect.bottom), radius: Radius.circular(borderRadius));
-    path.lineTo(cutOutRect.left + borderLength, cutOutRect.bottom);
+    // Bottom Right
+    path.moveTo(cutoutRect.right, cutoutRect.bottom - l);
+    path.lineTo(cutoutRect.right, cutoutRect.bottom - r);
+    path.arcToPoint(Offset(cutoutRect.right - r, cutoutRect.bottom), radius: Radius.circular(r));
+    path.lineTo(cutoutRect.right - l, cutoutRect.bottom);
 
-    // ជ្រុងក្រោមស្តាំ
-    path.moveTo(cutOutRect.right - borderLength, cutOutRect.bottom);
-    path.lineTo(cutOutRect.right - borderRadius, cutOutRect.bottom);
-    path.arcToPoint(Offset(cutOutRect.right, cutOutRect.bottom - borderRadius), radius: Radius.circular(borderRadius));
-    path.lineTo(cutOutRect.right, cutOutRect.bottom - borderLength);
+    // Bottom Left
+    path.moveTo(cutoutRect.left + l, cutoutRect.bottom);
+    path.lineTo(cutoutRect.left + r, cutoutRect.bottom);
+    path.arcToPoint(Offset(cutoutRect.left, cutoutRect.bottom - r), radius: Radius.circular(r));
+    path.lineTo(cutoutRect.left, cutoutRect.bottom - l);
 
     canvas.drawPath(path, borderPaint);
   }
 
   @override
-  ShapeBorder scale(double t) => this;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

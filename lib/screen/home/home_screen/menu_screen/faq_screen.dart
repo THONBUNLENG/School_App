@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:school_app/api/api_helper.dart';
+import 'package:school_app/config/app_color.dart';
 
 
 class AIChatBotScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
         icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         onPressed: () => Navigator.pop(context),
       ),
-      backgroundColor: const Color(0xFF81005B),
+      backgroundColor: AppColor.primaryColor,
       centerTitle: true,
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.5),
@@ -146,7 +147,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: isUser
-                    ? const Color(0xFF81005B)
+                    ? const Color(0xFF4A2A73)
                     : (isDark ? const Color(0xFF2C2C2C) : Colors.white),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
@@ -224,7 +225,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
             ),
             const SizedBox(width: 8),
             CircleAvatar(
-              backgroundColor: const Color(0xFF81005B),
+              backgroundColor: AppColor.accentGold,
               child: IconButton(
                 icon: const Icon(Icons.send, color: Colors.white, size: 20),
                 onPressed: _isLoading ? null : _sendMessage,

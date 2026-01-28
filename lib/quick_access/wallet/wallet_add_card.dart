@@ -1,9 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school_app/quick_access/wallet/qr_card.dart';
 import '../../config/app_color.dart';
-import 'top_up_wallet.dart';
-import 'qr_scanned.dart';
+import '../topup/net_topup_page.dart';
+import 'card_wallet.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key, required this.title});
@@ -25,8 +26,8 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Future<double> fetchBalance() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return 120567.68; // Mock balance
+    await Future.delayed(const Duration(milliseconds: 800));
+    return 120567123.68;
   }
 
   double cnyToUsd(double cny) => cny * 0.138;
@@ -37,292 +38,275 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF6F7FB);
-    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
-
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        title: const Text(
-          "My Wallet",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF81005B),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              // Open QR Scanner
-              final scannedCode = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const QrScannerScreen()),
-              );
+      backgroundColor: AppColor.backgroundColor,
+      body: Container(
+        decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              _buildTransparentAppBar(context),
+              Expanded(
+                child: FutureBuilder<double>(
+                  future: _balanceFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: AppColor.accentGold),
+                      );
+                    }
 
-              if (scannedCode != null) {
-                // Do something with the scanned code
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Scanned QR: $scannedCode')),
-                );
-              }
-            },
-            icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-          ),
-        ],
-      ),
+                    final balance = snapshot.data ?? 0.0;
 
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: FutureBuilder<double>(
-          future: _balanceFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 50),
-                  child: CircularProgressIndicator(),
+                    return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 15),
+                          // VIP Card
+                          const VIPCardFlippable(),
+                          const SizedBox(height: 35),
+                          _buildBalanceSection(balance),
+                          const SizedBox(height: 25),
+                          _buildActionButtons(),
+                          const SizedBox(height: 40),
+                          _sectionTitle('Recent Transactions'),
+                          _buildTransactionList(),
+                          const SizedBox(height: 25),
+                          _sectionTitle('Settings'),
+                          _buildSpendingLimitCard(),
+                          const SizedBox(height: 50),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              );
-            }
-
-            final balance = snapshot.data ?? 0.0;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(textColor, isDark),
-                const SizedBox(height: 16),
-                _buildBalanceCard(context, balance),
-                const SizedBox(height: 24),
-                _buildActionButtons(),
-                const SizedBox(height: 32),
-                _sectionTitle('Linked Payment Methods', textColor),
-                const SizedBox(height: 12),
-                _buildGroupedPaymentMethods(cardColor, isDark),
-                const SizedBox(height: 20),
-                _sectionTitle('Transaction History', textColor),
-                const SizedBox(height: 12),
-                _buildTransactionList(cardColor, textColor),
-                const SizedBox(height: 20),
-                _sectionTitle('Spending Limits', textColor),
-                const SizedBox(height: 12),
-                _buildSpendingLimitCard(cardColor, textColor),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(Color textColor, bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("My Wallet", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: textColor)),
-        Text("Manage your campus funds", style: TextStyle(fontSize: 14, color: isDark ? Colors.white54 : Colors.black26)),
-      ],
-    );
-  }
-
-  Widget _buildBalanceCard(BuildContext context, double balance) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      height: 210,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.primaryColor.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+              ),
+            ],
           ),
-        ],
-        gradient: LinearGradient(
-          colors: [AppColor.primaryColor, AppColor.primaryColor.withOpacity(0.85)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+
+  Widget _buildTransparentAppBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text("WALLET", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              GestureDetector(
-                onTap: () => setState(() => _isBalanceVisible = !_isBalanceVisible),
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    _isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                    color: Colors.white70,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+            onPressed: () => Navigator.pop(context),
           ),
-          const Spacer(),
-          const Text("Available Balance", style: TextStyle(color: Colors.white70, fontSize: 13)),
-          const SizedBox(height: 4),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            child: Text(
-              _isBalanceVisible ? "¥${formatCurrency(balance)}" : "¥ • • • •",
-              key: ValueKey<bool>(_isBalanceVisible),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: _isBalanceVisible ? 32.0 : 26.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: _isBalanceVisible ? 0.0 : 2.0,
+          const Text(
+            "FTB  Wallet",
+            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: AppColor.lightGold,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/image/me.png',
+                width: 38,
+                height: 38,
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          const SizedBox(height: 4),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            child: Text(
-              _isBalanceVisible ? "≈ \$${formatCurrency(cnyToUsd(balance))}" : "≈ \$ • • • •",
-              key: ValueKey<String>(_isBalanceVisible ? 'showUsd' : 'hideUsd'),
-              style: const TextStyle(color: Colors.white70, fontSize: 16),
-            ),
-          ),
-          const Spacer(),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Student Wallet", style: TextStyle(color: Colors.white70, fontSize: 11)),
-              Text("Tap for details", style: TextStyle(color: Colors.white54, fontSize: 10)),
-            ],
-          ),
+
         ],
       ),
+    );
+  }
+
+  Widget _buildBalanceSection(double balance) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Available Balance", style: TextStyle(color: Colors.white60, fontSize: 14)),
+              const SizedBox(height: 8),
+              Text(
+                _isBalanceVisible ? "¥ ${formatCurrency(balance)}" : "¥ • • • • • •",
+                style: const TextStyle(
+                  color: AppColor.accentGold,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                _isBalanceVisible ? "≈ \$${formatCurrency(cnyToUsd(balance))} USD" : "≈ \$ • • • •",
+                style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+        GestureDetector(
+          onTap: () => setState(() => _isBalanceVisible = !_isBalanceVisible),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.12),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withOpacity(0.15)),
+            ),
+            child: Icon(
+              _isBalanceVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              color: AppColor.accentGold,
+              size: 22,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildActionButtons() {
-    const primaryPurple = Color(0xFF81005B);
     return Row(
       children: [
+        Expanded(child: _glassButton(icon: Icons.add_rounded, label: "Add Money", onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const  TopUpWallet()),
+          );
+        },)),
+        const SizedBox(width: 15),
         Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopUpWallet())),
-            icon: const Icon(Icons.add_circle_outline_sharp, size: 20),
-            label: const Text('Add Money'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: primaryPurple.withOpacity(0.15),
-              foregroundColor: primaryPurple,
-              minimumSize: const Size(double.infinity, 50),
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const MyQrScreen()));
+          child: _glassButton(
+            icon: Icons.qr_code_2_rounded,
+            label: "My QR Code",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const  MyQrScreen()),
+              );
             },
-            icon: const Icon(Icons.qr_code, size: 20),
-            label: const Text('My QR'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: primaryPurple.withOpacity(0.15),
-              foregroundColor: primaryPurple,
-              minimumSize: const Size(double.infinity, 50),
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildGroupedPaymentMethods(Color cardColor, bool isDark) {
+  Widget _glassButton({required IconData icon, required String label, required VoidCallback onTap}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.2),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: AppColor.accentGold, size: 22),
+                const SizedBox(width: 10),
+                Text(
+                  label,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionList() {
+    final transactions = [
+      {"title": "Salary Deposit", "date": "Jan 27, 2026", "amount": 20000.0, "isPlus": true, "icon": Icons.account_balance_wallet_rounded},
+      {"title": "Online Purchase", "date": "Jan 26, 2026", "amount": -500.0, "isPlus": false, "icon": Icons.shopping_cart_rounded},
+    ];
+
+    return Column(
+      children: transactions.map((tx) {
+        return _transactionTile(tx["title"] as String, tx["date"] as String, tx["amount"] as double,
+            tx["isPlus"] as bool, tx["icon"] as IconData);
+      }).toList(),
+    );
+  }
+
+  Widget _transactionTile(String title, String date, double amount, bool isPlus, IconData icon) {
     return Container(
-      decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.circular(18)),
-      child: Column(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: Row(
         children: [
-          _methodItem('WeChat Pay', 'Digital Wallet', 'assets/image/wechat.png', true),
-          const Divider(height: 1),
-          _methodItem('Alipay', 'Digital Wallet', 'assets/image/alipay.png', true),
-          const Divider(height: 1),
-          _methodItem('ICBC Bank', 'Bank Transfer', 'assets/image/icbc_icon.png', true),
-          const Divider(height: 1),
-          _methodItem('Mastercard', '•••• 5678', null, false, icon: Icons.credit_card),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isPlus ? Colors.green.withOpacity(0.12) : Colors.red.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: isPlus ? Colors.greenAccent : Colors.redAccent, size: 22),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                const SizedBox(height: 4),
+                Text(date, style: const TextStyle(color: Colors.white38, fontSize: 12)),
+              ],
+            ),
+          ),
+          Text(
+            "${isPlus ? '+' : ''}¥${formatCurrency(amount.abs())}",
+            style: TextStyle(
+              color: isPlus ? Colors.greenAccent : Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _methodItem(String title, String subtitle, String? assetPath, bool isAsset, {IconData? icon}) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: const Color(0xFF81005B).withOpacity(0.1),
-        child: isAsset ? Padding(padding: const EdgeInsets.all(8), child: Image.asset(assetPath!)) : Icon(icon, color: const Color(0xFF81005B)),
-      ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(subtitle),
-      trailing: const Icon(Icons.chevron_right, size: 18),
-    );
-  }
-
-  Widget _buildTransactionList(Color cardColor, Color textColor) {
-    return Column(
-      children: [
-        _transactionItem(cardColor, textColor, Icons.receipt_long, 'Tuition Fee Payment', -500),
-        _transactionItem(cardColor, textColor, Icons.add_circle, 'Wallet Top-up', 200),
-      ],
-    );
-  }
-
-  Widget _transactionItem(Color cardColor, Color textColor, IconData icon, String title, double amount) {
-    final isPlus = amount > 0;
+  Widget _buildSpendingLimitCard() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.circular(16)),
-      child: ListTile(
-        leading: CircleAvatar(child: Icon(icon)),
-        title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
-        trailing: Text(
-          '${isPlus ? '+' : ''}¥${formatCurrency(amount.abs())}',
-          style: TextStyle(color: isPlus ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
-        ),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
-    );
-  }
-
-  Widget _buildSpendingLimitCard(Color cardColor, Color textColor) {
-    return Container(
-      decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.circular(16)),
       child: SwitchListTile(
-        title: Text('Set spending limits', style: TextStyle(color: textColor)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        title: const Text('Daily spending limit', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
         value: _spendingLimitEnabled,
         onChanged: (val) => setState(() => _spendingLimitEnabled = val),
-        activeColor: const Color(0xFF81005B),
+        activeColor: AppColor.accentGold,
+        inactiveTrackColor: Colors.white10,
       ),
     );
   }
 
-  Widget _sectionTitle(String title, Color textColor) {
+  Widget _sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: textColor)),
+      padding: const EdgeInsets.only(bottom: 18, left: 4),
+      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 }

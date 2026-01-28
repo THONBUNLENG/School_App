@@ -18,10 +18,6 @@ class TopUpSuccessScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           'Payment Successful',
           style: TextStyle(
@@ -166,14 +162,8 @@ class TopUpSuccessScreen extends StatelessWidget {
               height: 56,
               child: TextButton(
 
-                 // Navigator.popUntil(context, (route) => route.isFirst);
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const DashboardProfile(),
-                    //   ),
-                    // );
+
                   },
 
                 style: TextButton.styleFrom(
@@ -196,10 +186,6 @@ class TopUpSuccessScreen extends StatelessWidget {
             const SizedBox(height: 32),
             TextButton.icon(
               onPressed: () {
-                //Navigator.push(
-                //  context,
-                // MaterialPageRoute(builder: (context) =>  const ReviewSelectedFeesScreen(selectedFees: [],)),
-                // );
               },
               icon: const Icon(Icons.share_outlined),
               label: const Text('Share Payment',
@@ -211,8 +197,6 @@ class TopUpSuccessScreen extends StatelessWidget {
       ),
     );
   }
-
-  // ✅ Receipt Row
   Widget _buildRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),

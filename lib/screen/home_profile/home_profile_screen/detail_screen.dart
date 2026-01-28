@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/model/food.dart';
 import 'man_screen_user.dart';
 import 'new.dart';
 
-const Color nandaPurple = Color(0xFF81005B);
 
 /* ================= SCREEN COMPONENTS ================= */
 
@@ -13,7 +13,7 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title), backgroundColor: nandaPurple, foregroundColor: Colors.white),
+      appBar: AppBar(title: Text(title), backgroundColor: AppColor.primaryColor, foregroundColor: Colors.white),
       body: Center(child: Text("Welcome to $title Page")),
     );
   }
@@ -28,7 +28,7 @@ class NewsDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: nandaPurple, title: const Text("Detail"), foregroundColor: Colors.white),
+      appBar: AppBar(backgroundColor: AppColor.primaryColor, title: const Text("Detail"), foregroundColor: Colors.white),
       body: SingleChildScrollView(
         child: Column(
           children: [

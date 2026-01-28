@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/string_extension.dart';
 
 
@@ -52,7 +53,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF121212) : Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF81005B),
+        backgroundColor:AppColor.primaryColor,
         title: Text(
           'select_language'.tr,
           style: const TextStyle(
@@ -62,7 +63,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white), // back button color
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
 
@@ -88,7 +89,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isSelected ? const  Color(0xFF81005B) : Colors.transparent,
+          color: isSelected ? const  Color(0xFF4A2A73) : Colors.transparent,
           width: 2,
         ),
       ),
@@ -101,7 +102,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
         color: isDark ? Colors.white : Colors.black87,
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Color(0xFF81005B))
+          ? const Icon(Icons.check_circle, color: Color(0xFF4A2A73))
           : null,
       onTap: () {
         if (isSelected) {

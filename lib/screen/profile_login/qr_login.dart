@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/config/app_color.dart';
 
-const Color nandaPurple = Color(0xFF81005B);
+
 
 class QRCodeScreen extends StatefulWidget {
   const QRCodeScreen({super.key});
@@ -56,19 +57,10 @@ class _QRCodeScreenState extends State<QRCodeScreen> with SingleTickerProviderSt
 
   PreferredSizeWidget _buildHeader(BuildContext context) {
     return AppBar(
-      backgroundColor: nandaPurple,
+      backgroundColor: AppColor.accentGold,
       toolbarHeight: 80,
       elevation: 0,
       centerTitle: true,
-      // កំណត់ពណ៌សសម្រាប់ប៊ូតុង Back
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back,
-          color: Colors.white, // កំណត់ពណ៌សនៅទីនេះ
-          size: 28,
-        ),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -117,7 +109,7 @@ class _QRCodeScreenState extends State<QRCodeScreen> with SingleTickerProviderSt
             Container(
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
-                color: nandaPurple,
+                color:  AppColor.accentGold,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               ),
               child: Row(
@@ -157,8 +149,8 @@ class _QRCodeScreenState extends State<QRCodeScreen> with SingleTickerProviderSt
                           width: 200,
                           height: 2,
                           decoration: BoxDecoration(
-                            boxShadow: [BoxShadow(color: nandaPurple.withOpacity(0.5), blurRadius: 10, spreadRadius: 2)],
-                            gradient: const LinearGradient(colors: [Colors.transparent, nandaPurple, Colors.transparent]),
+                            boxShadow: [BoxShadow(color:  AppColor.accentGold.withOpacity(0.5), blurRadius: 10, spreadRadius: 2)],
+                            gradient: const LinearGradient(colors: [Colors.transparent,  AppColor.accentGold, Colors.transparent]),
                           ),
                         ),
                       );
@@ -201,7 +193,7 @@ class _QRCodeScreenState extends State<QRCodeScreen> with SingleTickerProviderSt
               shape: BoxShape.circle,
               border: Border.all(color: isDarkMode ? Colors.white12 : Colors.grey.shade300),
             ),
-            child: Icon(icon, color: nandaPurple, size: 24),
+            child: Icon(icon, color: AppColor.accentGold, size: 24),
           ),
           const SizedBox(height: 8),
           Text(

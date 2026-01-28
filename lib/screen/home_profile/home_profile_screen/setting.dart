@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/config/app_color.dart';
 import '../../../extension/change_notifier.dart';
 import '../../home/home_screen/change_language.dart';
 import '../../home/home_screen/menu_screen/logout.dart';
 
-const Color nandaPurple = Color(0xFF81005B);
 
 class SettingApp extends StatefulWidget {
   const SettingApp({super.key});
@@ -25,7 +25,7 @@ class _SettingsScreenState extends State<SettingApp> {
         title: const Text("Settings"),
         elevation: 0,
 
-        backgroundColor: isDark ? Color(0xFF81005B) : Color(0xFF81005B),
+        backgroundColor: isDark ? AppColor.primaryColor:AppColor.primaryColor,
         foregroundColor: isDark ? Colors.white : Colors.white,
       ),
       body: SingleChildScrollView(
@@ -63,7 +63,7 @@ class _SettingsScreenState extends State<SettingApp> {
               subTitle: isDark ? "Switch to Light Mode" : "Switch to Dark Mode",
               trailing: Switch(
                 value: isDark,
-                activeColor: nandaPurple,
+                activeColor: AppColor.primaryColor,
                 onChanged: (value) => themeManager.toggleTheme(value),
               ),
               onTap: () => themeManager.toggleTheme(!isDark),
@@ -106,7 +106,7 @@ class _SettingsScreenState extends State<SettingApp> {
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
-        color: isDark ? Colors.white70 : nandaPurple,
+        color: isDark ? Colors.white70 :AppColor.primaryColor,
         letterSpacing: 0.5,
       ),
     );
@@ -130,10 +130,10 @@ class _SettingsScreenState extends State<SettingApp> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: nandaPurple.withOpacity(0.1),
+            color: AppColor.primaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: nandaPurple, size: 24),
+          child: Icon(icon, color: AppColor.primaryColor, size: 24),
         ),
         title: Text(
             title,

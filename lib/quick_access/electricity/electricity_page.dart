@@ -3,15 +3,15 @@ import 'package:school_app/config/app_color.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
-class NanjingTimetable extends StatefulWidget {
+class ElectricityPage extends StatefulWidget {
   final String url;
-  const NanjingTimetable({super.key, required this.url});
+  const ElectricityPage({super.key, required this.url});
 
   @override
-  State<NanjingTimetable> createState() => _NanjingWebViewState();
+  State<ElectricityPage> createState() => _NanjingWebViewState();
 }
 
-class _NanjingWebViewState extends State<NanjingTimetable> {
+class _NanjingWebViewState extends State<ElectricityPage> {
   late final WebViewController controller;
   double loadingProgress = 0;
 
@@ -65,7 +65,7 @@ class _NanjingWebViewState extends State<NanjingTimetable> {
           actions: [
             IconButton(
               icon: const Icon(Icons.share, color: Colors.white, size: 20),
-              onPressed: () => Share.share('សូមចូលទៅកាន់៖ ${widget.url}'),
+              onPressed: () => Share.share('Please go to:៖ ${widget.url}'),
             ),
             IconButton(
               icon: const Icon(Icons.open_in_browser, color: Colors.white, size: 22),
@@ -80,7 +80,7 @@ class _NanjingWebViewState extends State<NanjingTimetable> {
               LinearProgressIndicator(
                 value: loadingProgress,
                 backgroundColor: Colors.white,
-                color: AppColor.primaryColor,
+                color: const Color(0xFF81005B),
                 minHeight: 3,
               ),
             Expanded(
@@ -102,7 +102,7 @@ class _NanjingWebViewState extends State<NanjingTimetable> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'NANJING UNIVERSITY',
+              'EmptyRooms',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -111,7 +111,7 @@ class _NanjingWebViewState extends State<NanjingTimetable> {
               ),
             ),
             Text(
-              'Timetable',
+              'NUJ',
               style: TextStyle(
                 fontSize: 10,
                 color: Colors.white70,

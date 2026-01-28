@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_app/campus_life/canteen/detail_screen.dart';
 import 'package:school_app/campus_life/library_screen.dart' hide nandaPurple;
 import 'package:school_app/campus_life/timetable_screen.dart' hide nandaPurple;
 import 'package:school_app/campus_life/wifi_screen.dart' hide nandaPurple;
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/screen/home/home_screen/main_holder.dart';
 import 'package:school_app/screen/home_profile/home_profile_screen/setting.dart' hide nandaPurple;
 import 'package:shimmer/shimmer.dart';
-
 import '../../../campus_life/canteen/menu_screen.dart';
 import '../../../extension/change_notifier.dart';
 import '../../../quick_access/ net_transfer_page/net_transfer_page.dart';
+import '../../../quick_access/campus_bus/campus_bus_screen.dart';
+import '../../../quick_access/campus_bus/man_bus.dart';
 import '../../../quick_access/campus_code/campus_code_page.dart';
-import '../../../quick_access/email_edit/email_edit_page.dart';
+import '../../../quick_access/electricity/electricity_page.dart';
+import '../../../quick_access/empty_rooms/empty_rooms.dart';
+import '../../../quick_access/gpa_grades/gpa_grades.dart';
+import '../../../quick_access/repair_hub/main_navigation.dart';
 import '../../../quick_access/topup/net_topup_page.dart';
-import '../../../quick_access/wallet/top_up_wallet.dart';
 import '../../../quick_access/wallet/wallet_add_card.dart';
+import '../edit_profile.dart';
 import 'list_item.dart';
 import 'new.dart';
 
@@ -29,7 +33,6 @@ class ManScreenUser extends StatefulWidget {
 
 class _ManScreenUserState extends State<ManScreenUser> {
   bool _isLoading = true;
-  final bool _isDarkMode = false;
 
   @override
   void initState() {
@@ -56,7 +59,7 @@ class _ManScreenUserState extends State<ManScreenUser> {
     return Scaffold(
       backgroundColor: bgColor,
       body: RefreshIndicator(
-        color: nandaPurple,
+        color:AppColor.accentGold,
         onRefresh: _fetchNews,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -93,7 +96,7 @@ class _ManScreenUserState extends State<ManScreenUser> {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 80.0,
-      backgroundColor: nandaPurple,
+      backgroundColor: AppColor.primaryColor,
       centerTitle: true,
       title: const Text(
           '南京大學',
@@ -141,7 +144,7 @@ class _ManScreenUserState extends State<ManScreenUser> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: nandaPurple.withOpacity(0.3),
+            color: AppColor.primaryColor.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -167,8 +170,8 @@ class _ManScreenUserState extends State<ManScreenUser> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      nandaPurple.withOpacity(0.9),
-                      nandaPurple.withOpacity(0.3),
+                      AppColor.primaryColor.withOpacity(0.9),
+                      AppColor.primaryColor.withOpacity(0.3),
                     ],
                   ),
                 ),
@@ -296,16 +299,16 @@ class _ManScreenUserState extends State<ManScreenUser> {
 
   Widget _quickAccess(Color textColor) {
     final List<Map<String, dynamic>> itemsList = [
-      {"icon": Icons.swap_horiz, "label": "Net Transfer", "color": Colors.blue, "page": NetTransferPage()},
+      {"icon": Icons.swap_horiz, "label": "Net Transfer", "color": Colors.blue, "page":NetTransfersPage ()},
       {"icon": Icons.account_balance_wallet, "label": "Net Balance", "color": Colors.orange, "page": WalletScreen (title: '',)},
-      {"icon": Icons.add_circle, "label": "Net Top-up", "color": Colors.green, "page": NetTopUpPage()},
-      {"icon": Icons.email, "label": "Email Edit", "color": Colors.purple, "page": EmailEditPage()},
-      {"icon": Icons.qr_code_scanner, "label": "Campus Code", "color": Colors.red, "page": CampusCodePage()},
-      // {"icon": Icons.event_available, "label": "Empty Rooms", "color": Colors.teal, "page": EmptyRoomsPage()},
-      // {"icon": Icons.electric_bolt, "label": "Electricity", "color": Colors.amber, "page": ElectricityPage()},
-      // {"icon": Icons.assignment, "label": "GPA/Grades", "color": Colors.indigo, "page": GPAGradesPage()},
-      // {"icon": Icons.support_agent, "label": "Repair Hub", "color": Colors.pink, "page": RepairHubPage()},
-      // {"icon": Icons.directions_bus, "label": "Campus Bus", "color": Colors.cyan, "page": CampusBusPage()},
+      {"icon": Icons.add_circle, "label": "Net Top-up", "color": Colors.green, "page": TopUpWallet()},
+      {"icon": Icons.email, "label": "Email Edit", "color": Colors.purple, "page": EditProfileStudent()},
+      {"icon": Icons.qr_code_scanner, "label": "Campus Code", "color": Colors.red, "page": QrScannerScreen ()},
+       {"icon": Icons.event_available, "label": "Empty Rooms", "color": Colors.teal, "page": EmptyRoomsPage(url: 'https://stuex.nju.edu.cn/en_/wousing/list.htm',)},
+      {"icon": Icons.electric_bolt, "label": "Electricity", "color": Colors.amber, "page": ElectricityPage(url: 'https://ese.nju.edu.cn/ese_en/main.psp',)},
+       {"icon": Icons.assignment, "label": "GPA/Grades", "color": Colors.indigo, "page":  GradesScreen()},
+       {"icon": Icons.support_agent, "label": "Repair Hub", "color": Colors.pink, "page":MainNavigation ()},
+       {"icon": Icons.directions_bus, "label": "Campus Bus", "color": Colors.cyan, "page": Main_Bus ()},
     ];
 
     return GridView.builder(
@@ -349,8 +352,6 @@ class _ManScreenUserState extends State<ManScreenUser> {
       },
     );
   }
-
-
   Widget _announcements(BuildContext context, Color cardColor, Color textColor) {
     return SizedBox(
       height: 100,
@@ -399,7 +400,7 @@ class _ManScreenUserState extends State<ManScreenUser> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(list[index].category, style: const TextStyle(color: nandaPurple, fontWeight: FontWeight.bold, fontSize: 10)),
+                        Text(list[index].category, style: const TextStyle(color:AppColor.primaryColor, fontWeight: FontWeight.bold, fontSize: 10)),
                         Text(list[index].title, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                       ],
                     ),

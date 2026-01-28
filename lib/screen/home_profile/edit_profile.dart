@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:school_app/config/app_color.dart';
 import '../../extension/change_notifier.dart';
 
-const Color nandaPurple = Color(0xFF81005B);
 
 class EditProfileStudent extends StatefulWidget {
   const EditProfileStudent({super.key});
@@ -91,12 +91,12 @@ class _EditProfilePageState extends State<EditProfileStudent> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: Text("Edit Profile", style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+        title: Text("Edit Profile", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColor.primaryColor,
         leading: IconButton(
-          icon: Icon(Icons.close, color: textColor),
+          icon: Icon(Icons.close, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -140,7 +140,7 @@ class _EditProfilePageState extends State<EditProfileStudent> {
       padding: const EdgeInsets.only(bottom: 12, left: 5),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(color: nandaPurple.withOpacity(0.8), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1),
+        style: TextStyle(color: AppColor.accentGold.withOpacity(0.8), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1),
       ),
     );
   }
@@ -152,7 +152,7 @@ class _EditProfilePageState extends State<EditProfileStudent> {
         controller: ctrl,
         style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontSize: 15),
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: nandaPurple, size: 20),
+          prefixIcon: Icon(icon, color: AppColor.accentGold, size: 20),
           labelText: label,
           labelStyle: const TextStyle(color: Colors.grey, fontSize: 13),
           filled: true,
@@ -160,7 +160,7 @@ class _EditProfilePageState extends State<EditProfileStudent> {
           contentPadding: const EdgeInsets.symmetric(vertical: 15),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
           enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: const BorderSide(color: nandaPurple, width: 1)),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: const BorderSide(color: AppColor.accentGold, width: 1)),
         ),
         validator: (v) => v!.isEmpty ? "Required field" : null,
       ),
@@ -174,11 +174,11 @@ class _EditProfilePageState extends State<EditProfileStudent> {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: nandaPurple, width: 2),
+              border: Border.all(color: AppColor.accentGold, width: 2),
             ),
             child: CircleAvatar(
               radius: 60,
-              backgroundColor: Colors.grey[200],
+              backgroundColor: AppColor.accentGold,
               backgroundImage: _imageFile != null
                   ? FileImage(_imageFile!) as ImageProvider
                   : const NetworkImage('https://scontent.fpnh19-1.fna.fbcdn.net/v/t39.30808-6/565256792_869820712368021_2775110481695495555_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=109&ccb=1-7&_nc_sid=fe5ecc&_nc_ohc=K9NmnfrV6VEQ7kNvwFyygHf&_nc_oc=Adnxy44aKN3VODMFFOUty1W7HnHm007aK5SyNMU_BoX9bW-uiLX5C1HMtzZnq8FMzOU&_nc_zt=23&_nc_ht=scontent.fpnh19-1.fna&_nc_gid=tCXfLjKrpi-cHZ0LJjdy_A&oh=00_AfoUoIkEmAjPAs7-u9NooHyfhKqfExQOZ3l3YazHV8D-9g&oe=69790F35'),
@@ -191,7 +191,7 @@ class _EditProfilePageState extends State<EditProfileStudent> {
               onTap: _pickImage,
               child: const CircleAvatar(
                   radius: 18,
-                  backgroundColor: nandaPurple,
+                  backgroundColor: AppColor.accentGold,
                   child: Icon(Icons.camera_alt, color: Colors.white, size: 18)
               ),
             ),
@@ -205,7 +205,7 @@ class _EditProfilePageState extends State<EditProfileStudent> {
     return ElevatedButton(
       onPressed: _isSaving ? null : _uploadProfile,
       style: ElevatedButton.styleFrom(
-        backgroundColor: nandaPurple,
+        backgroundColor: AppColor.accentGold,
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 55),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -222,7 +222,7 @@ class _EditProfilePageState extends State<EditProfileStudent> {
         child: Container(
           padding: const EdgeInsets.all(25),
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-          child: const CircularProgressIndicator(color: nandaPurple),
+          child: const CircularProgressIndicator(color: AppColor.accentGold),
         ),
       ),
     );

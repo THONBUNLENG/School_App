@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/string_extension.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -8,12 +9,8 @@ class AboutScreen extends StatefulWidget {
   State<AboutScreen> createState() => _AboutScreenState();
 }
 
-class _AboutScreenState extends State<AboutScreen>
-    with TickerProviderStateMixin {
+class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
-
-  static const Color primaryColor = Color(0xFF81005B);
-  static const Color accentColor = Color(0xFFFF005C);
 
   final List<Map<String, dynamic>> features = const [
     {'icon': Icons.science_outlined, 'title': 'science_title', 'desc': 'science_desc'},
@@ -38,7 +35,7 @@ class _AboutScreenState extends State<AboutScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1200),
     )..forward();
   }
 
@@ -50,80 +47,90 @@ class _AboutScreenState extends State<AboutScreen>
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-
-          /// 🔹 APP BAR
+          /// 🔹 Custom Sliver App Bar
           SliverAppBar(
-            expandedHeight: 280,
+            expandedHeight: 260,
             pinned: true,
-            backgroundColor: primaryColor,
+            stretch: true,
+            backgroundColor: AppColor.primaryColor,
             leading: const BackButton(color: Colors.white),
-            centerTitle: true,
-            title: Text(
-              'about_app'.tr,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.white,
-                fontFamily: 'Kantumruy Pro',
-              ),
-            ),
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [primaryColor, accentColor],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+              stretchModes: const [StretchMode.zoomBackground],
+              centerTitle: true,
+              title: Text(
+                'about_app'.tr,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontFamily: 'Kantumruy Pro',
+                ),
+              ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Background Gradient
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColor.primaryColor, Color(0xFF800000)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
                   ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    SizedBox(height: 60),
-                    Image(
-                      image: AssetImage('assets/image/logo.png'),
-                      width: 120,
-                      height: 120,
-                    ),
-                    SizedBox(height: 15),
-                    Text(
-                      '南京大學',
-                      style: TextStyle(
-                        fontFamily: 'MaoTi',
-                        fontSize: 24,
-                        color: Colors.white,
-                        letterSpacing: 8,
+                  // Logo & Text
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      SizedBox(height: 30),
+                      Image(
+                        image: AssetImage('assets/image/logo.png'),
+                        width: 100,
+                        height: 100,
                       ),
-                    ),
-                    Text(
-                      'NANJING UNIVERSITY',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      SizedBox(height: 12),
+                      Text(
+                        '南京大學',
+                        style: TextStyle(
+                          fontFamily: 'MaoTi',
+                          fontSize: 26,
+                          color: Colors.white,
+                          letterSpacing: 6,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                      Text(
+                        'NANJING UNIVERSITY',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white70,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
 
-          /// 🔹 FEATURE LIST
+          /// 🔹 Feature List Section
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                     (context, index) {
                   final item = features[index];
-                  return _buildAnimatedExpandableCard(
+                  return _buildAnimatedCard(
                     index,
                     item['icon'] as IconData,
                     (item['title'] as String).tr,
@@ -140,78 +147,78 @@ class _AboutScreenState extends State<AboutScreen>
     );
   }
 
-  /// 🔹 CARD
-  Widget _buildAnimatedExpandableCard(
-      int index,
-      IconData icon,
-      String title,
-      String desc,
-      bool isDark,
-      ) {
+  /// 🔹 Animated Card with ExpansionTile
+  Widget _buildAnimatedCard(int index, IconData icon, String title, String desc, bool isDark) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final start = index * 0.08;
+        final start = (index * 0.05).clamp(0.0, 1.0);
         final end = (start + 0.4).clamp(0.0, 1.0);
         final curve = CurvedAnimation(
           parent: _controller,
-          curve: Interval(start, end, curve: Curves.easeOut),
+          curve: Interval(start, end, curve: Curves.easeOutQuart),
         );
 
         return Opacity(
           opacity: curve.value,
           child: Transform.translate(
-            offset: Offset(0, 20 * (1 - curve.value)),
+            offset: Offset(0, 30 * (1 - curve.value)),
             child: child,
           ),
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(16),
+          border: isDark ? Border.all(color: Colors.white10) : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             )
           ],
         ),
-        child: ExpansionTile(
-          leading: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            iconColor: AppColor.accentGold,
+            collapsedIconColor: Colors.grey,
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColor.accentGold.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: AppColor.accentGold, size: 24),
             ),
-            child: Icon(icon, color: accentColor),
-          ),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
-              color: isDark ? Colors.white : Colors.black87,
-              fontFamily: 'Kantumruy Pro',
-            ),
-          ),
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Text(
-                desc,
-                textAlign: TextAlign.justify,
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.6,
-                  color: isDark ? Colors.white70 : Colors.black54,
-                  fontFamily: 'Battambang',
-                ),
+            title: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: isDark ? Colors.white : Colors.black87,
+                fontFamily: 'Kantumruy Pro',
               ),
             ),
-          ],
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: Text(
+                  desc,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.6,
+                    color: isDark ? Colors.white60 : Colors.black54,
+                    fontFamily: 'Battambang',
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

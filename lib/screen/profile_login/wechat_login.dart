@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/extension/change_notifier.dart';
 
-import '../home_profile/home_profile_screen/home_profile_screen.dart'; // ប្រើ ThemeManager របស់អ្នក
+import '../home_profile/home_profile_screen/home_profile_screen.dart';
 
 class WeChatLoginScreen extends StatefulWidget {
   const WeChatLoginScreen({super.key});
@@ -69,7 +69,6 @@ class _WeChatLoginScreenState extends State<WeChatLoginScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  // App Icon
                   const Icon(Icons.wechat, color: Color(0xFF07C160), size: 80),
                   const SizedBox(height: 15),
                   Text(
@@ -78,7 +77,6 @@ class _WeChatLoginScreenState extends State<WeChatLoginScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Permission Text
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -88,8 +86,6 @@ class _WeChatLoginScreenState extends State<WeChatLoginScreen> {
                   ),
                   const SizedBox(height: 15),
                   Divider(color: dividerColor),
-
-                  // Mock Profile Section
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     onTap: () {

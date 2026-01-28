@@ -3,13 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/change_notifier.dart';
 import 'package:school_app/screen/home_profile/home_profile_screen/home_profile_screen.dart';
 import 'package:school_app/screen/profile_login/qr_login.dart';
 import 'package:school_app/screen/profile_login/wechat_login.dart';
 import '../../api/api_sms.dart';
 
-const Color nandaPurple = Color(0xFF81005B);
 
 class UnifiedLoginScreen extends StatefulWidget {
   const UnifiedLoginScreen({super.key});
@@ -263,7 +263,7 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
             child: Image.asset(
               'assets/image/background_login.png',
               fit: BoxFit.cover,
-              errorBuilder: (c, e, s) => Container(color: nandaPurple),
+              errorBuilder: (c, e, s) => Container(color: AppColor.accentGold),
             ),
           ),
           Positioned.fill(
@@ -396,7 +396,7 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
     child: ElevatedButton(
       onPressed: _isLoading ? null : _handleLogin,
       style: ElevatedButton.styleFrom(
-        backgroundColor: nandaPurple,
+        backgroundColor: AppColor.accentGold,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: _isLoading
@@ -642,9 +642,9 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: nandaPurple.withOpacity(0.1),
+                color: AppColor.accentGold.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: nandaPurple.withOpacity(0.3)),
+                border: Border.all(color: AppColor.accentGold.withOpacity(0.3)),
               ),
               child: Text(
                 _currentCaptcha,
@@ -652,7 +652,7 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
                   fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.italic,
                   letterSpacing: 2,
-                  color: isDark ? Colors.white : nandaPurple,
+                  color: isDark ? Colors.white : AppColor.accentGold,
                   fontSize: 16,
                 ),
               ),
@@ -687,7 +687,7 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
             child: Text(
               _secondsRemaining > 0 ? "$_secondsRemaining s" : "Get Code",
               style: TextStyle(
-                color: _secondsRemaining > 0 ? Colors.grey : nandaPurple,
+                color: _secondsRemaining > 0 ? Colors.grey :AppColor.accentGold,
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
               ),

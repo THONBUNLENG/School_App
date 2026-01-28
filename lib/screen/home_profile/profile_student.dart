@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/config/app_color.dart';
 import '../../../extension/change_notifier.dart';
 import 'card_student.dart';
 import 'edit_profile.dart';
@@ -18,11 +19,13 @@ class StudentProfilePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA),
         appBar: AppBar(
-          title: const Text("Student Profile", style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text("Student Profile", style: TextStyle(fontWeight: FontWeight.bold)
+
+          ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.transparent,
-          foregroundColor: textColor,
+          backgroundColor: AppColor.primaryColor,
+          foregroundColor:Colors.white,
           actions: [
             IconButton(
               icon: const Icon(Icons.edit_note),
@@ -72,7 +75,7 @@ class StudentProfilePage extends StatelessWidget {
     return ListTile(
       visualDensity: const VisualDensity(vertical: -4),
       contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: Colors.grey, size: 20),
+      leading: Icon(icon, color: AppColor.accentGold, size: 20),
       title: Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
       subtitle: Text(val, style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
     );

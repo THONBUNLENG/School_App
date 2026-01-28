@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/string_extension.dart';
 import 'package:school_app/screen/home/home_screen/change_language.dart';
 import 'package:school_app/screen/home/home_screen/menu_screen/about_app.dart';
@@ -21,8 +22,6 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   bool _isNotificationOn = true;
   final FlutterLocalization _localization = FlutterLocalization.instance;
-
-  static const Color nandaPurple = Color(0xFF81005B);
 
   @override
   void initState() {
@@ -56,7 +55,7 @@ class _MenuScreenState extends State<MenuScreen> {
     return Scaffold(
       backgroundColor: scaffoldBgColor,
       appBar: AppBar(
-        backgroundColor: nandaPurple,
+        backgroundColor: AppColor.primaryColor,
         title: Text('more'.tr, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
         centerTitle: true,
         elevation: 0,
@@ -67,32 +66,32 @@ class _MenuScreenState extends State<MenuScreen> {
           children: [
             const SizedBox(height: 15),
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.info_outline, 'about_app', nandaPurple, textColor, dividerColor, () {
+              _buildMenuTile(Icons.info_outline, 'about_app', AppColor.accentGold, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen()));
               }),
-              _buildMenuTile(Icons.chat_bubble_outline, 'faq', nandaPurple, textColor, dividerColor, () {
+              _buildMenuTile(Icons.chat_bubble_outline, 'faq', AppColor.accentGold, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AIChatBotScreen()));
               }),
-              _buildMenuTile(Icons.help_outline, 'how_to_use', nandaPurple, textColor, dividerColor, () {}),
-              _buildMenuTile(Icons.description_outlined, 'terms_conditions', nandaPurple, textColor, dividerColor, () {}, isLast: true),
+              _buildMenuTile(Icons.help_outline, 'how_to_use', AppColor.accentGold, textColor, dividerColor, () {}),
+              _buildMenuTile(Icons.description_outlined, 'terms_conditions', AppColor.accentGold, textColor, dividerColor, () {}, isLast: true),
             ]),
 
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.translate, 'change_language', nandaPurple, textColor, dividerColor, () {
+              _buildMenuTile(Icons.translate, 'change_language', AppColor.accentGold, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangeLanguageScreen()));
               }),
-              _buildToggleTile(_isNotificationOn ? Icons.notifications_active : Icons.notifications_off, 'notification', _isNotificationOn, nandaPurple, textColor, dividerColor, (val) => setState(() => _isNotificationOn = val)),
-              _buildToggleTile(isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined, 'Dark_Mode', isDark, isDark ? Colors.orangeAccent : nandaPurple, textColor, dividerColor, (val) => themeManager.toggleTheme(val), isLast: true),
+              _buildToggleTile(_isNotificationOn ? Icons.notifications_active : Icons.notifications_off, 'notification', _isNotificationOn, AppColor.accentGold, textColor, dividerColor, (val) => setState(() => _isNotificationOn = val)),
+              _buildToggleTile(isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined, 'Dark_Mode', isDark, isDark ? Colors.orangeAccent : AppColor.accentGold, textColor, dividerColor, (val) => themeManager.toggleTheme(val), isLast: true),
             ]),
 
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.language, 'social_media', nandaPurple, textColor, dividerColor, () => _launchURL('https://www.facebook.com/belteigroups')),
-              _buildMenuTile(null, 'share_app', nandaPurple, textColor, dividerColor, () async {
+              _buildMenuTile(Icons.language, 'social_media', AppColor.accentGold, textColor, dividerColor, () => _launchURL('https://www.facebook.com/belteigroups')),
+              _buildMenuTile(null, 'share_app', AppColor.accentGold, textColor, dividerColor, () async {
                 const String playStoreLink = 'https://play.google.com/store/apps/details?id=com.beltei.school';
                 String shareTitle = 'share_title'.tr;
                 await Share.share('$shareTitle\n$playStoreLink', subject: 'NANJING International University');
-              }, leadingWidget: ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.asset('', width: 22, height: 22, errorBuilder: (context, error, stackTrace) => Icon(Icons.share, color: nandaPurple)))),
-              _buildMenuTile(Icons.qr_code_scanner, 'qr_code', nandaPurple, textColor, dividerColor, () {
+              }, leadingWidget: ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.asset('', width: 22, height: 22, errorBuilder: (context, error, stackTrace) => Icon(Icons.share, color: AppColor.accentGold)))),
+              _buildMenuTile(Icons.qr_code_scanner, 'qr_code',AppColor.accentGold, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const QRCodeScreen ()));
               }, isLast: true),
             ]),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/change_notifier.dart';
 
 import 'package:school_app/screen/home/home_screen/home_screen.dart';
@@ -27,8 +28,6 @@ class _MainHolderState extends State<MainHolder> {
     final themeManager = Provider.of<ThemeManager>(context);
     final bool isDark = themeManager.isDarkMode;
 
-     const Color primaryColor = Color(0xFF81005B);
-     const Color accentColor = Color(0xFFFF005C);
     final Color navBarColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final Color fabBgColor = isDark ? const Color(0xFF2C2C2C) : Colors.white;
     final Color fabBorderColor = isDark ? Colors.white10 : Colors.grey.shade300;
@@ -51,14 +50,14 @@ class _MainHolderState extends State<MainHolder> {
           elevation: 2,
           shape: CircleBorder(
               side: BorderSide(
-                  color: _selectedIndex == 1 ? primaryColor : fabBorderColor,
+                  color: _selectedIndex == 1 ? AppColor.primaryColor : fabBorderColor,
                   width: 2.0
               )
           ),
           onPressed: () => setState(() => _selectedIndex = 1),
           child: Icon(
               Icons.person,
-              color: _selectedIndex == 1 ? primaryColor : subTextColor,
+              color: _selectedIndex == 1 ? AppColor.primaryColor : subTextColor,
               size: 28
           ),
         ),
@@ -105,7 +104,6 @@ class _MainHolderState extends State<MainHolder> {
     required Color subTextColor,
   }) {
     bool isActive = _selectedIndex == index;
-    final Color activeColor =  Color(0xFF81005B);
     final Color inactiveColor = subTextColor;
 
     return Expanded(
@@ -119,11 +117,11 @@ class _MainHolderState extends State<MainHolder> {
               imagePath,
               height: 24,
               width: 24,
-              color: isActive ? activeColor : inactiveColor,
+              color: isActive ? AppColor.accentGold : inactiveColor,
             )
                 : Icon(
               icon,
-              color: isActive ? activeColor : inactiveColor,
+              color: isActive ? AppColor.accentGold  : inactiveColor,
               size: 24,
             ),
             const SizedBox(height: 2),
@@ -132,7 +130,7 @@ class _MainHolderState extends State<MainHolder> {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                color: isActive ? activeColor : inactiveColor,
+                color: isActive ? AppColor.accentGold  : inactiveColor,
               ),
             ),
           ],
