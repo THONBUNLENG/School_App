@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_app/config/app_color.dart';
 import 'package:school_app/model/model.dart';
-import 'package:school_app/model/sever_url_model/sever_url_model.dart';
+import '../../../api/sever_url_model/sever_url_model.dart';
 import '../../../extension/change_notifier.dart';
 import 'news_detail_screen.dart';
 
@@ -18,14 +19,13 @@ class NewsScreen extends StatelessWidget {
     final Color bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5);
     final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final Color textColor = isDark ? Colors.white : Colors.black87;
-    const Color nandaPurple = Color(0xFF81005B);
 
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
-          backgroundColor: nandaPurple,
+          backgroundColor: AppColor.primaryColor,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -38,7 +38,7 @@ class NewsScreen extends StatelessWidget {
           centerTitle: true,
           bottom: const TabBar(
             isScrollable: true,
-            indicatorColor:Color(0xFF81005B),
+            indicatorColor:AppColor.primaryColor,
             indicatorWeight: 3,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
