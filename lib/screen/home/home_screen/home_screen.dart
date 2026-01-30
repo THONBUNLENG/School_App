@@ -7,13 +7,20 @@ import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/string_extension.dart';
+import 'package:school_app/screen/home/admission/admission.dart';
+import 'package:school_app/screen/home/contacts/contacts.dart';
+import 'package:school_app/screen/home/history/history.dart';
 import 'package:school_app/screen/home/home_screen/change_language.dart';
+import 'package:school_app/screen/home/job/job.dart';
+import 'package:school_app/screen/home/schools_department/schools_department.dart';
 import 'package:school_app/screen/home/website/website_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import '../../../extension/change_notifier.dart';
+import '../main_programs/main_programs.dart';
 import '../news/new_screen.dart';
+import '../scholarship/scholarship.dart';
 import '../tuition_fees/tution_fees_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -156,10 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // --- Marquee News Bar ---
         Container(
-          height: 40, // បង្កើនកម្ពស់បន្តិចឱ្យមើលទៅសមសួន
+          height: 40,
           margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
           decoration: BoxDecoration(
-            // ប្តូរពណ៌ផ្ទៃខាងក្រោយតាម Mode
             color: isDark
                 ? AppColor.surfaceColor.withOpacity(0.5)
                 : AppColor.primaryColor.withOpacity(0.08),
@@ -169,7 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? AppColor.lightGold.withOpacity(0.2)
                   : AppColor.primaryColor.withOpacity(0.1),
             ),
-            // បន្ថែម Shadow ស្រាលៗដើម្បីឱ្យមើលទៅមានតម្លៃ (Premium Feel)
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
@@ -243,7 +248,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         flex: 2,
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => const  SchoolsDepartment(url: 'https://www.nju.edu.cn/en/Institution/Schools_Departments.htm'),
+                            ));
+                          },
                           borderRadius: BorderRadius.circular(18),
                           child: Container(
                             height: 110,
@@ -266,12 +275,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     errorBuilder: (c, e, s) => const Icon(Icons.laptop_chromebook, color: AppColor.lightGold, size: 35)),
                                 const SizedBox(height: 8),
                                 Text(
-                                    'e_learning_title'.tr,
+                                    'Schools & Department',
                                     style: const TextStyle(color: AppColor.lightGold, fontSize: 11, fontWeight: FontWeight.bold)
-                                ),
-                                Text(
-                                    'e_learning_sub'.tr,
-                                    style: const TextStyle(color: Colors.white70, fontSize: 9)
                                 ),
                               ],
                             ),
@@ -285,9 +290,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       _gridItem(context, 'website', 'assets/image/logo_school.png', cardColor, textColor),
-                      _gridItem(context, 'facebook', 'assets/image/fb_icon.png', cardColor, textColor),
+                      _gridItem(context, 'Scholarship', 'assets/image/scholarship.png', cardColor, textColor),
                       _gridItem(context, 'youtube', 'assets/image/youtube_icon.png', cardColor, textColor),
-                      _gridItem(context, 'jobs', 'assets/image/jobs.png', cardColor, textColor),
+                      _gridItem(context, 'job openings', 'assets/image/jobs.png', cardColor, textColor),
                     ],
                   ),
                 ],
@@ -374,30 +379,45 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));
               break;
             case 'admission':
-              await launchExternalURL('https://www.nju.edu.cn/en/Admission/General_Information.htm');
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const  Admission(url: 'https://www.nju.edu.cn/en/Admission.htm'),
+              ));
               break;
             case 'fees':
               Navigator.push(context, MaterialPageRoute(builder: (context) => const TuitionPage ()));
               break;
             case 'history':
-              await launchExternalURL('https://www.nju.edu.cn/en/AboutNJU/History.htm');
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const  History(url: 'https://www.nju.edu.cn/en/About/NJU_at_a_Glance/History.htm'),
+              ));
               break;
             case 'contacts':
-              await launchExternalURL('https://www.nju.edu.cn/en/AboutNJU/ContactUs.htm');
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const Contacts(),
+              ));
               break;
             case 'website':
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) => const NanjingWebView(url: 'https://www.nju.edu.cn/en/'),
               ));
               break;
-            case 'facebook':
-              await launchExternalURL('https://www.facebook.com/nanjinguniversity');
+            case 'Scholarship':
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const Scholarship(url: 'https://hwxy.nju.edu.cn/English/StudyatNJU/Scholarships/ChineseGovernmentScholarship/20230414/i242759.html'),
+              ));
               break;
             case 'youtube':
               await launchExternalURL('https://www.youtube.com/@njusters5239');
               break;
-            case 'jobs':
-              await launchExternalURL('https://hr.nju.edu.cn/');
+            case 'job openings':
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const Job(url: 'https://www.nju.edu.cn/en/Job_Openings.htm'),
+              ));
+              break;
+            case 'programs':
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const  MainPrograms(url: 'https://hwxy.nju.edu.cn/English/StudyatNJU/Admissions/BachelorsPrograms/index.html'),
+              ));
               break;
           }
         },
