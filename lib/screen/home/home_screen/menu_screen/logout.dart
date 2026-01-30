@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:school_app/config/app_color.dart';
+import '../../../profile_login/profile_page.dart';
+import '../../../splash_screen.dart';
 import '../main_holder.dart';
 
 class LogoutDialog extends StatefulWidget {
@@ -21,30 +24,34 @@ class LogoutDialog extends StatefulWidget {
 
 class _LogoutDialogState extends State<LogoutDialog> {
   bool _isLoading = false;
+  bool _isSuccess = false;
   String _loadingMessage = "Preparing to sign out...";
 
   Future<void> _handleLogout() async {
     setState(() => _isLoading = true);
 
     try {
-      await Future.delayed(const Duration(milliseconds: 1000));
+      await Future.delayed(const Duration(milliseconds: 800));
       if (!mounted) return;
       setState(() => _loadingMessage = "Clearing secure data...");
 
-      await Future.delayed(const Duration(milliseconds: 1000));
-      if (!mounted) return;
-      setState(() => _loadingMessage = "Saving your progress...");
-
-      await Future.delayed(const Duration(milliseconds: 800));
-
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.clear();
+
+      await Future.delayed(const Duration(milliseconds: 800));
+      if (!mounted) return;
+      setState(() {
+        _isSuccess = true;
+        _loadingMessage = "Goodbye! See you again soon.";
+      });
+
+      await Future.delayed(const Duration(milliseconds: 1200));
 
       if (!mounted) return;
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const MainHolder()),
+        MaterialPageRoute(builder: (context) => const UnifiedLoginScreen()),
             (route) => false,
       );
     } catch (e) {
@@ -62,114 +69,124 @@ class _LogoutDialogState extends State<LogoutDialog> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 12, 24, 35),
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColor.surfaceColor : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
+        border: Border.all(color: AppColor.glassBorder, width: 1.5),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 45,
-            height: 4,
+            width: 40,
+            height: 5,
             decoration: BoxDecoration(
-              color: isDark ? Colors.grey[700] : Colors.grey[300],
+              color: isDark ? Colors.white10 : Colors.grey[300],
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 35),
 
+          // Illustration & Status Area
           SizedBox(
-            height: 150,
+            height: 160,
             child: _isLoading
-                ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.redAccent,
-                strokeWidth: 4,
-              ),
+                ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _isSuccess
+                    ? const Icon(Icons.check_circle_rounded, color: Colors.green, size: 60)
+                    : const CircularProgressIndicator(color: AppColor.accentGold, strokeWidth: 3),
+                const SizedBox(height: 25),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  child: Text(
+                    _loadingMessage,
+                    key: ValueKey(_loadingMessage),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: _isSuccess ? AppColor.accentGold : (isDark ? Colors.white70 : Colors.black54),
+                    ),
+                  ),
+                ),
+              ],
             )
                 : Lottie.asset(
               'assets/tottie/man.json',
-              height: 120,
-              fit: BoxFit.contain,
+              height: 140,
               errorBuilder: (context, error, stackTrace) => Icon(
                 Icons.logout_rounded,
                 size: 80,
-                color: isDark ? Colors.red[300] : Colors.redAccent,
+                color: AppColor.accentGold.withOpacity(0.8),
               ),
             ),
           ),
 
-          const SizedBox(height: 25),
-
-          if (_isLoading) ...[
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              child: Text(
-                _loadingMessage,
-                key: ValueKey(_loadingMessage),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.red[200] : Colors.redAccent,
-                ),
+          if (!_isLoading) ...[
+            const SizedBox(height: 20),
+            Text(
+              "CONFIRM LOGOUT",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: isDark ? AppColor.lightGold : AppColor.primaryColor,
+                letterSpacing: 1.5,
               ),
             ),
-          ] else ...[
+            const SizedBox(height: 15),
             Text(
-              "Confirm Log Out",
+              "Are you sure you want to sign out? Your student session will be cleared from this device.",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : const Color(0xFF1F1F1F),
+                color: isDark ? Colors.white54 : Colors.grey[600],
+                fontSize: 14,
+                height: 1.6,
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              "Are you sure you want to log out? You will need to login again to access your account.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.black54,
-                  fontSize: 14,
-                  height: 1.4
-              ),
-            ),
-            const SizedBox(height: 35),
+            const SizedBox(height: 40),
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: TextButton(
                     onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
+                    style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: BorderSide(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(color: isDark ? Colors.white10 : Colors.grey[200]!),
+                      ),
                     ),
                     child: Text(
                       "Cancel",
-                      style: TextStyle(
-                          color: isDark ? Colors.white70 : Colors.black54,
-                          fontWeight: FontWeight.bold
-                      ),
+                      style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: _handleLogout,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: BrandGradient.luxury,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(color: AppColor.primaryColor.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))
+                      ],
                     ),
-                    child: const Text(
-                      "Log Out",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: ElevatedButton(
+                      onPressed: _handleLogout,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: const Text(
+                        "Sign Out",
+                        style: TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.w900),
+                      ),
                     ),
                   ),
                 ),

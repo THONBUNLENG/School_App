@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:provider/provider.dart';
 import 'package:school_app/config/app_color.dart';
+import '../../extension/change_notifier.dart'; // សម្រាប់ check isDarkMode
 
 class SubjectData {
   final String name;
@@ -31,14 +33,11 @@ class GradesScreen extends StatefulWidget {
 class _GradesScreenState extends State<GradesScreen> {
   bool isLoading = true;
 
-  final Color graphBlue = const Color(0xFF4267B2);
-
   late final List<SubjectData> subjects;
 
   @override
   void initState() {
     super.initState();
-
     subjects = [
       SubjectData(
         name: "Mathematics",
@@ -46,29 +45,15 @@ class _GradesScreenState extends State<GradesScreen> {
         trend: "+5%",
         trendColor: Colors.green,
         icon: Icons.calculate_outlined,
-        graphSpots: const [
-          FlSpot(0, 2),
-          FlSpot(1, 3.8),
-          FlSpot(2, 2.5),
-          FlSpot(3, 3.5),
-          FlSpot(4, 2.2),
-          FlSpot(5, 3.8)
-        ],
+        graphSpots: const [FlSpot(0, 80), FlSpot(1, 85), FlSpot(2, 82), FlSpot(3, 88), FlSpot(4, 90), FlSpot(5, 92)],
       ),
       SubjectData(
         name: "Science",
         currentGrade: 85,
         trend: "-2%",
-        trendColor: Colors.red,
+        trendColor: Colors.redAccent,
         icon: Icons.science_outlined,
-        graphSpots: const [
-          FlSpot(0, 1.8),
-          FlSpot(1, 3.2),
-          FlSpot(2, 2.0),
-          FlSpot(3, 3.8),
-          FlSpot(4, 1.5),
-          FlSpot(5, 3.5)
-        ],
+        graphSpots: const [FlSpot(0, 88), FlSpot(1, 87), FlSpot(2, 85), FlSpot(3, 86), FlSpot(4, 84), FlSpot(5, 85)],
       ),
       SubjectData(
         name: "History",
@@ -76,65 +61,58 @@ class _GradesScreenState extends State<GradesScreen> {
         trend: "+3%",
         trendColor: Colors.green,
         icon: Icons.auto_stories_outlined,
-        graphSpots: const [
-          FlSpot(0, 2.5),
-          FlSpot(1, 4.0),
-          FlSpot(2, 2.8),
-          FlSpot(3, 3.0),
-          FlSpot(4, 3.8),
-          FlSpot(5, 3.2)
-        ],
+        graphSpots: const [FlSpot(0, 82), FlSpot(1, 84), FlSpot(2, 86), FlSpot(3, 85), FlSpot(4, 88), FlSpot(5, 90)],
       ),
     ];
 
     Future.delayed(const Duration(seconds: 2), () {
-      setState(() => isLoading = false);
+      if (mounted) setState(() => isLoading = false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = Theme.of(context).textTheme.bodyLarge!.color;
-    final cardColor = Theme.of(context).cardColor;
+    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+        ),
         title: const Text(
-          'Grades',
-          style: TextStyle(fontWeight: FontWeight.w700),
+          'Academic Grades',
+          style: TextStyle(fontWeight: FontWeight.bold, color: AppColor.lightGold),
         ),
         centerTitle: true,
-        backgroundColor: AppColor.primaryColor,
-        foregroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-
       body: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        itemCount: isLoading ? 5 : subjects.length + 1,
+        padding: const EdgeInsets.all(20),
+        itemCount: isLoading ? 3 : subjects.length + 1,
         itemBuilder: (context, index) {
-          if (isLoading) {
-            return SubjectGradeShimmer(isDark: isDark);
-          }
+          if (isLoading) return SubjectGradeShimmer(isDark: isDark);
 
           if (index == 0) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 25),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Text(
-                "Subject Grades",
+                "Subject Performance",
                 style: TextStyle(
                     fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor),
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : AppColor.primaryColor),
               ),
             );
           }
 
           return SubjectGradeCard(
             data: subjects[index - 1],
-            graphColor: graphBlue,
             isDark: isDark,
-            cardColor: cardColor,
           );
         },
       ),
@@ -144,109 +122,132 @@ class _GradesScreenState extends State<GradesScreen> {
 
 class SubjectGradeCard extends StatelessWidget {
   final SubjectData data;
-  final Color graphColor;
   final bool isDark;
-  final Color cardColor;
 
-  const SubjectGradeCard(
-      {super.key,
-        required this.data,
-        required this.graphColor,
-        required this.isDark,
-        required this.cardColor});
+  const SubjectGradeCard({super.key, required this.data, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).textTheme.bodyLarge!.color;
-
-    return Card(
-      color: cardColor,
+    return Container(
       margin: const EdgeInsets.only(bottom: 20),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: isDark ? 0 : 2,
+      decoration: BoxDecoration(
+        color: isDark ? AppColor.surfaceColor : Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: AppColor.glassBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          )
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColor.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Icon(data.icon, color: isDark ? AppColor.lightGold : AppColor.primaryColor),
+                  ),
+                  const SizedBox(width: 15),
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(data.name,
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : AppColor.primaryColor)),
+                    Text("Current Grade", style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+                  ])
+                ],
+              ),
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                  color: data.trendColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(data.icon, color: Colors.grey),
+                child: Text(data.trend,
+                    style: TextStyle(color: data.trendColor, fontWeight: FontWeight.bold, fontSize: 12)),
               ),
-              const SizedBox(width: 12),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(data.name,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: textColor)),
-                Text("Current Grade: ${data.currentGrade}",
-                    style: const TextStyle(fontSize: 13, color: Colors.grey)),
-              ])
             ],
           ),
-          const SizedBox(height: 16),
-          const Text("Grade Trend", style: TextStyle(color: Colors.grey)),
-          Row(children: [
-            Text("${data.currentGrade}",
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: textColor)),
-            const SizedBox(width: 12),
-            Text("Last 6 months ${data.trend}",
-                style: TextStyle(
-                    color: data.trendColor, fontWeight: FontWeight.w600)),
-          ]),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text("${data.currentGrade}",
+                  style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? AppColor.lightGold : AppColor.primaryColor)),
+              const SizedBox(width: 5),
+              const Text("%", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey)),
+            ],
+          ),
+          const SizedBox(height: 15),
+          const Text("6-Month Progress", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+          const SizedBox(height: 10),
           SizedBox(
-            height: 150,
-            child: LineChart(LineChartData(
-              gridData: const FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-              titlesData: FlTitlesData(
-                leftTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    interval: 1,
-                    getTitlesWidget: (value, meta) {
-                      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-                      if (value.toInt() < months.length) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(months[value.toInt()],
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.grey)),
-                        );
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-                ),
-              ),
-              lineBarsData: [
-                LineChartBarData(
-                  isCurved: true,
-                  color: graphColor,
-                  barWidth: 3,
-                  dotData: const FlDotData(show: false),
-                  spots: data.graphSpots,
-                ),
-              ],
-            )),
+            height: 120,
+            child: LineChart(_buildChartData()),
           ),
         ]),
       ),
+    );
+  }
+
+  LineChartData _buildChartData() {
+    return LineChartData(
+      gridData: const FlGridData(show: false),
+      borderData: FlBorderData(show: false),
+      titlesData: FlTitlesData(
+        show: true,
+        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: 1,
+            getTitlesWidget: (value, meta) {
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+              if (value.toInt() < months.length) {
+                return Text(months[value.toInt()], style: const TextStyle(fontSize: 10, color: Colors.grey));
+              }
+              return const SizedBox();
+            },
+          ),
+        ),
+      ),
+      lineBarsData: [
+        LineChartBarData(
+          isCurved: true,
+          curveSmoothness: 0.35,
+          color: AppColor.accentGold,
+          barWidth: 4,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(
+            show: true,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppColor.accentGold.withOpacity(0.3), AppColor.accentGold.withOpacity(0)],
+            ),
+          ),
+          spots: data.graphSpots,
+        ),
+      ],
     );
   }
 }
@@ -258,31 +259,12 @@ class SubjectGradeShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
-      child: Card(
+      baseColor: isDark ? Colors.white10 : Colors.grey.shade300,
+      highlightColor: isDark ? Colors.white24 : Colors.grey.shade100,
+      child: Container(
         margin: const EdgeInsets.only(bottom: 20),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Container(width: 40, height: 40, color: Colors.white),
-              const SizedBox(width: 12),
-              Column(children: [
-                Container(width: 120, height: 14, color: Colors.white),
-                const SizedBox(height: 8),
-                Container(width: 80, height: 12, color: Colors.white),
-              ])
-            ]),
-            const SizedBox(height: 16),
-            Container(width: 100, height: 12, color: Colors.white),
-            const SizedBox(height: 8),
-            Container(width: 60, height: 28, color: Colors.white),
-            const SizedBox(height: 8),
-            Container(width: double.infinity, height: 120, color: Colors.white),
-          ]),
-        ),
+        height: 280,
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
       ),
     );
   }

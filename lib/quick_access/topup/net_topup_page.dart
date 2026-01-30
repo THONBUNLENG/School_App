@@ -1,8 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:local_auth_platform_interface/local_auth_platform_interface.dart' show AuthenticationOptions;
-import 'package:school_app/config/app_color.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart'; // 💡 កុំភ្លេចបន្ថែម intl ក្នុង pubspec.yaml
+import '../../config/app_color.dart';
+import '../topup/top_up_pay.dart';
 
 class TopUpWallet extends StatefulWidget {
   const TopUpWallet({super.key});
@@ -11,415 +12,367 @@ class TopUpWallet extends StatefulWidget {
   State<TopUpWallet> createState() => _TopUpWalletScreenState();
 }
 
-class _TopUpWalletScreenState extends State<TopUpWallet> with SingleTickerProviderStateMixin {
-  final LocalAuthentication auth = LocalAuthentication();
+class _TopUpWalletScreenState extends State<TopUpWallet> {
+  // ប្រើ NumberFormat ដើម្បីដាក់ក្បៀស
+  final NumberFormat _formatter = NumberFormat("#,###");
+  final TextEditingController _amountController = TextEditingController(text: '0');
+  final List<String> _quickAmounts = ['50', '100', '200', '500', '1000', '2000', '5000', '100000'];
 
-  bool _faceIDEnabled = false;
-  bool _isLoading = false;
-  double _selectedAmount = 50.0;
-  final TextEditingController _amountController = TextEditingController(text: '50.00');
-
-  late AnimationController _rotationController;
-
-  @override
-  void initState() {
-    super.initState();
-    _rotationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    );
+  // លុបក្បៀសចេញមុននឹងបម្លែងទៅជាលេខ double
+  double get amount {
+    String cleanString = _amountController.text.replaceAll(',', '');
+    return double.tryParse(cleanString) ?? 0;
   }
 
-  @override
-  void dispose() {
-    _rotationController.dispose();
-    _amountController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handlePayment() async {
-    if (_isLoading) return;
-
-    // ១. ច្រានចោលការទូទាត់បើលេខទឹកប្រាក់មិនត្រឹមត្រូវ (Verification)
-    final inputAmount = double.tryParse(_amountController.text) ?? 0;
-    if (inputAmount <= 0) {
-      _showErrorSnackBar("សូមបញ្ចូលទឹកប្រាក់ឱ្យបានត្រឹមត្រូវ");
-      return;
-    }
-
-    // បិទ keyboard
-    FocusScope.of(context).unfocus();
-
+  void _updateAmount(double newValue) {
+    if (newValue < 0) newValue = 0;
     setState(() {
-      _isLoading = true;
-      _rotationController.repeat();
+      // Format លេខដាក់ក្បៀសពេលបង្ហាញក្នុង TextField
+      _amountController.text = _formatter.format(newValue);
+      _amountController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _amountController.text.length),
+      );
     });
-
-    try {
-      bool authenticated = false;
-
-      if (_faceIDEnabled) {
-        final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-        final bool isSupported = await auth.isDeviceSupported();
-
-        if (canAuthenticateWithBiometrics || isSupported) {
-          authenticated = await auth.authenticate(
-            localizedReason: 'សូមស្កេន FaceID/Fingerprint ដើម្បីបញ្ជាក់ការបង់ប្រាក់',
-            options:  AuthenticationOptions(
-              stickyAuth: true,
-              biometricOnly: true,
-              useErrorDialogs: true,
-            ),
-          );
-        } else {
-          _showErrorSnackBar("ឧបករណ៍របស់អ្នកមិនគាំទ្រការស្កេនទេ។");
-          authenticated = false;
-        }
-      } else {
-        // ប្រសិនបើមិនប្រើ Biometric គួរតែមានការសួររក App PIN (យោបល់កែលម្អ)
-        authenticated = true;
-      }
-
-      if (authenticated) {
-        await Future.delayed(const Duration(seconds: 2));
-        if (mounted) _showSuccessDialog();
-      }
-    } catch (e) {
-      _showErrorSnackBar("បញ្ហា៖ $e");
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _rotationController.stop();
-        });
-      }
-    }
-  }
-
-  // ... (Widget ផ្សេងៗរក្សានៅដដែល) ...
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(message, style: const TextStyle(fontFamily: 'Battambang')),
-          backgroundColor: Colors.redAccent
-      ),
-    );
-  }
-
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Icon(Icons.check_circle, color: Colors.green, size: 60),
-        content: Text(
-            "Top-up Successful!\n¥${_amountController.text} has been added.",
-            textAlign: TextAlign.center
-        ),
-        actions: [
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColor.accentGold),
-              onPressed: () {
-                Navigator.pop(context); // បិទ Dialog
-                Navigator.pop(context); // ត្រឡប់ទៅ Home
-              },
-              child: const Text("Back to Home", style: TextStyle(color: Colors.white)),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.primaryColor,
-      appBar: AppBar(
-        title: const Text('Top-up Wallet', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: const Text(
+            'TOP-UP WALLET',
+            style: TextStyle(
+                color: AppColor.lightGold,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                fontSize: 16),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          _buildMainContent(),
-          if (_isLoading) _buildLoadingOverlay(),
-        ],
-      ),
-    );
-  }
-
-  // (រក្សា Widget ជំនួយផ្សេងៗទៀតដូចដើម)
-  Widget _buildMainContent() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [const Color(0xFF806B9F), Colors.black.withOpacity(0.9)],
-        ),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+        body: Stack(
+          children: [
+            Container(decoration: const BoxDecoration(gradient: BrandGradient.luxury)),
+            SafeArea(
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
-                  _buildBalanceHeader(),
-                  const SizedBox(height: 30),
-                  _buildMainInputCard(),
-                  const SizedBox(height: 25),
-                  _buildUsageHistory(),
                   const SizedBox(height: 20),
+                  _buildHeaderBalance(),
+                  const SizedBox(height: 40),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(45)),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(45)),
+                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                          ),
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _sectionTitle("AMOUNT SELECTION"),
+                                const SizedBox(height: 20),
+                                _buildAmountInputArea(),
+                                const SizedBox(height: 30),
+                                _buildQuickSelection(),
+                                const SizedBox(height: 40),
+                                _buildSecurityInfo(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  _buildConfirmButton(),
                 ],
               ),
             ),
-          ),
-          _buildBottomAction(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingOverlay() {
-    return Container(
-      color: Colors.black.withOpacity(0.7),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RotationTransition(
-              turns: _rotationController,
-              child: Container(
-                width: 80, height: 80,
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColor.accentGold, width: 3),
-                ),
-                child: ClipOval(
-                  child: Image.asset("assets/image/logo_profile.png", fit: BoxFit.contain),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text("Verifying Transaction...",
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBalanceHeader() {
+  Widget _buildHeaderBalance() {
     return Column(
       children: [
-        const Text("¥ 120,567,123.68", style: TextStyle(color: Colors.white, fontSize: 45, fontWeight: FontWeight.bold)),
-        const Text("Current Balance", style: TextStyle(color: Colors.white54, fontSize: 14)),
-        const SizedBox(height: 15),
+        Text(
+          "¥ 120,567,123.68",
+          style: TextStyle(
+              color: AppColor.accentGold,
+              fontSize: 34,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
+              shadows: [
+                Shadow(color: Colors.black.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))
+              ]),
+        ),
+        const SizedBox(height: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(border: Border.all(color: Colors.white30), borderRadius: BorderRadius.circular(20)),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add_circle_outline, color: Colors.white70, size: 18),
-              SizedBox(width: 8),
-              Text("Quick Top-Up", style: TextStyle(color: Colors.white70)),
-            ],
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
+          ),
+          child: const Text(
+            "Current Wallet Balance",
+            style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildMainInputCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Amount Selection", style: TextStyle(color: Colors.white70, fontSize: 15)),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [20, 50, 1000, 2000].map((e) => _quickBtn(e.toDouble())).toList(),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _amountController,
-            keyboardType: TextInputType.number,
-            style: const TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
-            decoration: InputDecoration(
-              prefixText: '¥ ',
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+  Widget _buildAmountInputArea() {
+    return Row(
+      children: [
+        _circleIconBtn(Icons.remove_rounded, () => _updateAmount(amount - 50)),
+        const SizedBox(width: 15),
+        Expanded(
+          child: Container(
+            height: 70,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 15, offset: const Offset(0, 8))
+              ],
+            ),
+            child: TextField(
+              controller: _amountController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                ThousandsSeparatorInputFormatter(),
+              ],
+              textAlign: TextAlign.center,
+              onChanged: (_) => setState(() {}),
+              style: const TextStyle(color: AppColor.primaryColor, fontSize: 26, fontWeight: FontWeight.w900),
+              decoration: const InputDecoration(
+                prefixText: '¥ ',
+                prefixStyle: TextStyle(color: Colors.black26, fontSize: 20, fontWeight: FontWeight.bold),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 18),
+              ),
             ),
           ),
-          const SizedBox(height: 12),
-          _buildPaymentMethodsRow(),
-          const Divider(color: Colors.white10, height: 30),
-          _buildFaceIDSwitch(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFaceIDSwitch() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text("Biometric Payment (FaceID)", style: TextStyle(color: Colors.white70, fontSize: 14)),
-        CupertinoSwitch(
-          value: _faceIDEnabled,
-          activeColor: AppColor.accentGold,
-          onChanged: (val) => setState(() => _faceIDEnabled = val),
         ),
+        const SizedBox(width: 15),
+        _circleIconBtn(Icons.add_rounded, () => _updateAmount(amount + 50)),
       ],
     );
   }
 
-  Widget _buildUsageHistory() {
+  Widget _buildQuickSelection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Usage & History", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-            Text("See All", style: TextStyle(color: AppColor.accentGold, fontSize: 12)),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: Column(
-            children: [
-              _buildSimpleBarChart(),
-              const SizedBox(height: 16),
-              _historyItem("Canteen - Lunch", "- ¥15.00", "Today, 12:30 PM"),
-              _historyItem("Internet Sync", "- ¥2.00", "Yesterday, 08:00 PM"),
-            ],
+        _sectionTitle("QUICK SELECTION"),
+        const SizedBox(height: 15),
+        SizedBox(
+          height: 50,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: _quickAmounts.length,
+            separatorBuilder: (context, index) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              String valStr = _quickAmounts[index];
+              double valDouble = double.parse(valStr);
+              String formattedVal = _formatter.format(valDouble);
+
+              bool isSelected = _amountController.text.replaceAll(',', '') == valStr;
+
+              return InkWell(
+                onTap: () {
+                  _updateAmount(valDouble);
+                  HapticFeedback.lightImpact();
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColor.accentGold : Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected ? Colors.transparent : Colors.white.withOpacity(0.1),
+                    ),
+                    boxShadow: isSelected
+                        ? [
+                      BoxShadow(
+                          color: AppColor.accentGold.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4))
+                    ]
+                        : [],
+                  ),
+                  child: Text(
+                    "¥$formattedVal",
+                    style: TextStyle(
+                      color: isSelected ? Colors.black : Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSimpleBarChart() {
-    final List<double> data = [0.2, 0.5, 0.8, 0.4, 0.7, 0.3, 0.9];
-    return SizedBox(
-      height: 60,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: data.map((h) => Container(
-          width: 8, height: 60 * h,
-          decoration: BoxDecoration(color: h > 0.7 ? AppColor.accentGold : Colors.white30, borderRadius: BorderRadius.circular(4)),
-        )).toList(),
+  Widget _buildSecurityInfo() {
+    if (amount < 1000) return const SizedBox.shrink();
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 400),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColor.accentGold.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: AppColor.accentGold.withOpacity(0.2)),
       ),
-    );
-  }
-
-  Widget _historyItem(String title, String amt, String time) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: const Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
-              Text(time, style: const TextStyle(color: Colors.white38, fontSize: 11)),
-            ],
+          Icon(Icons.security_rounded, color: AppColor.accentGold, size: 28),
+          SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("SECURITY NOTICE",
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.5)),
+                Text("Verification required for amounts ≥ ¥1,000",
+                    style: TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w600)),
+              ],
+            ),
           ),
-          Text(amt, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 
-  Widget _buildPaymentMethodsRow() {
-    return Wrap(
-      spacing: 10,
-      children: [
-        _miniIcon(Icons.wechat, "WeChat"),
-        _miniIcon(Icons.payment, "Alipay"),
-        _miniIcon(Icons.account_balance, "ICBC"),
-      ],
-    );
-  }
-
-  Widget _miniIcon(IconData icon, String label) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: Colors.white54, size: 14),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(color: Colors.white38, fontSize: 10)),
-      ],
-    );
-  }
-
-  Widget _quickBtn(double amount) {
-    bool isSelected = _selectedAmount == amount;
-    return GestureDetector(
-      onTap: () => setState(() {
-        _selectedAmount = amount;
-        _amountController.text = amount.toStringAsFixed(2);
-      }),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColor.accentGold.withOpacity(0.2) : Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: isSelected ? AppColor.accentGold : Colors.white12),
-        ),
-        child: Text("¥${amount.toInt()}", style: TextStyle(color: isSelected ? AppColor.accentGold : Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-
-  Widget _buildBottomAction() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-      child: SizedBox(
-        width: double.infinity,
-        height: 55,
-        child: ElevatedButton(
-          onPressed: _isLoading ? null : _handlePayment,
-          style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.accentGold,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              disabledBackgroundColor: Colors.grey[300]
+  Widget _circleIconBtn(IconData icon, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+          width: 55,
+          height: 55,
+          decoration: BoxDecoration(
+            color: AppColor.accentGold,
+            borderRadius: BorderRadius.circular(15),
           ),
-          child: const Text("Confirm & Top-Up", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
+          child: Icon(icon, color: Colors.black, size: 28),
         ),
       ),
+    );
+  }
+
+  Widget _buildConfirmButton() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+      decoration: BoxDecoration(
+        color: AppColor.surfaceColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 30, offset: const Offset(0, -5))],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Review Amount",
+                  style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+              Text("¥${_formatter.format(amount)}",
+                  style: const TextStyle(color: AppColor.lightGold, fontSize: 22, fontWeight: FontWeight.w900)),
+            ],
+          ),
+          const SizedBox(height: 25),
+          SizedBox(
+            width: double.infinity,
+            height: 60,
+            child: ElevatedButton(
+              onPressed: _handleNext,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.accentGold,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                elevation: 0,
+              ),
+              child: const Text("NEXT: SELECT METHOD",
+                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleNext() {
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a valid amount")),
+      );
+      return;
+    }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => TopUpPayment(
+                amount: amount,
+                childName: "He Wenlin",
+                note: "Wallet Recharge")));
+  }
+
+  Widget _sectionTitle(String title) {
+    return Text(title,
+        style: const TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1.5));
+  }
+}
+
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  static final NumberFormat _formatter = NumberFormat("#,###");
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '0');
+    }
+
+
+    String cleanString = newValue.text.replaceAll(',', '');
+    int? value = int.tryParse(cleanString);
+
+    if (value == null) return oldValue;
+
+    String newText = _formatter.format(value);
+
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
     );
   }
 }

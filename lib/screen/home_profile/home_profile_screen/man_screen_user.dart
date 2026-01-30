@@ -91,41 +91,67 @@ class _ManScreenUserState extends State<ManScreenUser> {
   }
 
   // --- Widget Functions ---
-
   Widget _buildSliverAppBar(bool isDarkMode) {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 80.0,
-      backgroundColor: AppColor.primaryColor,
+      elevation: 0,
+
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: BrandGradient.luxury,
+        ),
+      ),
       centerTitle: true,
-      title: const Text(
-          '南京大學',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+      title: const Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '南京大學',
+            style: TextStyle(
+              color: AppColor.lightGold,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontFamily: 'MaoTi',
+              letterSpacing: 4,
+            ),
+          ),
+          Text(
+            'NANJING UNIVERSITY',
+            style: TextStyle(
+              color: Colors.white60,
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
+            ),
+          ),
+        ],
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
-        onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MainHolder())
+        icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
+        onPressed: () => Navigator.push(context,
+        MaterialPageRoute(builder: (context) => MainHolder()),
         ),
       ),
       actions: [
+        // Search Button
         IconButton(
-          icon: const Icon(Icons.search, color: Colors.white),
+          icon: const Icon(Icons.search_rounded, color: AppColor.lightGold, size: 22),
           onPressed: () {
-
           },
         ),
         IconButton(
           icon: Icon(
-              isDarkMode ? Icons.settings_rounded : Icons.settings_outlined,
-              color: Colors.white
+            isDarkMode ? Icons.settings_rounded : Icons.settings_outlined,
+            color: AppColor.lightGold,
+            size: 22,
           ),
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SettingApp()),
           ),
         ),
+        const SizedBox(width: 8),
       ],
     );
   }
@@ -179,48 +205,78 @@ class _ManScreenUserState extends State<ManScreenUser> {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15), // 💡 បន្ថយ vertical padding មកត្រឹម ១៥
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // 💡 រៀបចំគម្លាតឱ្យស្មើគ្នាតាមទំហំដែលមាន
+                mainAxisSize: MainAxisSize.min,
                 children: [
-
+                  // --- Premium Admission Badge ---
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: AppColor.lightGold.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColor.lightGold.withOpacity(0.3)),
                     ),
                     child: const Text(
                       "ADMISSION 2026",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColor.lightGold,
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.0,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+
+                  const SizedBox(height: 10), // 💡 ប្រើតម្លៃតូចជាងមុន (ពី ១៥ មក ១០)
+
+                  // --- Main Title ---
                   const Text(
                     "Orientation Day",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 22, // 💡 បន្ថយទំហំអក្សរបន្តិច (ពី ២៤ ឬ ២៨ មក ២២)
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Full guide for new NJU students",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                      letterSpacing: 0.5,
+
+                  // 💡 ប្រើ Flexible សម្រាប់ Subtitle ដើម្បីការពារការរុញ Layout
+                  Flexible(
+                    child: Text(
+                      "Complete guide for new NJU students",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // --- Learn More Link ---
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Learn More",
+                        style: TextStyle(
+                          color: AppColor.lightGold,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      const Icon(Icons.arrow_forward_ios_rounded, color: AppColor.lightGold, size: 10),
+                    ],
                   ),
                 ],
               ),
-            ),
+            )
           ],
         ),
       ),

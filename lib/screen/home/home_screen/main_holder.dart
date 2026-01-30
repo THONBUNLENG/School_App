@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/change_notifier.dart';
-
 import 'package:school_app/screen/home/home_screen/home_screen.dart';
-import 'package:school_app/screen/profile_login/profile_page.dart';
-import 'menu_screen/menu.dart';
+import 'package:school_app/screen/home_profile/home_profile_screen/home_profile_screen.dart';
+import 'package:school_app/screen/home/home_screen/menu_screen/menu.dart';
 
 class MainHolder extends StatefulWidget {
   const MainHolder({super.key});
@@ -19,7 +18,7 @@ class _MainHolderState extends State<MainHolder> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-   const UnifiedLoginScreen(),
+    const SizedBox.shrink(),
     const MenuScreen(),
   ];
 
@@ -28,65 +27,72 @@ class _MainHolderState extends State<MainHolder> {
     final themeManager = Provider.of<ThemeManager>(context);
     final bool isDark = themeManager.isDarkMode;
 
-    final Color navBarColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color fabBgColor = isDark ? const Color(0xFF2C2C2C) : Colors.white;
-    final Color fabBorderColor = isDark ? Colors.white10 : Colors.grey.shade300;
-    final Color subTextColor = isDark ? Colors.white70 : Colors.black87;
+    final Color navBarColor = isDark ? AppColor.surfaceColor : Colors.white;
+    final Color subTextColor = isDark ? Colors.white60 : Colors.black54;
 
     return Scaffold(
-      backgroundColor: navBarColor,
+      backgroundColor: isDark ? AppColor.backgroundColor : Colors.grey.shade50,
       resizeToAvoidBottomInset: false,
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
       ),
 
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: SizedBox(
-        height: 55,
-        width: 55,
+      floatingActionButton: Container(
+        height: 64,
+        width: 64,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: isDark ? AppColor.backgroundColor : Colors.grey.shade50,
+          shape: BoxShape.circle,
+        ),
         child: FloatingActionButton(
-          backgroundColor: fabBgColor,
+          backgroundColor: navBarColor,
           elevation: 2,
           shape: CircleBorder(
-              side: BorderSide(
-                  color: _selectedIndex == 1 ? AppColor.primaryColor : fabBorderColor,
-                  width: 2.0
-              )
+              side: BorderSide(color: AppColor.glassBorder, width: 1.5)
           ),
-          onPressed: () => setState(() => _selectedIndex = 1),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeProfileScreen()),
+            );
+          },
           child: Icon(
-              Icons.person,
-              color: _selectedIndex == 1 ? AppColor.primaryColor : subTextColor,
-              size: 28
+              Icons.person_rounded,
+              color: subTextColor,
+              size: 30
           ),
         ),
       ),
 
+      // --- Bottom Navigation Bar (Fixed Overflow) ---
       bottomNavigationBar: BottomAppBar(
         color: navBarColor,
-        elevation: 5,
+        elevation: 20,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 6.0,
+        notchMargin: 10.0,
+        height: 70,
         padding: EdgeInsets.zero,
-        height: 50,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildNavItem(
               index: 0,
-              isDark: isDark,
-              label: "home",
-              imagePath: 'assets/image/home_icon.png',
+              label: "HOME",
+              iconData: Icons.home_rounded,
               subTextColor: subTextColor,
             ),
 
-            const SizedBox(width: 70),
+            // 💡 ចន្លោះទទេសម្រាប់ Notch (FAB)
+            const SizedBox(width: 80),
 
             _buildNavItem(
               index: 2,
-              isDark: isDark,
-              label: "more",
-              imagePath: 'assets/image/menu_icon.png',
+              label: "MORE",
+              iconData: Icons.grid_view_rounded,
               subTextColor: subTextColor,
             ),
           ],
@@ -97,42 +103,50 @@ class _MainHolderState extends State<MainHolder> {
 
   Widget _buildNavItem({
     required int index,
-    required bool isDark,
     required String label,
-    IconData? icon,
-    String? imagePath,
+    required IconData iconData,
     required Color subTextColor,
   }) {
     bool isActive = _selectedIndex == index;
-    final Color inactiveColor = subTextColor;
 
     return Expanded(
       child: InkWell(
         onTap: () => setState(() => _selectedIndex = index),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min, // 💡 សំខាន់បំផុត៖ ការពារ Overflow Error
           children: [
-            imagePath != null
-                ? Image.asset(
-              imagePath,
-              height: 24,
-              width: 24,
-              color: isActive ? AppColor.accentGold : inactiveColor,
-            )
-                : Icon(
-              icon,
-              color: isActive ? AppColor.accentGold  : inactiveColor,
-              size: 24,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                iconData,
+                color: isActive ? AppColor.accentGold : subTextColor,
+                size: 24,
+              ),
             ),
-            const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
                 fontSize: 10,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                color: isActive ? AppColor.accentGold  : inactiveColor,
+                fontWeight: isActive ? FontWeight.w900 : FontWeight.w500,
+                color: isActive ? AppColor.accentGold : subTextColor,
+                letterSpacing: 0.5,
               ),
             ),
+            const SizedBox(height: 4),
+
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 2,
+              width: isActive ? 12 : 0,
+              decoration: BoxDecoration(
+                color: AppColor.accentGold,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            )
           ],
         ),
       ),

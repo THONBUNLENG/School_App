@@ -47,16 +47,21 @@ class _MenuScreenState extends State<MenuScreen> {
     final themeManager = Provider.of<ThemeManager>(context);
     final bool isDark = themeManager.isDarkMode;
 
-    final Color scaffoldBgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA);
-    final Color sectionColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color textColor = isDark ? Colors.white70 : Colors.black87;
-    final Color dividerColor = isDark ? Colors.white10 : Colors.grey.shade200;
+    final Color scaffoldBgColor = isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB);
+    final Color sectionColor = isDark ? AppColor.surfaceColor : Colors.white;
+    final Color textColor = isDark ? Colors.white : AppColor.primaryColor;
+    final Color dividerColor = isDark ? Colors.white10 : Colors.grey.shade100;
 
     return Scaffold(
       backgroundColor: scaffoldBgColor,
       appBar: AppBar(
-        backgroundColor: AppColor.primaryColor,
-        title: Text('more'.tr, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+        ),
+        title: Text(
+            'more'.tr,
+            style: const TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1.2)
+        ),
         centerTitle: true,
         elevation: 0,
       ),
@@ -64,43 +69,51 @@ class _MenuScreenState extends State<MenuScreen> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            const SizedBox(height: 15),
+            const SizedBox(height: 20),
+
+            /// 🔹 Section 1: Support & Info
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.info_outline, 'about_app', AppColor.accentGold, textColor, dividerColor, () {
+              _buildMenuTile(Icons.info_outline_rounded, 'about_app', AppColor.accentGold, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen()));
               }),
-              _buildMenuTile(Icons.chat_bubble_outline, 'faq', AppColor.accentGold, textColor, dividerColor, () {
+              _buildMenuTile(Icons.auto_awesome_outlined, 'faq', AppColor.accentGold, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AIChatBotScreen()));
               }),
-              _buildMenuTile(Icons.help_outline, 'how_to_use', AppColor.accentGold, textColor, dividerColor, () {}),
-              _buildMenuTile(Icons.description_outlined, 'terms_conditions', AppColor.accentGold, textColor, dividerColor, () {}, isLast: true),
+              _buildMenuTile(Icons.menu_book_rounded, 'how_to_use', AppColor.accentGold, textColor, dividerColor, () {}),
+              _buildMenuTile(Icons.verified_user_outlined, 'terms_conditions', AppColor.accentGold, textColor, dividerColor, () {}, isLast: true),
             ]),
 
+            /// 🔹 Section 2: Preferences
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.translate, 'change_language', AppColor.accentGold, textColor, dividerColor, () {
+              _buildMenuTile(Icons.translate_rounded, 'change_language', AppColor.accentGold, textColor, dividerColor, () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangeLanguageScreen()));
               }),
-              _buildToggleTile(_isNotificationOn ? Icons.notifications_active : Icons.notifications_off, 'notification', _isNotificationOn, AppColor.accentGold, textColor, dividerColor, (val) => setState(() => _isNotificationOn = val)),
-              _buildToggleTile(isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined, 'Dark_Mode', isDark, isDark ? Colors.orangeAccent : AppColor.accentGold, textColor, dividerColor, (val) => themeManager.toggleTheme(val), isLast: true),
+              _buildToggleTile(_isNotificationOn ? Icons.notifications_active_rounded : Icons.notifications_off_rounded, 'notification', _isNotificationOn, AppColor.accentGold, textColor, dividerColor, (val) => setState(() => _isNotificationOn = val)),
+              _buildToggleTile(isDark ? Icons.nightlight_round : Icons.wb_sunny_rounded, 'Dark_Mode', isDark, isDark ? Colors.orangeAccent : AppColor.accentGold, textColor, dividerColor, (val) => themeManager.toggleTheme(val), isLast: true),
             ]),
 
+            /// 🔹 Section 3: Connectivity
             _buildSection(sectionColor, isDark, [
-              _buildMenuTile(Icons.language, 'social_media', AppColor.accentGold, textColor, dividerColor, () => _launchURL('https://www.facebook.com/belteigroups')),
+              _buildMenuTile(Icons.facebook_rounded, 'social_media', AppColor.accentGold, textColor, dividerColor, () => _launchURL('https://www.facebook.com/nanjinguniversity')),
               _buildMenuTile(null, 'share_app', AppColor.accentGold, textColor, dividerColor, () async {
-                const String playStoreLink = 'https://play.google.com/store/apps/details?id=com.beltei.school';
+                const String playStoreLink = 'https://play.google.com/store/apps/details?id=com.nju.app';
                 String shareTitle = 'share_title'.tr;
-                await Share.share('$shareTitle\n$playStoreLink', subject: 'NANJING International University');
-              }, leadingWidget: ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.asset('', width: 22, height: 22, errorBuilder: (context, error, stackTrace) => Icon(Icons.share, color: AppColor.accentGold)))),
-              _buildMenuTile(Icons.qr_code_scanner, 'qr_code',AppColor.accentGold, textColor, dividerColor, () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const QRCodeScreen ()));
+                await Share.share('$shareTitle\n$playStoreLink', subject: 'NANJING UNIVERSITY');
+              }, leadingWidget: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(color: AppColor.accentGold.withOpacity(0.1), shape: BoxShape.circle),
+                  child: const Icon(Icons.share_rounded, color: AppColor.accentGold, size: 18)
+              )),
+              _buildMenuTile(Icons.qr_code_scanner_rounded, 'qr_code', AppColor.accentGold, textColor, dividerColor, () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const QRCodeScreen()));
               }, isLast: true),
             ]),
 
-            const SizedBox(height: 30),
-            Text('copyright'.tr, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45, fontFamily: 'MaoTi')),
-            const SizedBox(height: 8),
-            Text('${'version'.tr} 1.0.0', style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 40),
+            const SizedBox(height: 10),
+            Text('copyright'.tr, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45, fontFamily: 'MaoTi', letterSpacing: 1.5)),
+            const SizedBox(height: 5),
+            Text('${'version'.tr} 1.0.0', style: TextStyle(fontSize: 10, color: isDark ? Colors.white24 : Colors.black38, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -112,10 +125,14 @@ class _MenuScreenState extends State<MenuScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.03), blurRadius: 10, offset: const Offset(0, 4))],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColor.glassBorder),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), blurRadius: 15, offset: const Offset(0, 8))],
       ),
-      child: Column(children: children),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Column(children: children),
+      ),
     );
   }
 
@@ -123,12 +140,16 @@ class _MenuScreenState extends State<MenuScreen> {
     return Column(
       children: [
         ListTile(
-          leading: leadingWidget ?? Icon(icon, color: iconColor, size: 22),
-          title: Text(titleKey.tr, style: TextStyle(fontFamily: 'Battambang', fontSize: 14, fontWeight: FontWeight.w500, color: textColor)),
-          trailing: Icon(Icons.arrow_forward_ios, size: 14, color: textColor.withOpacity(0.5)),
+          leading: leadingWidget ?? Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: AppColor.primaryColor.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          title: Text(titleKey.tr, style: TextStyle(fontFamily: 'Battambang', fontSize: 14, fontWeight: FontWeight.w600, color: textColor)),
+          trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: textColor.withOpacity(0.3)),
           onTap: onTap,
         ),
-        if (!isLast) Divider(height: 1, thickness: 0.5, color: divColor, indent: 55),
+        if (!isLast) Divider(height: 1, thickness: 1, color: divColor, indent: 60),
       ],
     );
   }
@@ -137,11 +158,20 @@ class _MenuScreenState extends State<MenuScreen> {
     return Column(
       children: [
         ListTile(
-          leading: Icon(icon, color: value ? iconColor : Colors.grey, size: 22),
-          title: Text(titleKey.tr, style: TextStyle(fontFamily: 'Battambang', fontSize: 14, fontWeight: FontWeight.w500, color: textColor)),
-          trailing: Switch.adaptive(value: value, onChanged: onChanged, activeColor: iconColor),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: AppColor.primaryColor.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: value ? iconColor : Colors.grey.shade400, size: 20),
+          ),
+          title: Text(titleKey.tr, style: TextStyle(fontFamily: 'Battambang', fontSize: 14, fontWeight: FontWeight.w600, color: textColor)),
+          trailing: Switch.adaptive(
+            value: value,
+            onChanged: onChanged,
+            activeColor: AppColor.accentGold,
+            activeTrackColor: AppColor.accentGold.withOpacity(0.3),
+          ),
         ),
-        if (!isLast) Divider(height: 1, thickness: 0.5, color: divColor, indent: 55),
+        if (!isLast) Divider(height: 1, thickness: 1, color: divColor, indent: 60),
       ],
     );
   }

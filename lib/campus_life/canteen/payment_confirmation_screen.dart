@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../extension/change_notifier.dart';
+import '../../extension/string_extension.dart';
 import '../../model/food.dart';
+import '../../config/app_color.dart';
 
 enum PaymentType { wechat, alipay, icbc }
 
@@ -15,19 +17,40 @@ class PaymentConfirmationScreen extends StatefulWidget {
       _PaymentConfirmationScreenState();
 }
 
-class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen> {
-  // --- 2. STATE VARIABLES ---
+class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen>
+    with SingleTickerProviderStateMixin { // 🔥 បន្ថែមសម្រាប់ការធ្វើ Animation
+
+  late AnimationController _rotationController;
   bool _isProcessing = false;
   bool _isSuccess = false;
   String _loadingMessage = "Processing your order...";
   final double deliveryFee = 0.00;
-
   PaymentType _selectedType = PaymentType.alipay;
 
-  void _handlePayment() async {
-    setState(() => _isProcessing = true);
+  @override
+  void initState() {
+    super.initState();
+    // បង្កើត Controller សម្រាប់បង្វិល Logo
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+  }
 
-    // Simulated API calls
+  @override
+  void dispose() {
+    _rotationController.dispose();
+    super.dispose();
+  }
+
+  void _handlePayment() async {
+    setState(() {
+      _isProcessing = true;
+      _loadingMessage = "Processing your order...";
+    });
+    _rotationController.repeat(); // ចាប់ផ្ដើមបង្វិល Logo
+
+    // ក្លែងធ្វើការហៅ API
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) setState(() => _loadingMessage = "Verifying with Canteen...");
 
@@ -36,6 +59,7 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen> {
 
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
+      _rotationController.stop();
       setState(() {
         _isProcessing = false;
         _isSuccess = true;
@@ -46,41 +70,49 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Provider.of<ThemeManager>(context).isDarkMode;
-    final bgColor = isDark ? Colors.grey[900] : Colors.white;
-    final cardColor = isDark ? Colors.grey[850] : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
-    final subTextColor = isDark ? Colors.grey[400] : Colors.grey.shade600;
+    final bgColor = isDark ? AppColor.backgroundColor : Colors.white;
+    final textColor = isDark ? Colors.white : AppColor.primaryColor;
+    final subTextColor = isDark ? Colors.white70 : Colors.grey.shade600;
 
-    // Calculate subtotal
     double subtotal = widget.cartItems.fold<double>(
-      0,
-          (sum, item) => sum + item.finalTotalPrice,
+      0, (sum, item) => sum + item.finalTotalPrice,
     );
 
-    if (_isSuccess) return _buildSuccessUI();
-    if (_isProcessing) return _buildLoadingUI();
+    if (_isSuccess) return _buildSuccessUI(isDark);
 
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text("Checkout", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: bgColor,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+        ),
+        title: Text("Checkout".tr, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColor.lightGold)),
         elevation: 0,
-        foregroundColor: textColor,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      body: _buildCheckoutUI(subtotal, cardColor, textColor, subTextColor),
+      // ប្រើ Stack ដើម្បីបង្ហាញ Loading Overlay ពីលើ Checkout UI
+      body: Stack(
+        children: [
+          _buildCheckoutUI(subtotal, isDark, textColor, subTextColor),
+          if (_isProcessing) _buildLoadingOverlay(),
+        ],
+      ),
     );
   }
 
   // --- CHECKOUT UI ---
-  Widget _buildCheckoutUI(
-      double subtotal, Color? cardColor, Color? textColor, Color? subTextColor) {
+  Widget _buildCheckoutUI(double subtotal, bool isDark, Color textColor, Color subTextColor) {
+    final cardColor = isDark ? AppColor.surfaceColor : Colors.white;
+
     return Column(
       children: [
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             itemCount: widget.cartItems.length,
             itemBuilder: (context, index) {
               final item = widget.cartItems[index];
@@ -89,162 +121,82 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: cardColor,
-                  border: Border.all(color: Colors.grey.shade700),
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10)
-                  ],
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: AppColor.glassBorder),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: const Offset(0, 4))],
                 ),
                 child: Row(
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(item.food.img,
-                          width: 70, height: 70, fit: BoxFit.cover),
+                      child: Image.network(item.food.img, width: 70, height: 70, fit: BoxFit.cover),
                     ),
                     const SizedBox(width: 15),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.food.name,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: textColor)),
+                          Text(item.food.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textColor)),
                           const SizedBox(height: 4),
-                          Text(
-                            "Size: ${item.size} • Qty: ${item.quantity}",
-                            style: TextStyle(color: subTextColor, fontSize: 13),
-                          ),
+                          Text("${item.size} • Qty: ${item.quantity}", style: TextStyle(color: subTextColor, fontSize: 13)),
                         ],
                       ),
                     ),
-                    Text(
-                      "¥${item.finalTotalPrice.toStringAsFixed(2)}",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
-                    ),
+                    Text("¥${item.finalTotalPrice.toStringAsFixed(2)}",
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange)),
                   ],
                 ),
               );
             },
           ),
         ),
-        _buildPaymentSummary(subtotal, cardColor, textColor, subTextColor),
+        _buildPaymentSummary(subtotal, isDark, textColor, subTextColor),
       ],
     );
   }
 
-  // --- PAYMENT SUMMARY SECTION ---
-  Widget _buildPaymentSummary(
-      double subtotal, Color? cardColor, Color? textColor, Color? subTextColor) {
-    final total = subtotal + deliveryFee;
-    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
-
+  // --- LOADING OVERLAY (Fixed & Premium) ---
+  Widget _buildLoadingOverlay() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(25, 20, 25, 40),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[850] : const Color(0xFFF5F5F5),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 20,
-              offset: const Offset(0, -5))
-        ],
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _paymentTile("微信", "assets/image/wechat.png", PaymentType.wechat, textColor!),
-          const SizedBox(height: 12),
-          _paymentTile("支付宝", "assets/image/alipay.png", PaymentType.alipay, textColor),
-          const SizedBox(height: 12),
-          _paymentTile("工商银行卡", "assets/image/icbc_icon.png", PaymentType.icbc, textColor),
-
-          const SizedBox(height: 30),
-
-          _summaryRow("Subtotal", "¥${subtotal.toStringAsFixed(2)}", subTextColor!),
-          const SizedBox(height: 12),
-          _summaryRow("Delivery Free", "¥${deliveryFee.toStringAsFixed(2)}", subTextColor),
-          const Divider(height: 30, thickness: 1),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Total",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
-              Text("¥${total.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFD85D22))),
-            ],
-          ),
-
-          const SizedBox(height: 25),
-
-          SizedBox(
-            width: double.infinity,
-            height: 55,
-            child: ElevatedButton(
-              onPressed: _handlePayment,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8B2682),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-              ),
-              child: const Text("确认支付",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _paymentTile(String title, String iconPath, PaymentType type, Color textColor) {
-    bool isSelected = _selectedType == type;
-
-    return GestureDetector(
-      onTap: () => setState(() => _selectedType = type),
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Provider.of<ThemeManager>(context).isDarkMode ? Colors.grey[800] : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.black.withOpacity(0.75),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(iconPath, width: 28, height: 28),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Text(title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: textColor)),
-            ),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? const Color(0xFF8B2682) : Colors.grey.shade300,
-                  width: 2,
+            RotationTransition(
+              turns: _rotationController,
+              child: Container(
+                width: 90,
+                height: 90,
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColor.accentGold, width: 3),
+                  boxShadow: [
+                    BoxShadow(color: AppColor.accentGold.withOpacity(0.5), blurRadius: 20, spreadRadius: 2)
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.asset("assets/image/logo_profile.png", fit: BoxFit.contain),
                 ),
               ),
-              child: isSelected
-                  ? Center(
-                child: Container(
-                  width: 12,
-                  height: 12,
-                  decoration: const BoxDecoration(
-                      color: Color(0xFF8B2682), shape: BoxShape.circle),
-                ),
-              )
-                  : null,
+            ),
+            const SizedBox(height: 25),
+            Text(
+              _loadingMessage,
+              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 15),
+            const SizedBox(
+              width: 140,
+              child: LinearProgressIndicator(
+                backgroundColor: Colors.white10,
+                valueColor: AlwaysStoppedAnimation<Color>(AppColor.accentGold),
+                minHeight: 2,
+              ),
             ),
           ],
         ),
@@ -252,22 +204,83 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen> {
     );
   }
 
-  // --- LOADING UI ---
-  Widget _buildLoadingUI() {
-    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
-    return Scaffold(
-      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+  // --- PAYMENT SUMMARY ---
+  Widget _buildPaymentSummary(double subtotal, bool isDark, Color textColor, Color subTextColor) {
+    final total = subtotal + deliveryFee;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(25, 20, 25, 40),
+      decoration: BoxDecoration(
+        color: isDark ? AppColor.surfaceColor : const Color(0xFFF8F9FA),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
+        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 20, offset: const Offset(0, -5))],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _paymentTile("微信支付 (WeChat)", "assets/image/wechat.png", PaymentType.wechat, isDark),
+          const SizedBox(height: 12),
+          _paymentTile("支付宝 (Alipay)", "assets/image/alipay.png", PaymentType.alipay, isDark),
+          const SizedBox(height: 12),
+          _paymentTile("工商银行 (ICBC)", "assets/image/icbc_icon.png", PaymentType.icbc, isDark),
+
+          const SizedBox(height: 25),
+          _summaryRow("Subtotal", "¥${subtotal.toStringAsFixed(2)}", subTextColor),
+          const SizedBox(height: 10),
+          _summaryRow("Delivery Fee", "¥${deliveryFee.toStringAsFixed(2)}", subTextColor),
+          const Divider(height: 30, thickness: 1),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Total", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
+              Text("¥${total.toStringAsFixed(2)}",
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.orange)),
+            ],
+          ),
+
+          const SizedBox(height: 25),
+          Container(
+            width: double.infinity,
+            height: 55,
+            decoration: BoxDecoration(
+              gradient: BrandGradient.goldMetallic,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: ElevatedButton(
+              onPressed: _handlePayment,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              ),
+              child: const Text("确认支付 (Confirm)",
+                  style: TextStyle(color: AppColor.primaryColor, fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _paymentTile(String title, String iconPath, PaymentType type, bool isDark) {
+    bool isSelected = _selectedType == type;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedType = type),
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: isDark ? AppColor.backgroundColor : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: isSelected ? AppColor.accentGold : Colors.transparent, width: 1.5),
+        ),
+        child: Row(
           children: [
-            const CircularProgressIndicator(color: Color(0xFF8B2682)),
-            const SizedBox(height: 30),
-            Text(_loadingMessage,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: isDark ? Colors.white : Colors.black)),
+            Image.asset(iconPath, width: 30, height: 30),
+            const SizedBox(width: 15),
+            Expanded(child: Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: isDark ? Colors.white : AppColor.primaryColor))),
+            Icon(isSelected ? Icons.check_circle : Icons.radio_button_off,
+                color: isSelected ? AppColor.accentGold : Colors.grey),
           ],
         ),
       ),
@@ -275,33 +288,30 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen> {
   }
 
   // --- SUCCESS UI ---
-  Widget _buildSuccessUI() {
-    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
+  Widget _buildSuccessUI(bool isDark) {
     return Scaffold(
-      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-      body: SafeArea(
+      backgroundColor: isDark ? AppColor.backgroundColor : Colors.white,
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.check_circle, color: Colors.green, size: 100),
+              const Icon(Icons.stars, color: AppColor.accentGold, size: 100),
               const SizedBox(height: 20),
-              Text("Order Successful!",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black)),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () =>
-                    Navigator.of(context).popUntil((route) => route.isFirst),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.green,
+              Text("Payment Successful!", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColor.primaryColor)),
+              const SizedBox(height: 50),
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primaryColor,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
+                  child: const Text("Back to Home", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
-                child: const Text("Back to Menu",
-                    style: TextStyle(color: Colors.white)),
               )
             ],
           ),
@@ -314,8 +324,8 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: textColor, fontSize: 15)),
-        Text(value, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: textColor)),
+        Text(label, style: TextStyle(color: textColor, fontSize: 14)),
+        Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: textColor)),
       ],
     );
   }

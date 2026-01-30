@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
+import '../../extension/change_notifier.dart'; // សម្រាប់ check isDarkMode
+import 'campus_bus_screen.dart';
 import 'package:school_app/quick_access/campus_bus/profile_bus_st_nju.dart';
 import 'package:school_app/quick_access/campus_bus/routes_details.dart';
 import 'package:school_app/quick_access/campus_bus/timetable_view.dart';
-import 'campus_bus_screen.dart';
 
 class Main_Bus extends StatefulWidget {
   const Main_Bus({super.key});
@@ -14,7 +17,6 @@ class Main_Bus extends StatefulWidget {
 class _MainHolderState extends State<Main_Bus> {
   int _currentIndex = 0;
 
-
   final List<Widget> _pages = [
     const MainBusScreen(),
     const TimetableView(),
@@ -25,7 +27,7 @@ class _MainHolderState extends State<Main_Bus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
+      extendBody: true, // ឱ្យ Body រុញចូលក្រោម Bottom Nav ដែលមានលក្ខណៈថ្លាៗ
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
@@ -35,24 +37,25 @@ class _MainHolderState extends State<Main_Bus> {
   }
 
   Widget _buildBottomNav() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
 
     return SafeArea(
       child: Container(
         height: 70,
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF252525).withOpacity(0.9)
-              : Colors.white.withOpacity(0.9),
+          // ប្រើពណ៌ស្វាយដិត Gradient សម្រាប់ Nav ដើម្បីឱ្យលេចធ្លោ
+          gradient: BrandGradient.luxury,
           borderRadius: BorderRadius.circular(35),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
+              color: AppColor.primaryColor.withOpacity(isDark ? 0.5 : 0.2),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
           ],
+          // បន្ថែម Border ស្ដើងៗបែប Glassmorphism
+          border: Border.all(color: AppColor.glassBorder, width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -69,7 +72,10 @@ class _MainHolderState extends State<Main_Bus> {
 
   Widget _navItem(IconData icon, int index, String label) {
     bool isActive = _currentIndex == index;
-    final activeColor = const Color(0xFF3476E1);
+
+    // ប្រើពណ៌មាសសម្រាប់ Active និង ពណ៌សថ្លាសម្រាប់ Inactive
+    final Color activeColor = AppColor.lightGold;
+    final Color inactiveColor = Colors.white.withOpacity(0.5);
 
     return Expanded(
       child: GestureDetector(
@@ -82,22 +88,34 @@ class _MainHolderState extends State<Main_Bus> {
           }
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: 4,
+                width: isActive ? 20 : 0,
+                decoration: BoxDecoration(
+                  color: activeColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              const SizedBox(height: 6),
               Icon(
                 icon,
-                color: isActive ? activeColor : Colors.grey[400],
-                size: isActive ? 28 : 24,
+                color: isActive ? activeColor : inactiveColor,
+                size: isActive ? 26 : 22,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                  color: isActive ? activeColor : Colors.grey[400],
+                  color: isActive ? activeColor : inactiveColor,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],

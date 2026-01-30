@@ -12,72 +12,126 @@ class StudentProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeManager>(context);
     final isDark = theme.isDarkMode;
-    final Color textColor = isDark ? Colors.white : Colors.black87;
+    final Color textColor = isDark ? Colors.white : AppColor.primaryColor;
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          title: const Text("Student Profile", style: TextStyle(fontWeight: FontWeight.bold)
-
-          ),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: AppColor.primaryColor,
-          foregroundColor:Colors.white,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.edit_note),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileStudent())),
-            )
-          ],
+    return Scaffold(
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: BrandGradient.luxury),
         ),
-        body: Column(
+        title: const Text(
+            "STUDENT PROFILE",
+            style: TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1.2)
+        ),
+        centerTitle: true,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_note_rounded, color: AppColor.lightGold, size: 28),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileStudent())),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
           children: [
+            const SizedBox(height: 15),
             const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: CampusCardHeader()
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildProfileContent(textColor, context),
-                ],
-              ),
-            ),
+
+            _buildProfileContent(textColor, isDark, context),
+
+            const SizedBox(height: 100),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileContent(Color textColor, BuildContext context) {
-    return SingleChildScrollView(
+  Widget _buildProfileContent(Color textColor, bool isDark, BuildContext context) {
+    return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Personal Information", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
-          const SizedBox(height: 10),
-          _infoTile(Icons.school_outlined, "Faculty", "Computer Science", textColor),
-          _infoTile(Icons.class_outlined, "Class", "CS Generation 21", textColor),
-          const Divider(height: 20),
-          _infoTile(Icons.email_outlined, "Email", "austin.carr@example.com", textColor),
-          _infoTile(Icons.phone_android_outlined, "Phone", "+855 12 345 678 999", textColor),
-          _infoTile(Icons.location_on_outlined, "Address", "Phnom Penh, Cambodia", textColor),
+          // Section Label
+          Row(
+            children: [
+              const Icon(Icons.badge_rounded, color: AppColor.accentGold, size: 20),
+              const SizedBox(width: 10),
+              Text(
+                  "PERSONAL INFORMATION",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? AppColor.lightGold : AppColor.primaryColor,
+                    letterSpacing: 1.2,
+                  )
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+
+          // Information Card
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? AppColor.surfaceColor : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColor.glassBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                )
+              ],
+            ),
+            child: Column(
+              children: [
+                _infoTile(Icons.school_rounded, "Faculty", "Computer Science", textColor, isDark),
+                _divider(),
+                _infoTile(Icons.hub_rounded, "Class", "CS Generation 21", textColor, isDark),
+                _divider(),
+                _infoTile(Icons.email_rounded, "Email", "austin.carr@example.com", textColor, isDark),
+                _divider(),
+                _infoTile(Icons.phone_android_rounded, "Phone", "+855 12 345 678", textColor, isDark),
+                _divider(),
+                _infoTile(Icons.location_on_rounded, "Address", "Phnom Penh, Cambodia", textColor, isDark),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _infoTile(IconData icon, String label, String val, Color textColor) {
+  Widget _infoTile(IconData icon, String label, String val, Color textColor, bool isDark) {
     return ListTile(
-      visualDensity: const VisualDensity(vertical: -4),
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: AppColor.accentGold, size: 20),
-      title: Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-      subtitle: Text(val, style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+      visualDensity: const VisualDensity(vertical: -2),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: AppColor.primaryColor.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: AppColor.accentGold, size: 20),
+      ),
+      title: Text(label, style: TextStyle(color: isDark ? Colors.white38 : Colors.grey.shade600, fontSize: 11, fontWeight: FontWeight.bold)),
+      subtitle: Text(val, style: TextStyle(color: isDark ? Colors.white : AppColor.primaryColor, fontWeight: FontWeight.w900, fontSize: 14)),
+    );
+  }
+
+  Widget _divider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Divider(height: 1, thickness: 1, color: AppColor.glassBorder),
     );
   }
 }

@@ -21,4 +21,4 @@ class DirectionsRepository {
     }
     return null;
   }
-}
+} 

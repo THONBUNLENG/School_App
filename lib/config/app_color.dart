@@ -7,7 +7,7 @@ mixin AppColor {
 
   static const Color accentGold = Color(0xFFD4AF37);
   static const Color lightGold = Color(0xFFF1D592);
-
+  static Color brandOrange = const Color(0xFFD85D22);
   // Glassmorphism colors
   static Color glassWhite = Colors.white.withOpacity(0.08);
   static Color glassBorder = Colors.white.withOpacity(0.15);

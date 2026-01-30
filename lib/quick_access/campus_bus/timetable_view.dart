@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
+import '../../extension/change_notifier.dart';
+import '../../extension/string_extension.dart'; // សម្រាប់ check isDarkMode
 
 class TimetableView extends StatefulWidget {
   const TimetableView({super.key});
@@ -36,7 +40,6 @@ class _TimetableViewState extends State<TimetableView> {
           .contains(enteredKeyword.toLowerCase()))
           .toList();
     }
-
     setState(() {
       _filteredSchedule = results;
     });
@@ -44,22 +47,27 @@ class _TimetableViewState extends State<TimetableView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA),
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       body: Column(
         children: [
           _buildSearchHeader(context, isDark),
           Expanded(
             child: _filteredSchedule.isNotEmpty
                 ? ListView.builder(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 20, bottom: 100), // បន្ថែម space សម្រាប់ Bottom Nav
               itemCount: _filteredSchedule.length,
               itemBuilder: (context, index) =>
                   _buildScheduleCard(_filteredSchedule[index], isDark),
             )
-                : const Center(child: Text("No routes found")),
+                : Center(
+              child: Text(
+                "No routes found".tr,
+                style: TextStyle(color: isDark ? Colors.white54 : Colors.grey),
+              ),
+            ),
           ),
         ],
       ),
@@ -70,40 +78,60 @@ class _TimetableViewState extends State<TimetableView> {
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 10,
-        bottom: 25,
+        bottom: 30,
         left: 20,
         right: 20,
       ),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF1A237E), const Color(0xFF0D1B2A)]
-              : [const Color(0xFF3476E1), const Color(0xFF67B0F5)],
-        ),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
+        // 🔥 ប្រើ Gradient ពណ៌ស្វាយដិត Identity របស់ NJU
+        gradient: BrandGradient.luxury,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.primaryColor.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          )
+        ],
       ),
       child: Column(
         children: [
-          const Text(
-            "Campus Timetable",
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            "Campus Timetable".tr,
+            style: const TextStyle(
+              color: AppColor.lightGold, // ពណ៌មាស Premium
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 20),
           // Search Input Field
-          TextField(
-            controller: _searchController,
-            onChanged: (value) => _runFilter(value),
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: "Search destination...",
-              hintStyle: const TextStyle(color: Colors.white54),
-              prefixIcon: const Icon(Icons.search, color: Colors.white70),
-              filled: true,
-              fillColor: Colors.white.withOpacity(0.2),
-              contentPadding: const EdgeInsets.symmetric(vertical: 0),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide.none,
+          Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))
+              ],
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) => _runFilter(value),
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: "Search destination...".tr,
+                hintStyle: const TextStyle(color: Colors.white54, fontSize: 14),
+                prefixIcon: const Icon(Icons.search_rounded, color: AppColor.lightGold),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.1),
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: AppColor.glassBorder),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),
@@ -113,30 +141,30 @@ class _TimetableViewState extends State<TimetableView> {
   }
 
   Widget _buildScheduleCard(Map<String, String> item, bool isDark) {
-    // Logic to determine color based on status text
     Color statusColor;
     switch (item['status']?.toLowerCase()) {
       case 'delayed':
         statusColor = Colors.redAccent;
         break;
       case 'departed':
-        statusColor = Colors.grey;
+        statusColor = isDark ? Colors.white24 : Colors.grey.shade400;
         break;
       default:
-        statusColor = const Color(0xFF3476E1); // NJU Blue for 'On Time'
+        statusColor = AppColor.brandOrange; // ប្រើពណ៌ទឹកក្រូចសម្រាប់ On Time ឱ្យលេចធ្លោ
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: isDark ? AppColor.surfaceColor : Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: AppColor.glassBorder),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
           )
         ],
       ),
@@ -149,21 +177,21 @@ class _TimetableViewState extends State<TimetableView> {
               Text(
                 item['time'] ?? "--:--",
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : const Color(0xFF3476E1),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? AppColor.lightGold : AppColor.primaryColor,
                 ),
               ),
               const Text(
-                "Scheduled",
-                style: TextStyle(fontSize: 10, color: Colors.grey),
+                "DEPARTURE",
+                style: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold, letterSpacing: 1),
               ),
             ],
           ),
           const SizedBox(width: 20),
 
           // 2. Vertical Divider
-          Container(width: 1, height: 40, color: Colors.grey.withOpacity(0.3)),
+          Container(width: 1.5, height: 45, color: AppColor.glassBorder),
           const SizedBox(width: 20),
 
           // 3. Route Details
@@ -173,21 +201,26 @@ class _TimetableViewState extends State<TimetableView> {
               children: [
                 Text(
                   item['route'] ?? "Unknown Route",
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 // Status Badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(6),
+                    color: statusColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: statusColor.withOpacity(0.2)),
                   ),
                   child: Text(
                     item['status']?.toUpperCase() ?? "UNKNOWN",
                     style: TextStyle(
                       color: statusColor,
-                      fontSize: 10,
+                      fontSize: 9,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -197,11 +230,16 @@ class _TimetableViewState extends State<TimetableView> {
           ),
 
           // 4. Notification Toggle
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, color: Colors.grey),
-            onPressed: () {
-              // Logic for "Remind me 5 minutes before"
-            },
+          Container(
+            decoration: BoxDecoration(
+              color: AppColor.primaryColor.withOpacity(0.05),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: Icon(Icons.notifications_active_outlined,
+                  color: isDark ? Colors.white38 : Colors.grey.shade400, size: 20),
+              onPressed: () {},
+            ),
           ),
         ],
       ),

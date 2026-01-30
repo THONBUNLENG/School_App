@@ -5,7 +5,6 @@ import '../../../extension/change_notifier.dart';
 import '../../home/home_screen/change_language.dart';
 import '../../home/home_screen/menu_screen/logout.dart';
 
-
 class SettingApp extends StatefulWidget {
   const SettingApp({super.key});
 
@@ -20,50 +19,64 @@ class _SettingsScreenState extends State<SettingApp> {
     final isDark = themeManager.isDarkMode;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Settings"),
+        // 🔥 ប្រើ Gradient Identity របស់ NJU
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+        ),
+        title: const Text(
+          "SETTINGS",
+          style: TextStyle(
+              color: AppColor.lightGold,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              letterSpacing: 1.2
+          ),
+        ),
         elevation: 0,
-
-        backgroundColor: isDark ? AppColor.primaryColor:AppColor.primaryColor,
-        foregroundColor: isDark ? Colors.white : Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle("Account", isDark),
-            const SizedBox(height: 10),
+            _buildSectionTitle("ACCOUNT", isDark),
+            const SizedBox(height: 15),
             _buildListTile(
-              icon: Icons.person_outline,
+              icon: Icons.person_outline_rounded,
               title: "Personal Information",
-              subTitle: "Manage your personal details",
+              subTitle: "Manage your student profile details",
               onTap: () {},
             ),
             _buildListTile(
-              icon: Icons.language_outlined,
+              icon: Icons.translate_rounded,
               title: "Language",
-              subTitle: "Set your preferred language",
+              subTitle: "Set your preferred interface language",
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ChangeLanguageScreen()),
               ),
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
-            _buildSectionTitle("Security & Appearance", isDark),
-            const SizedBox(height: 10),
+            _buildSectionTitle("PREFERENCES & APPEARANCE", isDark),
+            const SizedBox(height: 15),
 
             _buildListTile(
-              icon: isDark ? Icons.dark_mode : Icons.light_mode,
+              icon: isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
               title: "Dark Mode",
-              subTitle: isDark ? "Switch to Light Mode" : "Switch to Dark Mode",
-              trailing: Switch(
+              subTitle: isDark ? "Switch to Light theme" : "Switch to Dark theme",
+              trailing: Switch.adaptive(
                 value: isDark,
-                activeColor: AppColor.primaryColor,
+                activeColor: AppColor.accentGold,
                 onChanged: (value) => themeManager.toggleTheme(value),
               ),
               onTap: () => themeManager.toggleTheme(!isDark),
@@ -72,26 +85,35 @@ class _SettingsScreenState extends State<SettingApp> {
             _buildListTile(
               icon: Icons.logout_rounded,
               title: "Log Out",
-              subTitle: "Sign out from your account",
+              subTitle: "Sign out securely from your account",
               onTap: () => LogoutDialog.show(context),
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
-            _buildSectionTitle("Security", isDark),
-            const SizedBox(height: 10),
+            _buildSectionTitle("SECURITY", isDark),
+            const SizedBox(height: 15),
             _buildListTile(
               icon: Icons.lock_reset_rounded,
               title: "Change Password",
-              subTitle: "Update and secure your account password",
+              subTitle: "Update and secure your NJU account",
               onTap: () {},
             ),
 
-            const SizedBox(height: 30),
-            const Center(
-              child: Text(
-                "Version 1.0.0",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+            const SizedBox(height: 40),
+            Center(
+              child: Column(
+                children: [
+                  const Text(
+                    "NANJING UNIVERSITY STUDENT APP",
+                    style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Version 1.0.0",
+                    style: TextStyle(color: isDark ? Colors.white24 : Colors.grey.shade400, fontSize: 11),
+                  ),
+                ],
               ),
             ),
           ],
@@ -101,13 +123,16 @@ class _SettingsScreenState extends State<SettingApp> {
   }
 
   Widget _buildSectionTitle(String title, bool isDark) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: isDark ? Colors.white70 :AppColor.primaryColor,
-        letterSpacing: 0.5,
+    return Padding(
+      padding: const EdgeInsets.only(left: 5),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w900,
+          color: isDark ? AppColor.lightGold : AppColor.primaryColor,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
@@ -121,31 +146,42 @@ class _SettingsScreenState extends State<SettingApp> {
   }) {
     final isDark = Provider.of<ThemeManager>(context).isDarkMode;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      elevation: 0,
-      color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColor.surfaceColor : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColor.glassBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColor.primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+            color: AppColor.primaryColor.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: AppColor.primaryColor, size: 24),
+          child: Icon(icon, color: AppColor.accentGold, size: 22),
         ),
         title: Text(
             title,
             style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : AppColor.primaryColor,
             )
         ),
         subtitle: subTitle != null
-            ? Text(subTitle, style: TextStyle(fontSize: 12, color: isDark ? Colors.white60 : Colors.black54))
+            ? Text(subTitle, style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54))
             : null,
-        trailing: trailing ?? const Icon(Icons.chevron_right, color: Colors.grey),
+        trailing: trailing ?? Icon(Icons.arrow_forward_ios_rounded, color: isDark ? Colors.white24 : Colors.grey.shade300, size: 14),
         onTap: onTap,
       ),
     );

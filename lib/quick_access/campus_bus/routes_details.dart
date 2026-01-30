@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
+import '../../extension/change_notifier.dart';
+import '../../extension/string_extension.dart'; // សម្រាប់ check isDarkMode
 
 class RoutesDetailsPage extends StatelessWidget {
   const RoutesDetailsPage({super.key});
@@ -13,15 +17,16 @@ class RoutesDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       body: Column(
         children: [
           _buildRouteHeader(context, isDark),
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 30),
               itemCount: routePoints.length,
               itemBuilder: (context, index) => _buildRouteStep(
                 index,
@@ -39,20 +44,35 @@ class RoutesDetailsPage extends StatelessWidget {
   Widget _buildRouteHeader(BuildContext context, bool isDark) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 20, bottom: 25),
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 20, bottom: 35),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF1B263B), const Color(0xFF0D1B2A)]
-              : [const Color(0xFF3476E1), const Color(0xFF67B0F5)],
-        ),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
+        // 🔥 ប្រើ Gradient ពណ៌ស្វាយដិត Identity របស់ NJU
+        gradient: BrandGradient.luxury,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.primaryColor.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          )
+        ],
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Text("Line 1: Campus Loop", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 5),
-          Text("Direction: West to East", style: TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(
+            "Line 1: Campus Loop".tr,
+            style: const TextStyle(
+              color: AppColor.lightGold,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "Direction: West to East",
+            style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+          ),
         ],
       ),
     );
@@ -63,55 +83,64 @@ class RoutesDetailsPage extends StatelessWidget {
     bool hasBus = point['hasBus'];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 35),
       child: IntrinsicHeight(
         child: Row(
           children: [
-            // Timeline Indicator Logic
+            // --- Timeline Indicator ---
             Column(
               children: [
                 Container(
-                  width: 12,
-                  height: 12,
+                  width: 16,
+                  height: 16,
                   decoration: BoxDecoration(
-                    color: isPassed ? const Color(0xFF3476E1) : Colors.grey[300],
+                    color: isPassed ? AppColor.accentGold : (isDark ? Colors.white12 : Colors.grey[300]),
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: [if (isPassed) const BoxShadow(color: Colors.black12, blurRadius: 4)],
+                    border: Border.all(
+                        color: isPassed ? AppColor.lightGold : (isDark ? Colors.white24 : Colors.white),
+                        width: 3
+                    ),
+                    boxShadow: [
+                      if (isPassed)
+                        BoxShadow(color: AppColor.accentGold.withOpacity(0.4), blurRadius: 8, spreadRadius: 2)
+                    ],
                   ),
                 ),
                 if (index != total - 1)
                   Expanded(
                     child: Container(
-                      width: 2,
-                      color: isPassed ? const Color(0xFF3476E1) : Colors.grey[300],
+                      width: 3,
+                      decoration: BoxDecoration(
+                        color: isPassed ? AppColor.accentGold.withOpacity(0.5) : (isDark ? Colors.white12 : Colors.grey[200]),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(width: 20),
-            // Station Content
+            const SizedBox(width: 25),
+
+            // --- Station Content ---
             Expanded(
               child: Container(
-                padding: const EdgeInsets.only(bottom: 30),
+                padding: const EdgeInsets.only(bottom: 35),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      point['name'],
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isPassed ? FontWeight.bold : FontWeight.normal,
-                        color: isPassed ? (isDark ? Colors.white : Colors.black87) : Colors.grey,
+                    Expanded(
+                      child: Text(
+                        point['name'],
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: isPassed ? FontWeight.bold : FontWeight.w500,
+                          color: isPassed
+                              ? (isDark ? Colors.white : AppColor.primaryColor)
+                              : (isDark ? Colors.white38 : Colors.grey.shade400),
+                        ),
                       ),
                     ),
                     if (hasBus)
-                      const Column(
-                        children: [
-                          Icon(Icons.directions_bus, color: Color(0xFF3476E1), size: 28),
-                          Text("BUS HERE", style: TextStyle(color: Color(0xFF3476E1), fontSize: 8, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
+                      _buildBusIndicator(isDark),
                   ],
                 ),
               ),
@@ -119,6 +148,26 @@ class RoutesDetailsPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBusIndicator(bool isDark) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColor.brandOrange.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.directions_bus_rounded, color: Colors.orange, size: 24),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+            "BUS HERE",
+            style: TextStyle(color: Colors.orange, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5)
+        ),
+      ],
     );
   }
 }

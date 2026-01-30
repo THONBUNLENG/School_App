@@ -51,17 +51,17 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
     final bool isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9),
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          /// 🔹 Custom Sliver App Bar
+          /// 🔹 Custom Sliver App Bar (Luxury NJU Style)
           SliverAppBar(
-            expandedHeight: 260,
+            expandedHeight: 270,
             pinned: true,
             stretch: true,
             backgroundColor: AppColor.primaryColor,
-            leading: const BackButton(color: Colors.white),
+            leading: const BackButton(color: AppColor.lightGold),
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [StretchMode.zoomBackground],
               centerTitle: true,
@@ -70,50 +70,46 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: Colors.white,
-                  fontFamily: 'Kantumruy Pro',
+                  color: AppColor.lightGold, // ប្រើពណ៌មាស
+                  letterSpacing: 1.0,
                 ),
               ),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Background Gradient
+                  // 🔥 ប្រើ Gradient Identity របស់សាលា
                   Container(
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColor.primaryColor, Color(0xFF800000)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                      gradient: BrandGradient.luxury,
                     ),
                   ),
                   // Logo & Text
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      SizedBox(height: 30),
+                      SizedBox(height: 40),
                       Image(
                         image: AssetImage('assets/image/logo.png'),
-                        width: 100,
-                        height: 100,
+                        width: 90,
+                        height: 90,
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 15),
                       Text(
                         '南京大學',
                         style: TextStyle(
                           fontFamily: 'MaoTi',
-                          fontSize: 26,
-                          color: Colors.white,
-                          letterSpacing: 6,
+                          fontSize: 28,
+                          color: AppColor.lightGold, // ពណ៌មាស
+                          letterSpacing: 8,
                         ),
                       ),
                       Text(
                         'NANJING UNIVERSITY',
                         style: TextStyle(
                           fontSize: 10,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white70,
-                          letterSpacing: 1.2,
+                          letterSpacing: 2.0,
                         ),
                       ),
                     ],
@@ -125,7 +121,7 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
 
           /// 🔹 Feature List Section
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
+            padding: const EdgeInsets.fromLTRB(20, 25, 20, 100), // Spacing បន្ថែមសម្រាប់ Bottom Nav
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -147,7 +143,7 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
     );
   }
 
-  /// 🔹 Animated Card with ExpansionTile
+  /// 🔹 Animated Card with Premium Design
   Widget _buildAnimatedCard(int index, IconData icon, String title, String desc, bool isDark) {
     return AnimatedBuilder(
       animation: _controller,
@@ -162,57 +158,60 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
         return Opacity(
           opacity: curve.value,
           child: Transform.translate(
-            offset: Offset(0, 30 * (1 - curve.value)),
+            offset: Offset(0, 40 * (1 - curve.value)),
             child: child,
           ),
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 15),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: isDark ? Border.all(color: Colors.white10) : null,
+          color: isDark ? AppColor.surfaceColor : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColor.glassBorder),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
             )
           ],
         ),
         child: Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          data: Theme.of(context).copyWith(
+            dividerColor: Colors.transparent,
+            splashColor: AppColor.primaryColor.withOpacity(0.05),
+          ),
           child: ExpansionTile(
             iconColor: AppColor.accentGold,
-            collapsedIconColor: Colors.grey,
+            collapsedIconColor: Colors.grey.shade400,
             leading: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColor.accentGold.withOpacity(0.12),
-                borderRadius: BorderRadius.circular(12),
+                color: AppColor.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: Icon(icon, color: AppColor.accentGold, size: 24),
+              child: Icon(icon, color: isDark ? AppColor.lightGold : AppColor.primaryColor, size: 24),
             ),
             title: Text(
               title,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
-                color: isDark ? Colors.white : Colors.black87,
-                fontFamily: 'Kantumruy Pro',
+                color: isDark ? Colors.white : AppColor.primaryColor,
+                letterSpacing: 0.3,
               ),
             ),
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 25),
                 child: Text(
                   desc,
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 13,
-                    height: 1.6,
-                    color: isDark ? Colors.white60 : Colors.black54,
+                    height: 1.7,
+                    color: isDark ? Colors.white70 : Colors.black54,
                     fontFamily: 'Battambang',
                   ),
                 ),

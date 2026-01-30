@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../config/app_color.dart';
 import '../../extension/change_notifier.dart';
 import '../../extension/string_extension.dart';
 import '../../model/food.dart';
@@ -20,19 +21,14 @@ class _MenuScreenState extends State<MenuScreen> {
   String searchQuery = '';
 
   final List<String> categories = [
-    "All",
-    "Food",
-    "Popular Food Drink",
-    "Street Food",
-    "Drinks",
-    "Desserts"
+    "All", "Food", "Popular", "Street Food", "Drinks", "Desserts"
   ];
   late final List<Food> menuItems;
 
   @override
   void initState() {
     super.initState();
-    menuItems = getMenuItems(); // Make sure this returns your Food list
+    menuItems = getMenuItems();
   }
 
   double get cartTotal =>
@@ -49,8 +45,7 @@ class _MenuScreenState extends State<MenuScreen> {
       if (index != -1) {
         cartItems[index] = cartItems[index].copyWith(
           quantity: cartItems[index].quantity + newItem.quantity,
-          finalTotalPrice:
-          cartItems[index].finalTotalPrice + newItem.finalTotalPrice,
+          finalTotalPrice: cartItems[index].finalTotalPrice + newItem.finalTotalPrice,
         );
       } else {
         cartItems.add(newItem);
@@ -72,67 +67,55 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeManager = context.watch<ThemeManager>();
-    final isDark = themeManager.isDarkMode;
+    final isDark = context.watch<ThemeManager>().isDarkMode;
 
-    // Filter items
     List<Food> filteredItems = menuItems.where((item) {
       final matchesCategory = selectedCategory == 0 ||
-          item.category.toLowerCase() ==
-              categories[selectedCategory].toLowerCase();
-      final matchesSearch =
-      item.name.toLowerCase().contains(searchQuery.toLowerCase());
+          item.category.toLowerCase() == categories[selectedCategory].toLowerCase();
+      final matchesSearch = item.name.toLowerCase().contains(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     }).toList();
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.grey[900] : const Color(0xFFFBFBFB),
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: _buildAppBar(isDark),
       body: Column(
         children: [
           _buildSearchBar(isDark),
           _buildCategoryList(isDark),
           const SizedBox(height: 10),
-          filteredItems.isEmpty
-              ? Expanded(
-            child: Center(
-              child: Text(
-                "No items found".tr,
-                style: TextStyle(
-                  color: isDark ? Colors.white54 : Colors.grey[600],
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          )
-              : _buildFoodGrid(filteredItems, isDark),
+          Expanded(
+            child: filteredItems.isEmpty
+                ? Center(child: Text("No items found".tr, style: TextStyle(color: isDark ? Colors.white54 : Colors.grey)))
+                : _buildFoodGrid(filteredItems, isDark),
+          ),
         ],
       ),
-      bottomNavigationBar:
-      cartItems.isEmpty ? null : _buildFloatingCartSummary(isDark),
+      // ប្រើ Floating Action Button សម្រាប់ Cart ដើម្បីកុំឱ្យបាំង content
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: cartItems.isEmpty ? null : _buildFloatingCartSummary(isDark),
     );
   }
 
   AppBar _buildAppBar(bool isDark) {
     return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      centerTitle: true,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+      ),
       title: Text(
         "Canteen Menu".tr,
-        style: TextStyle(
-          color: isDark ? Colors.white : Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.bold),
       ),
+      centerTitle: true,
+      elevation: 0,
       actions: [
         IconButton(
           onPressed: _openCart,
           icon: Badge(
-            label: Text('${cartItems.length}'),
+            backgroundColor: AppColor.brandOrange,
+            label: Text('${cartItems.length}', style: const TextStyle(color: Colors.white)),
             isLabelVisible: cartItems.isNotEmpty,
-            child: Icon(Icons.shopping_cart_outlined,
-                color: isDark ? Colors.white : Colors.black),
+            child: const Icon(Icons.shopping_bag_outlined, color: AppColor.lightGold),
           ),
         ),
         const SizedBox(width: 10),
@@ -142,27 +125,32 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Widget _buildSearchBar(bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
       child: TextField(
         onChanged: (value) => setState(() => searchQuery = value),
         decoration: InputDecoration(
           hintText: "Search food...".tr,
-          prefixIcon: Icon(Icons.search, color: const Color(0xFFD85D22)),
+          prefixIcon: const Icon(Icons.search, color: AppColor.accentGold),
           filled: true,
-          fillColor: isDark ? Colors.grey[800] : Colors.white,
+          fillColor: isDark ? AppColor.surfaceColor : Colors.white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: AppColor.glassBorder),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: AppColor.glassBorder),
           ),
         ),
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        style: TextStyle(color: isDark ? Colors.white : AppColor.primaryColor),
       ),
     );
   }
 
   Widget _buildCategoryList(bool isDark) {
     return SizedBox(
-      height: 45,
+      height: 48,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -171,25 +159,22 @@ class _MenuScreenState extends State<MenuScreen> {
           bool isActive = selectedCategory == index;
           return GestureDetector(
             onTap: () => setState(() => selectedCategory = index),
-            child: Container(
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 22),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.only(right: 12, top: 5, bottom: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: isActive
-                    ? const Color(0xFFD85D22)
-                    : (isDark ? Colors.grey[800] : Colors.white),
+                gradient: isActive ? BrandGradient.goldMetallic : null,
+                color: isActive ? null : (isDark ? AppColor.surfaceColor : Colors.white),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isActive ? Colors.transparent : Colors.grey.shade200,
-                ),
+                border: Border.all(color: isActive ? Colors.transparent : AppColor.glassBorder),
+                boxShadow: isActive ? [BoxShadow(color: AppColor.accentGold.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))] : [],
               ),
               child: Center(
                 child: Text(
                   categories[index].tr,
                   style: TextStyle(
-                    color: isActive
-                        ? Colors.white
-                        : (isDark ? Colors.grey[400] : Colors.grey.shade600),
+                    color: isActive ? AppColor.primaryColor : (isDark ? Colors.white70 : Colors.grey.shade600),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -202,116 +187,110 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Widget _buildFoodGrid(List<Food> items, bool isDark) {
-    return Expanded(
-      child: GridView.builder(
-        padding: const EdgeInsets.all(20),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.72,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
-        ),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final item = items[index];
-          return GestureDetector(
-            onTap: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailScreen(
-                    food: item,
-                    cartCount: cartItems.length,
-                    onAddToCart: addToCart,
-                  ),
-                ),
-              );
-
-              if (result == "go_to_checkout") _openCart();
-            },
-            child: _buildFoodCard(item, isDark),
-          );
-        },
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 80),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.75,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
       ),
+      itemCount: items.length,
+      itemBuilder: (context, index) => _buildFoodCard(items[index], isDark),
     );
   }
 
   Widget _buildFoodCard(Food item, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[850] : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.2)
-                : Colors.black.withOpacity(0.04),
-            blurRadius: 10,
+    return GestureDetector(
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailScreen(food: item, cartCount: cartItems.length, onAddToCart: addToCart),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              child: Image.network(
-                item.img,
-                fit: BoxFit.cover,
-                width: double.infinity,
+        );
+        if (result == "go_to_checkout") _openCart();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? AppColor.surfaceColor : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColor.glassBorder),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: Hero(
+                  tag: '${item.name}-${item.img}',
+                  child: Image.network(item.img, fit: BoxFit.cover, width: double.infinity),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item.name,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 4),
-                Text(
-                  "\¥${item.price.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                      color: Color(0xFFD85D22), fontWeight: FontWeight.bold),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.name, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColor.primaryColor), maxLines: 1),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("\¥${item.price.toStringAsFixed(2)}", style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.w900)),
+                      const Icon(Icons.add_circle, color: AppColor.accentGold, size: 22),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFloatingCartSummary(bool isDark) {
-    return SafeArea(
-      child: Container(
-        margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1F2937),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      height: 60,
+      decoration: BoxDecoration(
+        gradient: BrandGradient.luxury,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: AppColor.primaryColor.withOpacity(0.4), blurRadius: 15, offset: const Offset(0, 5))],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _openCart,
           borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "${cartItems.length} items | \¥${cartTotal.toStringAsFixed(2)}",
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.shopping_bag, color: AppColor.lightGold),
+                    const SizedBox(width: 10),
+                    Text(
+                      "${cartItems.length} items  |  \¥${cartTotal.toStringAsFixed(2)}",
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const Row(
+                  children: [
+                    Text("View Cart", style: TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.bold)),
+                    Icon(Icons.arrow_forward_ios, color: AppColor.lightGold, size: 14),
+                  ],
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: _openCart,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD85D22)),
-              child: Text("View Cart".tr),
-            ),
-          ],
+          ),
         ),
       ),
     );

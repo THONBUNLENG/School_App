@@ -9,6 +9,7 @@ import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/string_extension.dart';
 import 'package:school_app/screen/home/home_screen/change_language.dart';
 import 'package:school_app/screen/home/website/website_screen.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import '../../../extension/change_notifier.dart';
@@ -58,23 +59,27 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
-        backgroundColor:AppColor.primaryColor,
-        toolbarHeight: 60,
-        elevation: 2,
+        // 🔥 ប្រើ Gradient Identity របស់សាលា
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+        ),
+        toolbarHeight: 75,
+        elevation: 0,
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Logo ជាមួយ Error Handler
             Image.asset(
               'assets/image/logo.png',
-              height: 60,
+              height: 55,
               errorBuilder: (context, error, stackTrace) =>
-              const Icon(Icons.school, color:Colors.white, size: 40),
+              const Icon(Icons.school, color: AppColor.lightGold, size: 40),
             ),
-            const SizedBox(width: 10),
-            const Column(
+            const SizedBox(width: 15),
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -83,16 +88,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontFamily: 'MaoTi',
                     fontSize: 24,
-                    color: Colors.white,
-                    letterSpacing: 8,
+                    color: AppColor.lightGold, // ប្រើពណ៌មាស Identity
+                    letterSpacing: 6,
                   ),
                 ),
-                Text(
-                  'NANJING  UNIVERSITY',
+                const Text(
+                  'NANJING UNIVERSITY',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white70,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ],
@@ -104,96 +110,98 @@ class _HomeScreenState extends State<HomeScreen> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            // Carousel Slider
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 280.0,
-                autoPlay: true,
-                viewportFraction: 0.98,
-                enlargeCenterPage: true,
-                autoPlayInterval: const Duration(seconds: 4),
-              ),
-              items: imgList.map((item) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      imageUrl: item,
-                      width: double.infinity,
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[100],
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4A2A73)),
-                          ),
+            // --- Carousel Slider ---
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  height: 220.0,
+                  autoPlay: true,
+                  viewportFraction: 0.92,
+                  enlargeCenterPage: true,
+                  autoPlayInterval: const Duration(seconds: 5),
+                ),
+                items: imgList.map((item) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: CachedNetworkImage(
+                        imageUrl: item,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(color: Colors.white),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.broken_image, color: Colors.grey),
                         ),
                       ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.broken_image, color: Colors.grey),
-                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
 
-            // Marquee
+            // --- Marquee News Bar ---
             Container(
-              height: 38,
-              margin: const EdgeInsets.symmetric(vertical: 0),
+              height: 35,
+              margin: const EdgeInsets.symmetric(horizontal: 15),
               decoration: BoxDecoration(
-                color: AppColor.primaryColor,
-                borderRadius: BorderRadius.circular(5),
+                color: AppColor.primaryColor.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: AppColor.primaryColor.withOpacity(0.1)),
               ),
-              child: Center(
-                child: Marquee(
-                  text: 'Welcome to NANJING UNIVERSITY!  欢迎来到南京大学！',
-                  style: const TextStyle(
-                    fontFamily: 'MaoTi',
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
+              child: Row(
+                children: [
+                  const SizedBox(width: 15),
+                  const Icon(Icons.campaign, color: AppColor.primaryColor, size: 18),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Marquee(
+                      text: 'Welcome to NANJING UNIVERSITY!  欢迎来到南京大学！',
+                      style: const TextStyle(
+                        color: AppColor.primaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      blankSpace: 100.0,
+                      velocity: 30.0,
+                      pauseAfterRound: const Duration(seconds: 2),
+                    ),
                   ),
-                  blankSpace: 80.0,
-                  velocity: 35.0,
-                  pauseAfterRound: const Duration(seconds: 1),
-                  accelerationDuration: const Duration(seconds: 1),
-                  accelerationCurve: Curves.linear,
-                ),
+                ],
               ),
             ),
 
             // Language Selector
             Padding(
-              padding: const EdgeInsets.only(top: 8, right: 8),
+              padding: const EdgeInsets.only(top: 12, right: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   _langIcon(context, '🇺🇸', 'en', subTextColor),
+                  const SizedBox(width: 10),
                   _langIcon(context, '🇨🇳', 'zh', subTextColor),
                 ],
               ),
             ),
 
-            // Grid Items
+            // --- Grid Menu Items ---
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(15.0),
               child: Column(
                 children: [
                   Row(
@@ -208,21 +216,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       _gridItem(context, 'history', 'assets/image/history.png', cardColor, textColor),
+
+                      // 🔥 Premium E-Learning Button
                       Expanded(
                         flex: 2,
                         child: InkWell(
                           onTap: () {},
+                          borderRadius: BorderRadius.circular(18),
                           child: Container(
                             height: 110,
-                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF4A2A73),
-                              borderRadius: BorderRadius.circular(10),
+                              gradient: BrandGradient.luxury,
+                              borderRadius: BorderRadius.circular(18),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
+                                  color: AppColor.primaryColor.withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
                                 ),
                               ],
                             ),
@@ -230,17 +241,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset('assets/image/e_learning_logo.png', height: 40,
-                                    errorBuilder: (c, e, s) => const Icon(Icons.computer, color: Colors.white, size: 35)),
-                                const SizedBox(height: 5),
+                                    errorBuilder: (c, e, s) => const Icon(Icons.laptop_chromebook, color: AppColor.lightGold, size: 35)),
+                                const SizedBox(height: 8),
                                 Text(
                                     'e_learning_title'.tr,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontFamily: 'Battambang', color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)
+                                    style: const TextStyle(color: AppColor.lightGold, fontSize: 11, fontWeight: FontWeight.bold)
                                 ),
                                 Text(
                                     'e_learning_sub'.tr,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w500)
+                                    style: const TextStyle(color: Colors.white70, fontSize: 9)
                                 ),
                               ],
                             ),
@@ -262,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -270,9 +279,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _langIcon(BuildContext context, String flag, String code, Color txtCol) {
+    // ឆែកមើលថាតើភាសានេះត្រូវបានជ្រើសរើសឬនៅ
     bool isSelected = translator.currentLocale?.languageCode == code;
 
     return InkWell(
+      // លុប Effect ខ្មៅៗពេលចុចចេញ
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: () {
         if (isSelected) return;
 
@@ -283,19 +296,42 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {});
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(flag, style: const TextStyle(fontSize: 22)),
+            // បង្ហាញទង់ជាតិ
+            Text(flag, style: const TextStyle(fontSize: 24)),
+            const SizedBox(height: 4),
+            // បង្ហាញឈ្មោះភាសា
             Text(
-               (code == 'en' ? 'english'.tr : 'chinese'.tr),
+              (code == 'en' ? 'english'.tr : 'chinese'.tr),
               style: TextStyle(
-                fontSize: 10,
-                color: isSelected ? const Color(0xFF00AEEF) : txtCol,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 11,
+                // បើជ្រើសរើសប្រើពណ៌មាស បើមិនជ្រើសរើសប្រើពណ៌ដែលបញ្ជូនមក
+                color: isSelected ? AppColor.lightGold : txtCol.withOpacity(0.6),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                letterSpacing: 0.5,
               ),
             ),
-            if (isSelected) Container(height: 2, width: 15, color: const Color(0xFF00AEEF))
+            const SizedBox(height: 4),
+            // Indicator ខាងក្រោមអក្សរ (មាស)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 2.5,
+              width: isSelected ? 20 : 0,
+              decoration: BoxDecoration(
+                color: AppColor.lightGold,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  if (isSelected)
+                    BoxShadow(
+                      color: AppColor.accentGold.withOpacity(0.4),
+                      blurRadius: 4,
+                    )
+                ],
+              ),
+            )
           ],
         ),
       ),
@@ -303,8 +339,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _gridItem(BuildContext context, String labelKey, String imagePath, Color cardBg, Color txtCol) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Expanded(
       child: InkWell(
+        // លុប Effect ខ្មៅៗពេលចុចចេញ ដើម្បីឱ្យមើលទៅ High-end
+        splashColor: AppColor.primaryColor.withOpacity(0.1),
+        highlightColor: Colors.transparent,
         onTap: () async {
           Future<void> launchExternalURL(String url) async {
             final Uri uri = Uri.parse(url);
@@ -318,16 +359,16 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));
               break;
             case 'admission':
-              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/admission');
+              await launchExternalURL('https://www.nju.edu.cn/en/Admission/General_Information.htm'); // កែទៅ NJU URL
               break;
             case 'fees':
-              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/tuition-fee');
+              await launchExternalURL('https://www.nju.edu.cn/en/Admission/Scholarships.htm');
               break;
             case 'history':
-              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/about-beltei/history');
+              await launchExternalURL('https://www.nju.edu.cn/en/AboutNJU/History.htm');
               break;
             case 'contacts':
-              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/contact-us');
+              await launchExternalURL('https://www.nju.edu.cn/en/AboutNJU/ContactUs.htm');
               break;
             case 'website':
               Navigator.push(context, MaterialPageRoute(
@@ -335,48 +376,62 @@ class _HomeScreenState extends State<HomeScreen> {
               ));
               break;
             case 'facebook':
-              await launchExternalURL('https://www.facebook.com/belteiinternationalgroup');
+              await launchExternalURL('https://www.facebook.com/nanjinguniversity');
               break;
             case 'youtube':
               await launchExternalURL('https://www.youtube.com/@njusters5239');
               break;
             case 'jobs':
-              await launchExternalURL('https://www.beltei.edu.kh/khm/index.php/job-announcement');
+              await launchExternalURL('https://hr.nju.edu.cn/');
               break;
           }
         },
         child: Column(
           children: [
+            // --- Icon Container with Glassmorphism Effect ---
             Container(
-              height: 62, width: 62,
+              height: 65, width: 65,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: cardBg,
+                // បន្ថែម Border ស្ដើងៗបែប Glass Border
+                border: Border.all(color: AppColor.glassBorder, width: 1.5),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))
+                  BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6)
+                  )
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.all(16.0), // បង្កើន Padding បន្តិចឱ្យមើលទៅស្រឡះ
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.contain,
-                  errorBuilder: (c, e, s) => const Icon(Icons.grid_view_rounded, color: Color(0xFF81005B), size: 25),
+                  // Error Icon ប្តូរមកប្រើពណ៌មាស Identity របស់ NJU
+                  errorBuilder: (c, e, s) => const Icon(
+                      Icons.grid_view_rounded,
+                      color: AppColor.accentGold,
+                      size: 25
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
+            // --- Label Text ---
             SizedBox(
-              height: 35,
+              height: 38,
               child: Text(
                 labelKey.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontFamily: 'Battambang',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: txtCol,
-                    height: 1.3
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white70 : AppColor.primaryColor,
+                    height: 1.2,
+                    letterSpacing: 0.2
                 ),
               ),
             ),

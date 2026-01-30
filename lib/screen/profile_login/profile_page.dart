@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/change_notifier.dart';
+import 'package:school_app/screen/home/home_screen/main_holder.dart';
 import 'package:school_app/screen/home_profile/home_profile_screen/home_profile_screen.dart';
 import 'package:school_app/screen/profile_login/qr_login.dart';
 import 'package:school_app/screen/profile_login/wechat_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/api_sms.dart';
 
 
@@ -202,7 +204,7 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
       String result;
 
       if (_currentTab == 0) {
-        // Hardcoded account login for testing
+
         result = (user == "admin" && pass == "@Bunleng520") ? "success" : "Invalid username or password";
       } else {
         // SMS login via service
@@ -238,11 +240,17 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
       );
   }
 
-// Navigate to Home screen on successful login
-  void _onLoginSuccess() {
+  Future<void> _onLoginSuccess() async {
+    final prefs = await SharedPreferences.getInstance();
+    // 💡 រក្សាទុកស្ថានភាព Login ក្នុង SharedPreferences
+    await prefs.setBool('isLoggedIn', true);
+
+    if (!mounted) return;
+
+    // រុញទៅកាន់ MainHolder និងលុបស្គ្រីន Login ចោល (ការពារកុំឱ្យ Back មកវិញបាន)
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const HomeProfileScreen()),
+      MaterialPageRoute(builder: (context) => const MainHolder()),
           (route) => false,
     );
   }
@@ -318,40 +326,59 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
       ),
     );
   }
-
-  // ---------- Helper Widgets ----------
   Widget _buildHeader() => Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Image.asset(
         'assets/image/logo_school.png',
-        height: 45,
-        color: Colors.white,
-        errorBuilder: (c, e, s) => const Icon(Icons.school, color: Colors.white, size: 40),
+        height: 50,
+        color: AppColor.lightGold,
+        errorBuilder: (c, e, s) => const Icon(Icons.school, color: AppColor.lightGold, size: 45),
       ),
-      const SizedBox(width: 10),
+      const SizedBox(width: 15),
+
+
       Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: const [
           Text(
             "南京大学",
             style: TextStyle(
-                color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'serif'),
+              color: AppColor.lightGold,
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'MaoTi',
+              letterSpacing: 2,
+            ),
           ),
           Text(
             "NANJING UNIVERSITY",
-            style: TextStyle(color: Colors.white, fontSize: 7, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
           ),
         ],
       ),
+
       Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12),
-        height: 25,
-        width: 1,
-        color: Colors.white30,
+        margin: const EdgeInsets.symmetric(horizontal: 15),
+        height: 30,
+        width: 1.5,
+        color: Colors.white24,
       ),
+
       const Text(
-        "统一身份认证",
-        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400),
+        "统一身份认证\nUNIFIED LOGIN",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          height: 1.2,
+        ),
       ),
     ],
   );

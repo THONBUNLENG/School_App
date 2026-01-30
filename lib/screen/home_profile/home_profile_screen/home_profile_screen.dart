@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_app/screen/home_profile/home_profile_screen/detail_screen.dart';
-
+import 'package:provider/provider.dart';
+import 'package:school_app/config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
+import '../../../../extension/change_notifier.dart'; // សម្រាប់ check isDarkMode
 import '../courese.dart';
 import '../profile_student.dart';
 import 'man_screen_user.dart';
@@ -15,9 +16,6 @@ class HomeProfileScreen extends StatefulWidget {
 class _HomeProfileScreenState extends State<HomeProfileScreen> {
   int _selectedIndex = 0;
 
-  // Toggle dark mode as needed
-  bool isDarkMode = false;
-
   late final List<Widget> _pages;
 
   @override
@@ -25,63 +23,97 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     super.initState();
     _pages = [
       const ManScreenUser(),
-      CoursePageFix(),
+        CoursePageFix(),
       const StudentProfilePage(),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Provider.of<ThemeManager>(context).isDarkMode;
+
     return Scaffold(
       extendBody: true,
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: _buildFloatingNavBar(),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: _buildFloatingNavBar(isDark),
     );
   }
 
-  Widget _buildFloatingNavBar() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
-      height: 65,
-      decoration: BoxDecoration(
-        color: const Color(0xFFD1C4E9),
-        borderRadius: BorderRadius.circular(35),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 15,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _navItem("Home", 0),
-          _navItem("Course", 1),
-          _navItem("Profile", 2),
-        ],
+  Widget _buildFloatingNavBar(bool isDark) {
+    return SafeArea(
+      child: Container(
+        height: 65,
+        margin: const EdgeInsets.fromLTRB(40, 0, 40, 25),
+        decoration: BoxDecoration(
+
+          gradient: BrandGradient.luxury,
+          borderRadius: BorderRadius.circular(35),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.primaryColor.withOpacity(0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+          border: Border.all(color: AppColor.glassBorder, width: 1),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _navItem("Home", 0),
+            _navItem("Course", 1),
+            _navItem("Profile", 2),
+          ],
+        ),
       ),
     );
   }
 
   Widget _navItem(String label, int index) {
     final bool active = _selectedIndex == index;
+
     return GestureDetector(
       onTap: () => setState(() => _selectedIndex = index),
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         decoration: BoxDecoration(
-          color: active ? const Color(0xFF6A51A3) : Colors.transparent,
-          borderRadius: BorderRadius.circular(25),
+          // បន្ថែមពន្លឺតិចៗនៅពីក្រោយអក្សរដែលបានជ្រើសរើស
+          color: active ? Colors.white.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: active ? Colors.white : const Color(0xFF6A51A3),
-            fontWeight: FontWeight.bold,
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label.toUpperCase(),
+              style: TextStyle(
+                color: active ? AppColor.lightGold : Colors.white60,
+                fontWeight: active ? FontWeight.w900 : FontWeight.bold,
+                fontSize: 11,
+                letterSpacing: 1.0,
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 2.5,
+              width: active ? 12 : 0,
+              decoration: BoxDecoration(
+                color: AppColor.lightGold,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  if (active)
+                    const BoxShadow(color: AppColor.accentGold, blurRadius: 4)
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

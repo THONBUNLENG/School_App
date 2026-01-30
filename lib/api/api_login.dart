@@ -38,7 +38,7 @@ Future<String> loginWithApi(String username, String password, {bool isTestMode =
         return data['message'] ?? "Incorrect username or password.";
       }
     } else {
-      return "កំហុស Server: ${response.statusCode}";
+      return "Error Server: ${response.statusCode}";
     }
   } on SocketException {
     return "Unable to connect to the server! Please check your VPN.";

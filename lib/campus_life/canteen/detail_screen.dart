@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../config/app_color.dart';
 import '../../extension/change_notifier.dart';
 import '../../extension/string_extension.dart';
 import '../../model/food.dart';
@@ -25,7 +26,6 @@ class _DetailScreenState extends State<DetailScreen> {
   int _quantity = 1;
   String _selectedSize = 'Regular';
   bool _isLiked = false;
-  final Color brandOrange = const Color(0xFFD85D22);
 
   // ---------------- PRICE LOGIC ----------------
   double get _totalSidesPrice => sideData
@@ -121,7 +121,7 @@ class _DetailScreenState extends State<DetailScreen> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: brandOrange,
+                color: AppColor.brandOrange,
               ),
             ),
           ],
@@ -187,7 +187,7 @@ class _DetailScreenState extends State<DetailScreen> {
               margin: const EdgeInsets.only(right: 15),
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected ? brandOrange : Colors.grey[100],
+                color: isSelected ?AppColor.brandOrange : Colors.grey[100],
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected ? Colors.transparent : Colors.grey.shade300,
@@ -245,7 +245,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Widget _sideCard(
       String name, String price, String img, bool isSelected, bool isDark,
-      {double rating = 4.5}) { // default rating
+      {double rating = 4.5}) {
     return Container(
       width: 140,
       margin: const EdgeInsets.only(right: 15, bottom: 5),
@@ -253,13 +253,13 @@ class _DetailScreenState extends State<DetailScreen> {
         color: isDark ? Colors.grey[800] : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? brandOrange : Colors.grey.shade200,
+          color: isSelected ? AppColor.accentGold : Colors.grey.shade200,
           width: 2,
         ),
         boxShadow: isSelected
             ? [
           BoxShadow(
-            color: brandOrange.withOpacity(0.1),
+            color: AppColor.accentGold.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           )
@@ -312,7 +312,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 12)),
               Icon(isSelected ? Icons.check_circle : Icons.add_circle,
-                  color: brandOrange, size: 20),
+                  color:AppColor.brandOrange, size: 20),
             ]),
           ]),
         ),
@@ -323,36 +323,59 @@ class _DetailScreenState extends State<DetailScreen> {
 
   // ---------------- APPBAR ----------------
   AppBar _buildAppBar(bool isDark) {
+    final Color contentColor = AppColor.lightGold;
+
     return AppBar(
-      backgroundColor: Colors.transparent,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: BrandGradient.luxury,
+        ),
+      ),
       elevation: 0,
       centerTitle: true,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_new, color: contentColor, size: 20),
+        onPressed: () => Navigator.pop(context),
+      ),
       title: Text(
         "Details".tr,
         style: TextStyle(
-          color: isDark ? Colors.white : Colors.black,
+          color: contentColor,
           fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
         ),
       ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: Stack(
+            alignment: Alignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.shopping_cart_outlined,
-                    color: isDark ? Colors.white : Colors.black),
-                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.shopping_cart_outlined, color: contentColor),
+                onPressed: () => Navigator.pushNamed(context, 'cart'),
               ),
               if (widget.cartCount > 0)
                 Positioned(
-                  right: 6,
-                  top: 6,
-                  child: CircleAvatar(
-                    radius: 8,
-                    backgroundColor: Colors.orange,
-                    child: Text(widget.cartCount.toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 9)),
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: AppColor.brandOrange,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColor.primaryColor, width: 1.5),
+                    ),
+                    constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                    child: Text(
+                      '${widget.cartCount}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
             ],
@@ -387,7 +410,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 backgroundColor: Colors.white.withOpacity(0.9),
                 child: Icon(
                   _isLiked ? Icons.favorite : Icons.favorite_border,
-                  color: _isLiked ? Colors.red : brandOrange,
+                  color: _isLiked ? Colors.red : AppColor.brandOrange,
                 ),
               ),
             ),
@@ -431,7 +454,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: brandOrange,
+                    color: AppColor.brandOrange,
                   ),
                 ),
               ],
@@ -455,19 +478,30 @@ class _DetailScreenState extends State<DetailScreen> {
       height: 55,
       width: 60,
       decoration: BoxDecoration(
-        border: Border.all(color: brandOrange.withOpacity(0.5)),
+        color: AppColor.accentGold.withOpacity(0.1),
+        border: Border.all(
+          color: AppColor.accentGold.withOpacity(0.4),
+          width: 1.5,
+        ),
         borderRadius: BorderRadius.circular(15),
       ),
       child: IconButton(
-        icon: Icon(Icons.add_shopping_cart_outlined, color: brandOrange),
+        icon: Icon(Icons.add_shopping_cart_outlined, color: AppColor.accentGold),
         onPressed: () {
           widget.onAddToCart(_createCartItem());
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Added to cart!".tr),
-              backgroundColor: brandOrange,
+              content: Text(
+                "Added to cart!".tr,
+                style: const TextStyle(
+                  color: AppColor.primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: AppColor.lightGold,
               behavior: SnackBarBehavior.floating,
-              duration: const Duration(milliseconds: 800),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              duration: const Duration(milliseconds: 1500),
             ),
           );
         },
@@ -476,8 +510,20 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _buildBuyNowButton() {
-    return SizedBox(
+    return Container(
       height: 55,
+      decoration: BoxDecoration(
+
+        gradient: BrandGradient.goldMetallic,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.accentGold.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          )
+        ],
+      ),
       child: ElevatedButton.icon(
         onPressed: () {
           final newItem = _createCartItem();
@@ -486,18 +532,21 @@ class _DetailScreenState extends State<DetailScreen> {
         },
         icon: const Icon(
           Icons.shopping_cart_checkout,
-          color: Colors.white,
+          color: AppColor.primaryColor,
         ),
         label: Text(
           "Order Now".tr,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColor.primaryColor,
             fontWeight: FontWeight.bold,
+            fontSize: 16,
+            letterSpacing: 0.5,
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: brandOrange,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),
       ),
     );

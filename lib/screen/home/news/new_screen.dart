@@ -11,40 +11,42 @@ class NewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access theme state
     final themeManager = Provider.of<ThemeManager>(context);
     final bool isDark = themeManager.isDarkMode;
 
-    // Define dynamic colors based on theme
-    final Color bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5);
-    final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color textColor = isDark ? Colors.white : Colors.black87;
+    final Color bgColor = isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB);
+    final Color cardColor = isDark ? AppColor.surfaceColor : Colors.white;
+    final Color textColor = isDark ? Colors.white : AppColor.primaryColor;
 
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
-          backgroundColor: AppColor.primaryColor,
+          // 🔥 ប្រើ Gradient Identity របស់ NJU
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+          ),
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
             onPressed: () => Navigator.pop(context),
           ),
           title: const Text(
-            'News',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            'UNIVERSITY NEWS',
+            style: TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1.2),
           ),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
             isScrollable: true,
-            indicatorColor:AppColor.primaryColor,
+            indicatorColor: AppColor.lightGold, // ប្តូរមកពណ៌មាស
             indicatorWeight: 3,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: [
+            labelColor: AppColor.lightGold,
+            unselectedLabelColor: Colors.white60,
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            tabs: const [
               Tab(text: 'ALL'),
-              Tab(text: 'Daily New'),
+              Tab(text: 'Daily News'),
               Tab(text: 'Announcement'),
               Tab(text: 'Videos'),
             ],
@@ -52,15 +54,14 @@ class NewsScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            _buildTopBanner(cardColor, textColor),
-            const Divider(height: 1, thickness: 1),
+            _buildTopBanner(cardColor, isDark),
             Expanded(
               child: TabBarView(
                 children: [
-                  _buildNewsListFiltered(cardColor, textColor, 'ALL'),
-                  _buildNewsListFiltered(cardColor, textColor, 'Daily New'),
-                  _buildNewsListFiltered(cardColor, textColor, 'Announcement'),
-                  _buildNewsListFiltered(cardColor, textColor, 'Videos'),
+                  _buildNewsListFiltered(cardColor, textColor, 'ALL', isDark),
+                  _buildNewsListFiltered(cardColor, textColor, 'Daily New', isDark),
+                  _buildNewsListFiltered(cardColor, textColor, 'Announcement', isDark),
+                  _buildNewsListFiltered(cardColor, textColor, 'Videos', isDark),
                 ],
               ),
             ),
@@ -70,26 +71,29 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
-  // --- Top Banner (Refined Layout) ---
-  Widget _buildTopBanner(Color cardBg, Color txtCol) {
+  // --- Top Banner (Refined with University Branding) ---
+  Widget _buildTopBanner(Color cardBg, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(12),
-      color: cardBg,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardBg,
+        border: Border(bottom: BorderSide(color: AppColor.glassBorder, width: 0.5)),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              'assets/image/nanjing_book.png',
-              height: 100,
-              width: 75,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 100,
-                width: 75,
-                color: Colors.grey[300],
-                child: const Icon(Icons.menu_book, color: Colors.grey),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/image/nanjing_book.png',
+                height: 110,
+                width: 85,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -99,32 +103,25 @@ class NewsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'BELTEI INTERNATIONAL SCHOOL',
+                  'NANJING UNIVERSITY',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 14, color: txtCol),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.w900, fontSize: 15, color: isDark ? AppColor.lightGold : AppColor.primaryColor),
                 ),
-                const SizedBox(height: 4),
-                const Text('BOOKLET',
-                    style: TextStyle(fontSize: 12, color: Colors.grey, letterSpacing: 1.2)),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: SizedBox(
-                    height: 30,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        // Action for booklet
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.black12),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: Text('Read More',
-                          style: TextStyle(fontSize: 11, color: txtCol)),
+                const SizedBox(height: 5),
+                const Text('ADMISSION BOOKLET 2026',
+                    style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 32,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.primaryColor.withOpacity(0.1),
+                      foregroundColor: AppColor.primaryColor,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: AppColor.primaryColor, width: 0.5)),
                     ),
+                    child: const Text('Read More', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -135,63 +132,42 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
-  // --- Filtered News List (Optimized Fetching) ---
-  Widget _buildNewsListFiltered(Color cardBg, Color txtCol, String category) {
+  // --- News List with Enhanced Styling ---
+  Widget _buildNewsListFiltered(Color cardBg, Color txtCol, String category, bool isDark) {
     return FutureBuilder<List<NewsModel>>(
       future: NewsService().fetchNews(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: Color(0xFF81005B)));
+          return const Center(child: CircularProgressIndicator(color: AppColor.accentGold));
         }
-        if (snapshot.hasError) {
-          return const Center(child: Text("Error loading data"));
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("មិនមានទិន្នន័យ"));
+        if (snapshot.hasError || !snapshot.hasData) {
+          return const Center(child: Text("Error loading news"));
         }
 
-        final allNews = snapshot.data!;
         final filteredNews = category == 'ALL'
-            ? allNews
-            : allNews.where((item) => item.category == category).toList();
-
-        if (filteredNews.isEmpty) {
-          return const Center(child: Text("មិនមានទិន្នន័យសម្រាប់ប្រភេទនេះ"));
-        }
+            ? snapshot.data!
+            : snapshot.data!.where((item) => item.category == category).toList();
 
         return ListView.separated(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           itemCount: filteredNews.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 12),
+          separatorBuilder: (context, index) => const SizedBox(height: 15),
           itemBuilder: (context, index) {
             final item = filteredNews[index];
-
             return InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => NewsDetailScreen(newsItem: item),
-                  ),
-                );
-              },
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NewsDetailScreen(newsItem: item))),
               child: Container(
                 decoration: BoxDecoration(
                   color: cardBg,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColor.glassBorder),
                   boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
+                    BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), blurRadius: 15, offset: const Offset(0, 8)),
                   ],
                 ),
-                // Conditional UI based on Category
                 child: item.category == 'Videos'
-                    ? _buildVideoRow(item, cardBg, txtCol)
-                    : _buildNewsRow(item, cardBg, txtCol),
+                    ? _buildVideoRow(item, txtCol, isDark)
+                    : _buildNewsRow(item, txtCol, isDark),
               ),
             );
           },
@@ -200,133 +176,71 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
-  // --- Helper: Logic for Thumbnail (Handles your YouTube Link Issue) ---
-  String _getValidThumbnail(NewsModel item) {
-    if (item.images.isEmpty) return '';
-    // If first image is a YouTube link, try to use the second one
-    if (item.images.first.contains('youtu.be') || item.images.first.contains('youtube.com')) {
-      return item.images.length > 1 ? item.images[1] : '';
-    }
-    return item.images.first;
-  }
-
-  // --- Standard News Row ---
-  Widget _buildNewsRow(NewsModel item, Color cardBg, Color txtCol) {
-    final thumb = _getValidThumbnail(item);
-
+  Widget _buildNewsRow(NewsModel item, Color txtCol, bool isDark) {
     return Row(
       children: [
-        Hero(
-          tag: 'news_${item.id}',
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              bottomLeft: Radius.circular(12),
-            ),
-            child: Image.network(
-              thumb,
-              width: 130,
-              height: 100,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 130,
-                height: 100,
-                color: Colors.grey[200],
-                child: const Icon(Icons.image_not_supported, color: Colors.grey),
-              ),
-            ),
-          ),
-        ),
-        _buildInfoColumn(item, txtCol),
+        _buildThumbnail(item, isVideo: false),
+        _buildInfoColumn(item, txtCol, isDark),
       ],
     );
   }
 
-  Widget _buildVideoRow(NewsModel item, Color cardBg, Color txtCol) {
-    final thumb = _getValidThumbnail(item);
-
+  Widget _buildVideoRow(NewsModel item, Color txtCol, bool isDark) {
     return Row(
       children: [
-        Hero(
-          tag: 'news_${item.id}',
-          child: Stack(
-            alignment: Alignment.center, // ប្រើ Alignment របស់ Flutter ផ្ទាល់
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
-                ),
-                child: Image.network(
-                  thumb,
-                  width: 130,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 130,
-                    height: 100,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.videocam_off, color: Colors.grey),
-                  ),
-                ),
-              ),
-              Container(
-                width: 130,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.play_circle_fill,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ],
-          ),
-        ),
-        _buildInfoColumn(item, txtCol),
+        _buildThumbnail(item, isVideo: true),
+        _buildInfoColumn(item, txtCol, isDark),
       ],
     );
   }
-  
-  Widget _buildInfoColumn(NewsModel item, Color txtCol) {
+
+  Widget _buildThumbnail(NewsModel item, {required bool isVideo}) {
+    final thumb = item.images.isNotEmpty ? item.images.first : '';
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        ClipRRect(
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
+          child: Image.network(
+            thumb,
+            width: 130, height: 110,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(width: 130, height: 110, color: Colors.grey[200]),
+          ),
+        ),
+        if (isVideo)
+          Container(
+            width: 130, height: 110,
+            decoration: const BoxDecoration(color: Colors.black26, borderRadius: BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16))),
+            child: const Icon(Icons.play_circle_fill, color: AppColor.lightGold, size: 40),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildInfoColumn(NewsModel item, Color txtCol, bool isDark) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               item.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 13, color: txtCol),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: isDark ? Colors.white : AppColor.primaryColor),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(Icons.calendar_month, size: 12, color: Colors.grey),
+                const Icon(Icons.calendar_today_rounded, size: 12, color: AppColor.accentGold),
+                const SizedBox(width: 6),
+                Text(item.date, style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
+                const Spacer(),
+                const Icon(Icons.remove_red_eye_outlined, size: 12, color: Colors.grey),
                 const SizedBox(width: 4),
-                Text(
-                  item.date,
-                  style: const TextStyle(fontSize: 10, color: Colors.grey),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const Icon(Icons.visibility_outlined, size: 12, color: Colors.grey),
-                const SizedBox(width: 4),
-                Text('${item.views} views',
-                    style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                Text('${item.views}', style: const TextStyle(fontSize: 10, color: Colors.grey)),
               ],
             ),
           ],

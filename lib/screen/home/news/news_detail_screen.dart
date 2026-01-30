@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:school_app/config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
 import 'package:school_app/model/model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
-
-
 
 class NewsDetailScreen extends StatefulWidget {
   final NewsModel newsItem;
@@ -72,36 +70,66 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color nandaPurple = Color(0xFF81005B);
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final item = widget.newsItem;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
-        backgroundColor: nandaPurple,
-        title: const Text('News Detail', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        // 🔥 ប្រើ Gradient Identity របស់ NJU
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(gradient: BrandGradient.luxury),
+        ),
+        title: const Text(
+            'NEWS DETAIL',
+            style: TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1.2)
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             _buildMainMedia(item),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
+                  Text(
+                      item.title,
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : AppColor.primaryColor,
+                          height: 1.3
+                      )
+                  ),
+                  const SizedBox(height: 15),
                   _buildMetadata(item),
-                  const Divider(height: 30),
-                  Text(item.description, style: const TextStyle(fontSize: 16, height: 1.6)),
-                  const SizedBox(height: 30),
-                  _buildSwipeGallery(context, item),
-                  const SizedBox(height: 30),
-                  _buildActionButton(_launchURL, nandaPurple),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Divider(height: 1, thickness: 1, color: Colors.white),
+                  ),
+                  Text(
+                      item.description,
+                      style: TextStyle(
+                          fontSize: 15,
+                          height: 1.8,
+                          color: isDark ? Colors.white70 : Colors.black87,
+                          fontFamily: 'Battambang'
+                      )
+                  ),
+                  const SizedBox(height: 35),
+                  _buildSwipeGallery(context, item, isDark),
+                  const SizedBox(height: 40),
+                  _buildActionButton(_launchURL),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -114,12 +142,12 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   Widget _buildMetadata(NewsModel item) {
     return Row(
       children: [
-        const Icon(Icons.access_time, size: 14, color: Colors.grey),
-        const SizedBox(width: 4),
-        Text(item.date, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-        const SizedBox(width: 15),
-        const Icon(Icons.remove_red_eye_outlined, size: 14, color: Colors.grey),
-        const SizedBox(width: 4),
+        const Icon(Icons.calendar_today_rounded, size: 14, color: AppColor.accentGold),
+        const SizedBox(width: 6),
+        Text(item.date, style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+        const SizedBox(width: 20),
+        const Icon(Icons.remove_red_eye_rounded, size: 16, color: Colors.grey),
+        const SizedBox(width: 6),
         Text('${item.views} views', style: const TextStyle(color: Colors.grey, fontSize: 12)),
       ],
     );
@@ -129,39 +157,44 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     if (item.category == 'Videos' && _youtubeController != null) {
       return Hero(
         tag: 'news_${item.id}',
-        child: YoutubePlayer(controller: _youtubeController!, showVideoProgressIndicator: true),
+        child: YoutubePlayer(
+          controller: _youtubeController!,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: AppColor.accentGold,
+        ),
       );
     }
 
     String mainImageUrl = '';
     if (item.images.isNotEmpty) {
       bool isFirstItemVideo = item.images.first.contains('youtu.be') || item.images.first.contains('youtube.com');
-      if (isFirstItemVideo && item.images.length > 1) {
-        mainImageUrl = item.images[1];
-      } else {
-        mainImageUrl = item.images.first;
-      }
+      mainImageUrl = (isFirstItemVideo && item.images.length > 1) ? item.images[1] : item.images.first;
     }
 
     return Hero(
       tag: 'news_${item.id}',
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
-        child: Image.network(
-          mainImageUrl,
-          width: double.infinity,
-          height: 250,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Container(
-            height: 250, color: Colors.grey[300],
-            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+      child: Container(
+        decoration: BoxDecoration(
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 5))]
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+          child: Image.network(
+            mainImageUrl,
+            width: double.infinity,
+            height: 260,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              height: 260, color: Colors.grey[200],
+              child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSwipeGallery(BuildContext context, NewsModel item) {
+  Widget _buildSwipeGallery(BuildContext context, NewsModel item, bool isDark) {
     final List<String> onlyImages = item.images.where((url) {
       return !url.toLowerCase().contains('youtube.com') && !url.toLowerCase().contains('youtu.be');
     }).toList();
@@ -172,8 +205,22 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Gallery", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        const SizedBox(height: 12),
+        Row(
+          children: [
+            const Icon(Icons.photo_library_rounded, color: AppColor.accentGold, size: 20),
+            const SizedBox(width: 8),
+            Text(
+                "IMAGE GALLERY",
+                style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    color: isDark ? AppColor.lightGold : AppColor.primaryColor,
+                    letterSpacing: 1.0
+                )
+            ),
+          ],
+        ),
+        const SizedBox(height: 15),
         SizedBox(
           height: 220,
           child: PageView.builder(
@@ -184,10 +231,15 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
               final imageUrl = galleryList[index];
               return GestureDetector(
                 onTap: () => _openImageZoom(context, imageUrl),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColor.glassBorder),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))]
+                  ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                     child: Image.network(
                       imageUrl,
                       fit: BoxFit.cover,
@@ -200,16 +252,16 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
             },
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 15),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(galleryList.length, (index) => AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: _currentPage == index ? 10 : 8,
-            height: 8,
+            width: _currentPage == index ? 20 : 8,
+            height: 6,
             decoration: BoxDecoration(
-              color: _currentPage == index ? const Color(0xFF005696) : Colors.grey[300],
+              color: _currentPage == index ? AppColor.accentGold : Colors.grey[300],
               borderRadius: BorderRadius.circular(4),
             ),
           )),
@@ -218,17 +270,28 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     );
   }
 
-  Widget _buildActionButton(VoidCallback onPressed, Color color) {
-    return SizedBox(
+  Widget _buildActionButton(VoidCallback onPressed) {
+    return Container(
       width: double.infinity,
-      height: 50,
+      height: 55,
+      decoration: BoxDecoration(
+        gradient: BrandGradient.luxury,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: AppColor.primaryColor.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))
+        ],
+      ),
       child: ElevatedButton.icon(
         onPressed: onPressed,
-        icon: const Icon(Icons.language, color: Colors.white),
-        label: const Text("Read More on Website", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        icon: const Icon(Icons.public_rounded, color: AppColor.lightGold, size: 20),
+        label: const Text(
+            "READ FULL ARTICLE",
+            style: TextStyle(color: AppColor.lightGold, fontWeight: FontWeight.bold, letterSpacing: 1.1)
+        ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
     );
