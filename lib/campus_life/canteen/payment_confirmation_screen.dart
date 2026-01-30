@@ -18,7 +18,7 @@ class PaymentConfirmationScreen extends StatefulWidget {
 }
 
 class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen>
-    with SingleTickerProviderStateMixin { // 🔥 បន្ថែមសម្រាប់ការធ្វើ Animation
+    with SingleTickerProviderStateMixin {
 
   late AnimationController _rotationController;
   bool _isProcessing = false;
@@ -30,7 +30,7 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen>
   @override
   void initState() {
     super.initState();
-    // បង្កើត Controller សម្រាប់បង្វិល Logo
+
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -48,9 +48,8 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen>
       _isProcessing = true;
       _loadingMessage = "Processing your order...";
     });
-    _rotationController.repeat(); // ចាប់ផ្ដើមបង្វិល Logo
+    _rotationController.repeat();
 
-    // ក្លែងធ្វើការហៅ API
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) setState(() => _loadingMessage = "Verifying with Canteen...");
 
@@ -94,7 +93,6 @@ class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen>
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      // ប្រើ Stack ដើម្បីបង្ហាញ Loading Overlay ពីលើ Checkout UI
       body: Stack(
         children: [
           _buildCheckoutUI(subtotal, isDark, textColor, subTextColor),

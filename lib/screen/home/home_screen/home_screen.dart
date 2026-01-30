@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import '../../../extension/change_notifier.dart';
 import '../news/new_screen.dart';
+import '../tuition_fees/tution_fees_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool isDark = themeManager.isDarkMode;
 
     // Colors
-    final Color bgColor = isDark ? const Color(0xFF121212) : Colors.white;
+    final Color _ = isDark ? const Color(0xFF121212) : Colors.white;
     final Color cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final Color textColor = isDark ? Colors.white : const Color(0xFF333333);
     final Color subTextColor = isDark ? Colors.white70 : Colors.black87;
@@ -61,7 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
-        // 🔥 ប្រើ Gradient Identity របស់សាលា
         flexibleSpace: Container(
           decoration: const BoxDecoration(gradient: BrandGradient.luxury),
         ),
@@ -71,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo ជាមួយ Error Handler
             Image.asset(
               'assets/image/logo.png',
               height: 55,
@@ -88,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontFamily: 'MaoTi',
                     fontSize: 24,
-                    color: AppColor.lightGold, // ប្រើពណ៌មាស Identity
+                    color: AppColor.lightGold,
                     letterSpacing: 6,
                   ),
                 ),
@@ -156,35 +155,59 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             // --- Marquee News Bar ---
-            Container(
-              height: 35,
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                color: AppColor.primaryColor.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: AppColor.primaryColor.withOpacity(0.1)),
-              ),
-              child: Row(
-                children: [
-                  const SizedBox(width: 15),
-                  const Icon(Icons.campaign, color: AppColor.primaryColor, size: 18),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Marquee(
-                      text: 'Welcome to NANJING UNIVERSITY!  欢迎来到南京大学！',
-                      style: const TextStyle(
-                        color: AppColor.primaryColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      blankSpace: 100.0,
-                      velocity: 30.0,
-                      pauseAfterRound: const Duration(seconds: 2),
-                    ),
-                  ),
-                ],
-              ),
+        Container(
+          height: 40, // បង្កើនកម្ពស់បន្តិចឱ្យមើលទៅសមសួន
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+          decoration: BoxDecoration(
+            // ប្តូរពណ៌ផ្ទៃខាងក្រោយតាម Mode
+            color: isDark
+                ? AppColor.surfaceColor.withOpacity(0.5)
+                : AppColor.primaryColor.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: isDark
+                  ? AppColor.lightGold.withOpacity(0.2)
+                  : AppColor.primaryColor.withOpacity(0.1),
             ),
+            // បន្ថែម Shadow ស្រាលៗដើម្បីឱ្យមើលទៅមានតម្លៃ (Premium Feel)
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 15),
+              const Icon(
+                  Icons.campaign_rounded,
+                  color: AppColor.accentGold,
+                  size: 20
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Marquee(
+                  text: 'Welcome to NANJING UNIVERSITY!  欢迎来到南京大学！   •   ',
+                  style: TextStyle(
+                    color: isDark ? AppColor.lightGold : AppColor.primaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                  ),
+                  blankSpace: 100.0,
+                  velocity: 35.0,
+                  pauseAfterRound: const Duration(seconds: 2),
+                  startPadding: 10.0,
+                  accelerationDuration: const Duration(seconds: 1),
+                  accelerationCurve: Curves.linear,
+                ),
+              ),
+              const SizedBox(width: 15),
+            ],
+          ),
+        ),
 
             // Language Selector
             Padding(
@@ -217,7 +240,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       _gridItem(context, 'history', 'assets/image/history.png', cardColor, textColor),
 
-                      // 🔥 Premium E-Learning Button
                       Expanded(
                         flex: 2,
                         child: InkWell(
@@ -279,11 +301,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _langIcon(BuildContext context, String flag, String code, Color txtCol) {
-    // ឆែកមើលថាតើភាសានេះត្រូវបានជ្រើសរើសឬនៅ
     bool isSelected = translator.currentLocale?.languageCode == code;
 
     return InkWell(
-      // លុប Effect ខ្មៅៗពេលចុចចេញ
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
@@ -300,22 +320,18 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // បង្ហាញទង់ជាតិ
             Text(flag, style: const TextStyle(fontSize: 24)),
             const SizedBox(height: 4),
-            // បង្ហាញឈ្មោះភាសា
             Text(
               (code == 'en' ? 'english'.tr : 'chinese'.tr),
               style: TextStyle(
                 fontSize: 11,
-                // បើជ្រើសរើសប្រើពណ៌មាស បើមិនជ្រើសរើសប្រើពណ៌ដែលបញ្ជូនមក
                 color: isSelected ? AppColor.lightGold : txtCol.withOpacity(0.6),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                 letterSpacing: 0.5,
               ),
             ),
             const SizedBox(height: 4),
-            // Indicator ខាងក្រោមអក្សរ (មាស)
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               height: 2.5,
@@ -343,7 +359,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Expanded(
       child: InkWell(
-        // លុប Effect ខ្មៅៗពេលចុចចេញ ដើម្បីឱ្យមើលទៅ High-end
         splashColor: AppColor.primaryColor.withOpacity(0.1),
         highlightColor: Colors.transparent,
         onTap: () async {
@@ -359,10 +374,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));
               break;
             case 'admission':
-              await launchExternalURL('https://www.nju.edu.cn/en/Admission/General_Information.htm'); // កែទៅ NJU URL
+              await launchExternalURL('https://www.nju.edu.cn/en/Admission/General_Information.htm');
               break;
             case 'fees':
-              await launchExternalURL('https://www.nju.edu.cn/en/Admission/Scholarships.htm');
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const TuitionPage ()));
               break;
             case 'history':
               await launchExternalURL('https://www.nju.edu.cn/en/AboutNJU/History.htm');
@@ -388,13 +403,11 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: Column(
           children: [
-            // --- Icon Container with Glassmorphism Effect ---
             Container(
               height: 65, width: 65,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: cardBg,
-                // បន្ថែម Border ស្ដើងៗបែប Glass Border
                 border: Border.all(color: AppColor.glassBorder, width: 1.5),
                 boxShadow: [
                   BoxShadow(
@@ -405,11 +418,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0), // បង្កើន Padding បន្តិចឱ្យមើលទៅស្រឡះ
+                padding: const EdgeInsets.all(16.0),
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.contain,
-                  // Error Icon ប្តូរមកប្រើពណ៌មាស Identity របស់ NJU
                   errorBuilder: (c, e, s) => const Icon(
                       Icons.grid_view_rounded,
                       color: AppColor.accentGold,

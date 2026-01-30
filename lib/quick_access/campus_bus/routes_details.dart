@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
+import '../../config/app_color.dart';
 import '../../extension/change_notifier.dart';
-import '../../extension/string_extension.dart'; // សម្រាប់ check isDarkMode
+import '../../extension/string_extension.dart';
 
 class RoutesDetailsPage extends StatelessWidget {
   const RoutesDetailsPage({super.key});
@@ -46,7 +46,7 @@ class RoutesDetailsPage extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 20, bottom: 35),
       decoration: BoxDecoration(
-        // 🔥 ប្រើ Gradient ពណ៌ស្វាយដិត Identity របស់ NJU
+
         gradient: BrandGradient.luxury,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
         boxShadow: [

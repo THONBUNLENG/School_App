@@ -11,7 +11,9 @@ mixin AppColor {
   // Glassmorphism colors
   static Color glassWhite = Colors.white.withOpacity(0.08);
   static Color glassBorder = Colors.white.withOpacity(0.15);
-
+  static const Color primaryTeal = Color(0xFF008080);
+  static const Color background = Color(0xFFF5F7FA);
+  static const Color surface = Colors.white;
   static const MaterialColor primarySwatch = MaterialColor(
     0xFF4A2A73,
     <int, Color>{

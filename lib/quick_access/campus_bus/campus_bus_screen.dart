@@ -1,21 +1,19 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import 'dart:async';
-
-import '../../extension/change_notifier.dart'; // ប្រាកដថា path ត្រឹមត្រូវសម្រាប់ ThemeManager
-import '../../config/app_color.dart';      // ប្រើ AppColor & BrandGradient របស់អ្នក
-import '../../model/model_bus.dart';
-
-class Station {
-  final String name;
-  final LatLng location;
-  Station(this.name, this.location);
-}
+import '../../config/app_color.dart';
+import '../../extension/change_notifier.dart';
+import 'booking.dart';
 
 class MainBusScreen extends StatefulWidget {
   const MainBusScreen({super.key});
+
   @override
   State<MainBusScreen> createState() => _MainBusScreenState();
 }
@@ -24,57 +22,123 @@ class _MainBusScreenState extends State<MainBusScreen> with TickerProviderStateM
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
 
-  List<BusLocation> _buses = [];
-  bool _isLoading = true;
-  Timer? _timer;
+  LatLng? _userLocation;
+  LatLng? _destination;
+  List<LatLng> _routePoints = [];
+  LatLng _busPos = const LatLng(32.120, 118.960);
 
-  final List<Station> _stations = [
-    Station("Library", const LatLng(32.115, 118.950)),
-    Station("North Gate", const LatLng(32.118, 118.955)),
-    Station("Gymnasium", const LatLng(32.112, 118.945)),
-    Station("Student Center", const LatLng(32.110, 118.940)),
-  ];
+  bool _isSatellite = false;
+  bool _isBusMoving = false;
+  bool _hasAlerted = false;
+  int _currentStep = 0;
+  Timer? _moveTimer;
+  String _eta = "Calculating...";
 
   @override
   void initState() {
     super.initState();
-    _fetchBuses();
-    _timer = Timer.periodic(const Duration(seconds: 10), (_) => _fetchBuses());
+    _initLocationTracking();
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _searchController.dispose();
+    _moveTimer?.cancel();
     _mapController.dispose();
     super.dispose();
   }
 
-  Future<void> _fetchBuses() async {
-    // Simulated movement
-    final double move = (DateTime.now().second % 10) * 0.0003;
-    final newBuses = [
-      BusLocation(lat: 32.115 + move, lng: 118.950 + move, busId: "BUS-01", occupancy: 42),
-      BusLocation(lat: 32.118 - move, lng: 118.955, busId: "BUS-02", occupancy: 78),
-    ];
-    if (mounted) setState(() { _buses = newBuses; _isLoading = false; });
+  Future<void> _initLocationTracking() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    Geolocator.getPositionStream(locationSettings: const LocationSettings(accuracy: LocationAccuracy.high))
+        .listen((pos) {
+      if (mounted) {
+        setState(() => _userLocation = LatLng(pos.latitude, pos.longitude));
+        _checkDistanceForAlert();
+      }
+    });
   }
 
-  void _animatedMapMove(LatLng destLocation, double destZoom) {
-    final latTween = Tween<double>(begin: _mapController.camera.center.latitude, end: destLocation.latitude);
-    final lngTween = Tween<double>(begin: _mapController.camera.center.longitude, end: destLocation.longitude);
-    final zoomTween = Tween<double>(begin: _mapController.camera.zoom, end: destZoom);
+  void _checkDistanceForAlert() {
+    if (_userLocation == null || !_isBusMoving) return;
+    double distance = Geolocator.distanceBetween(
+      _busPos.latitude, _busPos.longitude,
+      _userLocation!.latitude, _userLocation!.longitude,
+    );
+    if (distance < 100 && !_hasAlerted) {
+      HapticFeedback.heavyImpact();
+      _showArrivalNotification();
+      setState(() => _hasAlerted = true);
+    }
+  }
 
-    final controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
-    final animation = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+  void _showArrivalNotification() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("🚌 The bus is coming! Get ready."),
+        backgroundColor: AppColor.primaryColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
 
-    controller.addListener(() {
-      _mapController.move(
-        LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
-        zoomTween.evaluate(animation),
-      );
+  Future<void> _onSearch() async {
+    String query = _searchController.text.trim();
+    if (query.isEmpty) return;
+    final url = Uri.parse('https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=1');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final found = LatLng(double.parse(data[0]['lat']), double.parse(data[0]['lon']));
+          setState(() { _destination = found; _eta = "Calculating..."; });
+          _mapController.move(found, 16.0);
+          _fetchRoute();
+          FocusScope.of(context).unfocus();
+        }
+      }
+    } catch (e) { debugPrint("Search Error: $e"); }
+  }
+
+  Future<void> _fetchRoute() async {
+    if (_destination == null) return;
+    final url = Uri.parse(
+      'https://router.project-osrm.org/route/v1/driving/'
+          '${_busPos.longitude},${_busPos.latitude};'
+          '${_destination!.longitude},${_destination!.latitude}'
+          '?overview=full&geometries=geojson',
+    );
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final coords = data['routes'][0]['geometry']['coordinates'] as List;
+        final duration = (data['routes'][0]['duration'] as num).toDouble();
+        final route = coords.map((c) => LatLng(c[1], c[0])).toList();
+        setState(() { _routePoints = route; _currentStep = 0; _eta = "${(duration / 60).round()} min"; _hasAlerted = false; });
+        _startBusNavigation(route);
+      }
+    } catch (e) { debugPrint("Route Error: $e"); }
+  }
+
+  void _startBusNavigation(List<LatLng> route) {
+    if (route.isEmpty) return;
+    _moveTimer?.cancel();
+    setState(() => _isBusMoving = true);
+    _moveTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
+      if (_currentStep < route.length - 1) {
+        setState(() { _busPos = route[_currentStep]; _currentStep++; });
+        _checkDistanceForAlert();
+      } else {
+        timer.cancel();
+        setState(() { _isBusMoving = false; _eta = "Arrived"; });
+      }
     });
-    controller.forward().then((_) => controller.dispose());
   }
 
   @override
@@ -82,172 +146,209 @@ class _MainBusScreenState extends State<MainBusScreen> with TickerProviderStateM
     final bool isDark = Provider.of<ThemeManager>(context).isDarkMode;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: isDark ? AppColor.backgroundColor : Colors.white,
       body: Stack(
         children: [
-          // MAP LAYER
+          // 🗺️ ផែនទី (Map Layer)
           FlutterMap(
             mapController: _mapController,
-            options: const MapOptions(initialCenter: LatLng(32.115, 118.950), initialZoom: 15.0),
+            options: MapOptions(
+              initialCenter: const LatLng(32.115, 118.950),
+              initialZoom: 15.5,
+              onTap: (_, latlng) {
+                setState(() => _destination = latlng);
+                _fetchRoute();
+              },
+            ),
             children: [
               TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.nju.shuttle.app',
-                tileBuilder: isDark ? (context, tileWidget, tile) => ColorFiltered(
-                  colorFilter: const ColorFilter.matrix([
-                    -1, 0, 0, 0, 255, 0, -1, 0, 0, 255, 0, 0, -1, 0, 255, 0, 0, 0, 1, 0,
-                  ]),
-                  child: tileWidget,
-                ) : null,
+                urlTemplate: _isSatellite
+                    ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                    : (isDark
+                    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+                subdomains: const ['a', 'b', 'c'],
               ),
+              if (_routePoints.isNotEmpty)
+                PolylineLayer(
+                  polylines: [Polyline(points: _routePoints, color: AppColor.accentGold, strokeWidth: 5)],
+                ),
               MarkerLayer(
                 markers: [
-                  // Bus Markers (Gold Color)
-                  ..._buses.map((bus) => Marker(
-                    point: LatLng(bus.lat, bus.lng),
-                    width: 60, height: 60,
-                    child: GestureDetector(
-                      onTap: () => _animatedMapMove(LatLng(bus.lat, bus.lng), 17.0),
-                      child: const Icon(Icons.directions_bus_rounded, color: AppColor.accentGold, size: 35),
-                    ),
-                  )),
-                  // Station Markers (Purple Color)
-                  ..._stations.map((station) => Marker(
-                    point: station.location,
-                    width: 40, height: 40,
-                    child: Icon(Icons.location_on, color: AppColor.primaryColor.withOpacity(0.8), size: 25),
-                  )),
+                  if (_userLocation != null)
+                    Marker(point: _userLocation!, width: 40, height: 40, child: _buildUserMarker()),
+                  if (_destination != null)
+                    Marker(point: _destination!, width: 50, height: 50,
+                        child: const Icon(Icons.location_on, color: Colors.red, size: 35)),
+                  Marker(point: _busPos, width: 80, height: 80, child: _buildBusMarker()),
                 ],
               ),
             ],
           ),
 
-          // HEADER (Luxury Purple Gradient)
-          Positioned(top: 0, left: 0, right: 0, child: _buildHeader(isDark)),
+          Positioned(top: 50, left: 15, right: 15, child: _buildSearchHeader(isDark)),
 
-          // BOTTOM SHEET
-          _buildDraggableSheet(isDark),
+          Positioned(right: 15, top: 125, child: _buildSideTools()),
 
-          if (_isLoading) _buildLoadingOverlay(isDark),
+          _buildDraggablePanel(isDark),
         ],
       ),
     );
   }
 
-  Widget _buildHeader(bool isDark) {
+  Widget _buildSearchHeader(bool isDark) {
     return Container(
-      padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 10,
-          bottom: 25, left: 10, right: 20
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      height: 55,
       decoration: BoxDecoration(
-        gradient: BrandGradient.luxury,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(35)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 5))
-        ],
+        color: isDark ? AppColor.surfaceColor : Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
         children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => Navigator.maybePop(context),
-                icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
-              ),
-              Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(
-                        "南京大学 校车",
-                        style: TextStyle(color: AppColor.lightGold, fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "NJU Campus Shuttle",
-                        style: TextStyle(color: Colors.white70, fontSize: 10, letterSpacing: 1.2),
-                      ),
-                    ],
-                  )
-              ),
-              const CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.white12,
-                backgroundImage: NetworkImage("https://scontent.fpnh19-1.fna.fbcdn.net/v/t39.30808-6/..."), // Shortened for brevity
-              ),
-            ],
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios_new,
+                color: isDark ? Colors.white : Colors.black87, size: 20),
           ),
-          const SizedBox(height: 20),
-          // Search Bar
-          Container(
-            height: 50,
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: AppColor.glassBorder, width: 0.5),
-            ),
+
+          const VerticalDivider(indent: 15, endIndent: 15, thickness: 1, width: 10),
+
+          Expanded(
             child: TextField(
               controller: _searchController,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
-              decoration: InputDecoration(
-                hintText: "Search for stations...",
-                hintStyle: const TextStyle(color: Colors.white54, fontSize: 14),
+              onSubmitted: (_) => _onSearch(),
+              onChanged: (val) => setState(() {}),
+              decoration: const InputDecoration(
+                hintText: "Search a building or gate...",
                 border: InputBorder.none,
-                prefixIcon: const Icon(Icons.search, color: AppColor.lightGold, size: 22),
+                contentPadding: EdgeInsets.symmetric(horizontal: 10),
               ),
-              onSubmitted: (value) => _handleSearch(value),
             ),
+          ),
+          if (_searchController.text.isNotEmpty)
+            IconButton(
+              onPressed: () {
+                _searchController.clear();
+                setState(() {});
+              },
+              icon: const Icon(Icons.close, color: Colors.grey, size: 20),
+            ),
+
+          const VerticalDivider(indent: 15, endIndent: 15, thickness: 1, width: 10),
+
+          IconButton(
+            onPressed: _onSearch,
+            icon: const Icon(Icons.search, color: AppColor.accentGold),
           ),
         ],
       ),
     );
   }
 
-  void _handleSearch(String query) {
-    if (query.isEmpty) return;
-    try {
-      final found = _stations.firstWhere((s) => s.name.toLowerCase().contains(query.toLowerCase()));
-      _animatedMapMove(found.location, 17.0);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Station not found!")));
-    }
-  }
+  Widget _buildSideTools() => Column(
+    children: [
+      FloatingActionButton.small(
+        heroTag: "layer",
+        onPressed: () => setState(() => _isSatellite = !_isSatellite),
+        backgroundColor: Colors.white, child: Icon(_isSatellite ? Icons.map : Icons.layers, color: Colors.blue),
+      ),
+      const SizedBox(height: 12),
+      FloatingActionButton.small(
+        heroTag: "locate",
+        onPressed: () => _userLocation != null ? _mapController.move(_userLocation!, 17) : null,
+        backgroundColor: Colors.white, child: const Icon(Icons.my_location, color: Colors.blue),
+      ),
+    ],
+  );
 
-  Widget _buildDraggableSheet(bool isDark) {
+  Widget _buildBusMarker() => Column(
+    children: [
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(color: AppColor.primaryColor, borderRadius: BorderRadius.circular(10)),
+        child: Text(_eta, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+      ),
+      const Icon(Icons.directions_bus, color: AppColor.accentGold, size: 35),
+    ],
+  );
+
+  Widget _buildUserMarker() => Stack(
+    alignment: Alignment.center,
+    children: [
+      Container(width: 30, height: 30, decoration: BoxDecoration(color: Colors.blue.withOpacity(0.2), shape: BoxShape.circle)),
+      Container(width: 14, height: 14, decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.white, blurRadius: 4)])),
+    ],
+  );
+
+  Widget _buildDraggablePanel(bool isDark) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.25,
-      minChildSize: 0.15,
+      initialChildSize: 0.18,
+      minChildSize: 0.12,
       maxChildSize: 0.6,
+      snap: true,
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
             color: isDark ? AppColor.surfaceColor : Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 15)],
           ),
-          child: Column(
+          child: ListView(
+            controller: scrollController,
+            padding: EdgeInsets.zero,
             children: [
-              Container(margin: const EdgeInsets.symmetric(vertical: 12), width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[400], borderRadius: BorderRadius.circular(10))),
-              Expanded(
-                child: ListView.builder(
-                  controller: scrollController,
-                  padding: EdgeInsets.zero,
-                  itemCount: _stations.length,
-                  itemBuilder: (context, index) {
-                    final station = _stations[index];
-                    return ListTile(
-                      leading: const Icon(Icons.location_on, color: AppColor.accentGold),
-                      title: Text(station.name, style: TextStyle(color: isDark ? Colors.white : AppColor.primaryColor, fontWeight: FontWeight.bold)),
-                      subtitle: const Text("Station Available", style: TextStyle(fontSize: 11, color: Colors.grey)),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-                      onTap: () => _animatedMapMove(station.location, 16.5),
-                    );
-                  },
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  width: 45, height: 5,
+                  decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: Row(
+                  children: [
+                    const CircleAvatar(backgroundColor: AppColor.accentGold, child: Icon(Icons.bus_alert, color: Colors.white)),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("NJU Shuttle NJU-01", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                          Text(_isBusMoving ? "On my way to you": "Waiting for a call...", style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                        ],
+                      ),
+                    ),
+                    Text(_eta, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColor.primaryColor)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 15),
+              const Divider(thickness: 0.5),
+              _buildDetailTile("Next stop", "Main Library Gate", Icons.map_outlined),
+              _buildDetailTile("Number of seats available", "8 seats", Icons.chair_alt_outlined),
+              _buildDetailTile("Current speed", "40 km/h", Icons.speed),
+              _buildDetailTile("Driver ", "Mr. Zhang", Icons.person_outline),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SeatBookingView(busInfo: {
+                      'route': 'Main Library Gate',
+                      'time': '10:30 AM',
+                    })));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primaryColor,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
+                  child: const Text("Book a seat now", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(height: 30),
             ],
           ),
         );
@@ -255,10 +356,12 @@ class _MainBusScreenState extends State<MainBusScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildLoadingOverlay(bool isDark) {
-    return Container(
-      color: isDark ? Colors.black54 : Colors.white70,
-      child: const Center(child: CircularProgressIndicator(color: AppColor.accentGold)),
+  Widget _buildDetailTile(String title, String value, IconData icon) {
+    return ListTile(
+      leading: Icon(icon, color: AppColor.accentGold, size: 22),
+      title: Text(title, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+      trailing: Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+      dense: true,
     );
   }
 }

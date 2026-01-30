@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
-import '../../extension/change_notifier.dart'; // សម្រាប់ check isDarkMode
+import '../../config/app_color.dart';
+import '../../extension/change_notifier.dart';
 import 'campus_bus_screen.dart';
 import 'package:school_app/quick_access/campus_bus/profile_bus_st_nju.dart';
 import 'package:school_app/quick_access/campus_bus/routes_details.dart';
@@ -27,7 +27,7 @@ class _MainHolderState extends State<Main_Bus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // ឱ្យ Body រុញចូលក្រោម Bottom Nav ដែលមានលក្ខណៈថ្លាៗ
+      extendBody: true,
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
@@ -44,7 +44,6 @@ class _MainHolderState extends State<Main_Bus> {
         height: 70,
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
-          // ប្រើពណ៌ស្វាយដិត Gradient សម្រាប់ Nav ដើម្បីឱ្យលេចធ្លោ
           gradient: BrandGradient.luxury,
           borderRadius: BorderRadius.circular(35),
           boxShadow: [
@@ -54,7 +53,7 @@ class _MainHolderState extends State<Main_Bus> {
               offset: const Offset(0, 10),
             ),
           ],
-          // បន្ថែម Border ស្ដើងៗបែប Glassmorphism
+
           border: Border.all(color: AppColor.glassBorder, width: 1),
         ),
         child: Row(
@@ -73,7 +72,7 @@ class _MainHolderState extends State<Main_Bus> {
   Widget _navItem(IconData icon, int index, String label) {
     bool isActive = _currentIndex == index;
 
-    // ប្រើពណ៌មាសសម្រាប់ Active និង ពណ៌សថ្លាសម្រាប់ Inactive
+
     final Color activeColor = AppColor.lightGold;
     final Color inactiveColor = Colors.white.withOpacity(0.5);
 

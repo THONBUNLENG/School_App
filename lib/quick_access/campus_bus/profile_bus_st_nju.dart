@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../config/app_color.dart'; // ប្រើ AppColor & BrandGradient របស់អ្នក
-import '../../extension/change_notifier.dart'; // សម្រាប់ check isDarkMode
+import '../../config/app_color.dart';
+import '../../extension/change_notifier.dart';
 
 class ProfileBusStNju extends StatelessWidget {
   const ProfileBusStNju({super.key});
@@ -11,7 +11,6 @@ class ProfileBusStNju extends StatelessWidget {
     final isDark = Provider.of<ThemeManager>(context).isDarkMode;
 
     return Scaffold(
-      // ប្រើ backgroundColor ពី AppColor របស់អ្នក
       backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       body: SingleChildScrollView(
         child: Column(
@@ -21,7 +20,7 @@ class ProfileBusStNju extends StatelessWidget {
             _buildQuickActions(isDark),
             const SizedBox(height: 25),
             _buildSettingsList(isDark),
-            const SizedBox(height: 100), // Spacing បន្ថែមសម្រាប់ Bottom Nav អណ្តែត
+            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -38,7 +37,6 @@ class ProfileBusStNju extends StatelessWidget {
         right: 30,
       ),
       decoration: BoxDecoration(
-        // 🔥 ប្រើ Gradient ពណ៌ស្វាយដិត Identity របស់ NJU
         gradient: BrandGradient.luxury,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(45)),
         boxShadow: [
@@ -54,7 +52,7 @@ class ProfileBusStNju extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(3),
             decoration: const BoxDecoration(
-              color: AppColor.lightGold, // Border ពណ៌មាសជុំវិញរូប Profile
+              color: AppColor.lightGold,
               shape: BoxShape.circle,
             ),
             child: const CircleAvatar(
@@ -70,7 +68,7 @@ class ProfileBusStNju extends StatelessWidget {
               Text(
                 "NJU Student",
                 style: TextStyle(
-                  color: AppColor.lightGold, // ឈ្មោះពណ៌មាស
+                  color: AppColor.lightGold,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
