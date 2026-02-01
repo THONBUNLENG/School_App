@@ -17,6 +17,7 @@ class StudentProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         flexibleSpace: Container(
           decoration: const BoxDecoration(gradient: BrandGradient.luxury),
         ),

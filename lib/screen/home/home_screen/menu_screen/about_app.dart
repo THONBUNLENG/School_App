@@ -51,6 +51,7 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
     final bool isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+
       backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
@@ -61,23 +62,26 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
             pinned: true,
             stretch: true,
             backgroundColor: AppColor.primaryColor,
-            leading: const BackButton(color: AppColor.lightGold),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
+              onPressed: () => Navigator.pop(context),
+            ),
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [StretchMode.zoomBackground],
               centerTitle: true,
               title: Text(
+
                 'about_app'.tr,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: AppColor.lightGold, // ប្រើពណ៌មាស
+                  color: AppColor.lightGold,
                   letterSpacing: 1.0,
                 ),
               ),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // 🔥 ប្រើ Gradient Identity របស់សាលា
                   Container(
                     decoration: const BoxDecoration(
                       gradient: BrandGradient.luxury,
@@ -99,7 +103,7 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
                         style: TextStyle(
                           fontFamily: 'MaoTi',
                           fontSize: 28,
-                          color: AppColor.lightGold, // ពណ៌មាស
+                          color: AppColor.lightGold,
                           letterSpacing: 8,
                         ),
                       ),
@@ -121,7 +125,7 @@ class _AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin
 
           /// 🔹 Feature List Section
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 25, 20, 100), // Spacing បន្ថែមសម្រាប់ Bottom Nav
+            padding: const EdgeInsets.fromLTRB(20, 25, 20, 100),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                     (context, index) {

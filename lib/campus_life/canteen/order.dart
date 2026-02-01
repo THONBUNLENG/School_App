@@ -16,7 +16,7 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   final double deliveryFee = 0.00;
-  final double commonImageSize = 65.0; // បង្កើនទំហំបន្តិចឱ្យមើលទៅច្បាស់
+  final double commonImageSize = 65.0;
 
   void _clearCart() {
     showDialog(

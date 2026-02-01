@@ -21,7 +21,7 @@ class _MenuScreenState extends State<MenuScreen> {
   String searchQuery = '';
 
   final List<String> categories = [
-    "All", "Food", "Popular", "Street Food", "Drinks", "Desserts"
+    "All", "Food", "Popular", "Street Food", "Drinks", "Desserts","Coffee"
   ];
   late final List<Food> menuItems;
 
@@ -91,7 +91,6 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ],
       ),
-      // ប្រើ Floating Action Button សម្រាប់ Cart ដើម្បីកុំឱ្យបាំង content
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: cartItems.isEmpty ? null : _buildFloatingCartSummary(isDark),
     );
@@ -99,6 +98,10 @@ class _MenuScreenState extends State<MenuScreen> {
 
   AppBar _buildAppBar(bool isDark) {
     return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new, color: AppColor.lightGold, size: 20),
+        onPressed: () => Navigator.pop(context),
+      ),
       flexibleSpace: Container(
         decoration: const BoxDecoration(gradient: BrandGradient.luxury),
       ),

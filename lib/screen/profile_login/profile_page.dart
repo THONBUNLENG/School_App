@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:school_app/config/app_color.dart';
 import 'package:school_app/extension/change_notifier.dart';
 import 'package:school_app/screen/home/home_screen/main_holder.dart';
-import 'package:school_app/screen/home_profile/home_profile_screen/home_profile_screen.dart';
 import 'package:school_app/screen/profile_login/qr_login.dart';
 import 'package:school_app/screen/profile_login/wechat_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';

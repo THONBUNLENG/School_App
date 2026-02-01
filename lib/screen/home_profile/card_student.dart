@@ -10,9 +10,8 @@ class CampusCardHeader extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
       padding: const EdgeInsets.all(22),
-      height: 210, // បង្កើនកម្ពស់បន្តិចឱ្យសមជាមួយ Layout ថ្មី
+      height: 210,
       decoration: BoxDecoration(
-        // 🔥 ប្រើ Gradient Identity របស់ NJU
         gradient: BrandGradient.luxury,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
@@ -26,7 +25,7 @@ class CampusCardHeader extends StatelessWidget {
           image: NetworkImage(
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZNIyvggDhiIM7pCEnNZMFUq9XC5cLjcNehg&s",
           ),
-          opacity: 0.08, // បន្ថយ opacity ឱ្យមើលទៅ Premium
+          opacity: 0.08,
           fit: BoxFit.cover,
         ),
       ),

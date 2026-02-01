@@ -1,185 +1,378 @@
 import '../../model/food.dart';
+
 final List<Map<String, dynamic>> sideData = [
-  {"name": "Fried plantain", "price": 3.75, "img": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400", "isSelected": false},
-  {"name": "Fried Chicken", "price": 2.50, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400", "isSelected": false},
-  {"name": "Mashed Potatoes", "price": 2.00, "img": "https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?w=400", "isSelected": false},
-  {"name": "Garden Salad", "price": 2.25, "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400", "isSelected": false},
-  {"name": "Spring Rolls", "price": 1.50, "img": "https://images.unsplash.com/photo-1606755456206-b25206cde27e?w=400", "isSelected": false},
-  {"name": "Corn on the Cob", "price": 1.25, "img": "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400", "isSelected": false},
-  {"name": "Potato Wedges", "price": 1.50, "img": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400", "isSelected": false},
-  {"name": "Chicken Wings", "price": 3.50, "img": "https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400", "isSelected": false},
-  {"name": "Nuggets", "price": 2.00, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400", "isSelected": false},
-  {"name": "Cheese Toast", "price": 1.25, "img": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400", "isSelected": false},
-  {"name": "Hash Browns", "price": 1.50, "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400", "isSelected": false},
-  {"name": "Brownie", "price": 2.50, "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400", "isSelected": false},
-  {"name": "Ice Cream", "price": 2.00, "img": "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400", "isSelected": false},
-  {"name": "Fruit Bowl", "price": 1.75, "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=400", "isSelected": false},
-  {"name": "Soda", "price": 1.00, "img": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500", "isSelected": false},
-  {"name": "Vegetable Soup", "price": 2.00, "img": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400", "isSelected": false},
+  {
+    "name": "Fried plantain",
+    "price": 3.75,
+    "img": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Fried Chicken",
+    "price": 2.50,
+    "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Mashed Potatoes",
+    "price": 2.00,
+    "img": "https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Garden Salad",
+    "price": 2.25,
+    "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Spring Rolls",
+    "price": 1.50,
+    "img": "https://images.unsplash.com/photo-1606755456206-b25206cde27e?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Corn on the Cob",
+    "price": 1.25,
+    "img": "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Potato Wedges",
+    "price": 1.50,
+    "img": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Chicken Wings",
+    "price": 3.50,
+    "img": "https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Nuggets",
+    "price": 2.00,
+    "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Cheese Toast",
+    "price": 1.25,
+    "img": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Hash Browns",
+    "price": 1.50,
+    "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Brownie",
+    "price": 2.50,
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Ice Cream",
+    "price": 2.00,
+    "img": "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Fruit Bowl",
+    "price": 1.75,
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=400",
+    "isSelected": false,
+  },
+  {
+    "name": "Soda",
+    "price": 1.00,
+    "img": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500",
+    "isSelected": false,
+  },
+  {
+    "name": "Vegetable Soup",
+    "price": 2.00,
+    "img": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400",
+    "isSelected": false,
+  },
 ];
+
 List<Food> getMenuItems() {
   return [
+    //------------------Popular-------------------------------
+    Food(
+      name: "Sichuan Hot Pot",
+      des: "Spicy and numbing broth with premium beef and fresh veggies.",
+      price: 250.0,
+      img:
+          "https://www.eastchinatrip.com/wp-content/uploads/1.-%E5%9B%9B%E5%B7%9D%E7%81%AB%E9%94%85.webp",
+      rating: 4.9,
+      category: "Popular",
+    ),
+    Food(
+      name: "Crispy Peking Duck",
+      des: "Traditional roasted duck with thin, crispy skin and pancakes.",
+      price: 222.0,
+      img:
+          "https://www.gressinghamduck.co.uk/wp-content/uploads/2021/08/homemade-whole-crispy-aromatic-duck.jpg",
+      rating: 4.8,
+      category: "Popular",
+    ),
+    Food(
+      name: "Xiaolongbao",
+      des: "Hand-crafted soup dumplings with savory pork broth.",
+      price: 80.0,
+      img:
+          "https://thewoksoflife.com/wp-content/uploads/2014/09/shanghai-soup-dumpling-12-e1569441411964.jpg",
+      rating: 4.9,
+      category: "Popular",
+    ),
+    Food(
+      name: "Spicy Mapo Tofu",
+      des: "Authentic Sichuan tofu with fermented beans and chili oil.",
+      price: 44.5,
+      img:
+          "https://www.thespicehouse.com/cdn/shop/articles/Mapo_Tofu_720x.jpg?v=1652468003",
+      rating: 4.7,
+      category: "Popular",
+    ),
+    Food(
+      name: "Kung Pao Chicken",
+      des: "Classic stir-fried chicken with peanuts and dry chili.",
+      price: 46.0,
+      img:
+          "https://www.kitchensanctuary.com/wp-content/uploads/2019/10/Kung-Pao-Chicken-square-FS-39-new.jpg",
+      rating: 4.6,
+      category: "Popular",
+    ),
+    Food(
+      name: "Lanzhou Beef Noodles",
+      des: "Famous hand-pulled noodles with rich clear beef soup.",
+      price: 22.5,
+      img:
+          "https://redhousespice.com/wp-content/uploads/2020/01/Lanzhou-beef-noodle-soup-foodgawker-e1650565777685.jpg",
+      rating: 4.8,
+      category: "Popular",
+    ),
+    Food(
+      name: "Glutinous Rice Cake",
+      des: "Sticky rice with sweet black sesame filling.",
+      price: 60.0,
+      img:
+          "https://cookingwithlei.com/wp-content/uploads/2022/03/sweet-rice-cake-3.jpg",
+      rating: 4.5,
+      category: "Popular",
+    ),
+    Food(
+      name: "Cantonese BBQ Pork",
+      des: "Honey-glazed roasted pork loin with sweet-savory flavor.",
+      price: 180.0,
+      img:
+          "https://images.getrecipekit.com/20241120144335-how-to-make-chinese-cantonese-bbq-roasted-pork-char-siu-recipe.png?aspect_ratio=16:9&quality=90&",
+      rating: 4.8,
+      category: "Popular",
+    ),
+    Food(
+      name: "Hainanese Chicken Rice",
+      des: "Tender poached chicken served with fragrant ginger rice.",
+      price: 28.5,
+      img:
+          "https://static01.nyt.com/images/2025/01/28/multimedia/KP-Hainan-Chicken-Rice-hcgv/KP-Hainan-Chicken-Rice-hcgv-mediumSquareAt3X.jpg",
+      rating: 4.7,
+      category: "Popular",
+    ),
+    Food(
+      name: "Yangzhou Fried Rice",
+      des: "Signature fried rice with shrimp, ham, and fresh peas.",
+      price: 11.0,
+      img:
+          "https://cdn.sanity.io/images/2r0kdewr/production/82f8a09e19a456b94077b31d23861a5b03905307-1000x667.jpg",
+      rating: 4.4,
+      category: "Popular",
+    ),
+
     // ------------------- Drinks (5 items) -------------------
     Food(
       name: "Soy Milk",
       des: "Freshly made soy milk",
-      price: 2.0,
-      img: "https://bluebalu.com/wp-content/uploads/2015/02/vitasoy-exhibition-at-flagstaff-house-museum-of-tea-ware-hong-kong-2015-3.jpg?w=640",
+      price: 12.0,
+      img:
+          "https://bluebalu.com/wp-content/uploads/2015/02/vitasoy-exhibition-at-flagstaff-house-museum-of-tea-ware-hong-kong-2015-3.jpg?w=640",
       rating: 4.6,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Bubble Milk Tea",
       des: "Milk tea with tapioca pearls",
-      price: 3.5,
-      img: "https://images.slurrp.com/prod/recipe_images/transcribe/beverage/Bubble-Milk-Tea.webp?impolicy=slurrp-20210601&width=1200&height=675",
+      price: 9.5,
+      img:
+          "https://images.slurrp.com/prod/recipe_images/transcribe/beverage/Bubble-Milk-Tea.webp?impolicy=slurrp-20210601&width=1200&height=675",
       rating: 4.7,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Herbal Tea",
       des: "Cooling Chinese herbal drink",
-      price: 2.5,
-      img: "https://img2.chinadaily.com.cn/images/201712/06/5a27a0b1a310786506f6e851.jpeg",
+      price: 11.5,
+      img:
+          "https://img2.chinadaily.com.cn/images/201712/06/5a27a0b1a310786506f6e851.jpeg",
       rating: 4.5,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Lemon Tea",
       des: "Iced lemon tea with honey",
-      price: 2.5,
-      img: "https://image.made-in-china.com/202f0j00rMkWZTgPaRGm/Chill-with-LAN-Fong-Yuen-Authentic-Ice-Lemon-Tea-Bliss.webp",
+      price: 9.5,
+      img:
+          "https://image.made-in-china.com/202f0j00rMkWZTgPaRGm/Chill-with-LAN-Fong-Yuen-Authentic-Ice-Lemon-Tea-Bliss.webp",
       rating: 4.4,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Fruit Juice",
       des: "Fresh orange or watermelon juice",
-      price: 3.0,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUVVZAsYiRetSTzVanuMoxu4vh3_QQ9bmOew&s",
+      price: 16.0,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUVVZAsYiRetSTzVanuMoxu4vh3_QQ9bmOew&s",
       rating: 4.6,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
 
-// ------------------- Desserts / Snacks (5 items) -------------------
+    // ------------------- Desserts / Snacks (5 items) -------------------
     Food(
       name: "Red Bean Bun",
       des: "Sweet steamed bun with red bean paste",
-      price: 2.5,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToS7-5bKp4Pb-3GP1mlOPkB3oqckJGuF002Q&s",
+      price: 14.5,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToS7-5bKp4Pb-3GP1mlOPkB3oqckJGuF002Q&s",
       rating: 4.5,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Egg Tart",
       des: "Soft pastry with creamy egg filling",
-      price: 3.0,
-      img: "https://media.cnn.com/api/v1/images/stellar/prod/191021072355-macao-egg-tarts.jpg?q=w_1602,h_898,x_0,y_0,c_fill",
+      price: 14.0,
+      img:
+          "https://media.cnn.com/api/v1/images/stellar/prod/191021072355-macao-egg-tarts.jpg?q=w_1602,h_898,x_0,y_0,c_fill",
       rating: 4.6,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Sesame Ball (Jian Dui)",
       des: "Fried glutinous rice ball with sweet filling",
-      price: 2.5,
-      img: "https://img.freepik.com/premium-photo/onde-ondeindonesian-traditional-snackotherwise-known-as-sesame-balls-jian-dui_431906-1623.jpg",
+      price: 12.5,
+      img:
+          "https://img.freepik.com/premium-photo/onde-ondeindonesian-traditional-snackotherwise-known-as-sesame-balls-jian-dui_431906-1623.jpg",
       rating: 4.5,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Mango Pudding",
       des: "Sweet mango-flavored jelly",
-      price: 3.0,
-      img: "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2022/04/29/Kristina-Cho-Mango-Pudding-Cups_s4x3.jpg.rend.hgtvcom.1280.960.suffix/1651243460168.webp",
+      price: 9.0,
+      img:
+          "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2022/04/29/Kristina-Cho-Mango-Pudding-Cups_s4x3.jpg.rend.hgtvcom.1280.960.suffix/1651243460168.webp",
       rating: 4.4,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
     Food(
       name: "Sweet Rice Cake",
       des: "Sticky rice with red bean or peanut filling",
-      price: 2.5,
-      img: "https://asianinspirations.com.au/wp-content/uploads/2018/12/R01414_Korean_Sweet_Rice_Cakes.jpg",
+      price: 13.5,
+      img:
+          "https://asianinspirations.com.au/wp-content/uploads/2018/12/R01414_Korean_Sweet_Rice_Cakes.jpg",
       rating: 4.5,
-      category: "Popular Food Drink",
+      category: "Popular",
     ),
 
-// ------------------- Chinese Street Food (7 items) -------------------
+    // ------------------- Chinese Street Food (7 items) -------------------
     Food(
       name: "Jianbing",
       des: "Savory Chinese crepe with egg & sauce",
-      price: 3.0,
-      img: "https://preview.redd.it/y3nd0mvcaqee1.jpg?width=640&crop=smart&auto=webp&s=004733cf420714a91d6be59d4f5cea68915e59a2",
+      price: 70.0,
+      img:
+          "https://preview.redd.it/y3nd0mvcaqee1.jpg?width=640&crop=smart&auto=webp&s=004733cf420714a91d6be59d4f5cea68915e59a2",
       rating: 4.7,
       category: "Street Food",
     ),
     Food(
       name: "Baozi",
       des: "Steamed bun with pork filling",
-      price: 2.5,
-      img: "https://images.getrecipekit.com/20221128153512-baked-bao-buns-recipe-kao-baozi.jpg?aspect_ratio=4:3&quality=90&",
+      price: 44.5,
+      img:
+          "https://images.getrecipekit.com/20221128153512-baked-bao-buns-recipe-kao-baozi.jpg?aspect_ratio=4:3&quality=90&",
       rating: 4.6,
       category: "Street Food",
     ),
     Food(
       name: "Chuan'r (Skewers)",
       des: "Grilled meat skewers with spices",
-      price: 2.0,
-      img: "https://eatyourworld.com/wp-content/uploads/2011/08/beijing-chuanr.jpg",
+      price: 45.0,
+      img:
+          "https://eatyourworld.com/wp-content/uploads/2011/08/beijing-chuanr.jpg",
       rating: 4.8,
       category: "Street Food",
     ),
     Food(
       name: "Xiaolongbao",
       des: "Soup-filled steamed dumplings",
-      price: 4.0,
-      img: "https://imagedelivery.net/WLUarKbmUXuuhDC7PG5_Qw/articles/6e309487e08128261daa4ca9af2a8e48.jpeg/public",
+      price: 80.0,
+      img:
+          "https://imagedelivery.net/WLUarKbmUXuuhDC7PG5_Qw/articles/6e309487e08128261daa4ca9af2a8e48.jpeg/public",
       rating: 4.7,
       category: "Street Food",
     ),
     Food(
       name: "Roujiamo",
       des: "Chinese sandwich with braised meat",
-      price: 3.5,
-      img: "https://www.thefooddictator.com/wp-content/uploads/2023/04/chinesehamburger.jpeg",
+      price: 24.5,
+      img:
+          "https://www.thefooddictator.com/wp-content/uploads/2023/04/chinesehamburger.jpeg",
       rating: 4.6,
       category: "Street Food",
     ),
     Food(
       name: "Tanghulu",
       des: "Candied fruit skewers",
-      price: 2.5,
-      img: "https://upload.wikimedia.org/wikipedia/commons/5/58/Tanghulu-shanghai.jpg",
+      price: 100.0,
+      img:
+          "https://upload.wikimedia.org/wikipedia/commons/5/58/Tanghulu-shanghai.jpg",
       rating: 4.5,
       category: "Street Food",
     ),
     Food(
       name: "Fried Dumplings",
       des: "Crispy dumplings with pork filling",
-      price: 3.0,
-      img: "https://asianinspirations.com.au/wp-content/uploads/2022/09/R03015-Pan-Fried-Beef-Potstickers-(Dumplings)-619x412.jpg",
+      price: 13.0,
+      img:
+          "https://asianinspirations.com.au/wp-content/uploads/2022/09/R03015-Pan-Fried-Beef-Potstickers-(Dumplings)-619x412.jpg",
       rating: 4.6,
       category: "Street Food",
     ),
     Food(
       name: "Stinky Tofu",
       des: "Fermented tofu, deep-fried and crispy",
-      price: 3.0,
-      img: "https://media.istockphoto.com/id/801664324/photo/hand-holding-a-box-of-black-deep-fried-stinky-tofu-with-red-chili.jpg?s=612x612&w=0&k=20&c=nEVyHdal36FxEhy5vBGuwPZhD0JZdJD0Ezxz6zeFLJw=",
+      price: 13.0,
+      img:
+          "https://media.istockphoto.com/id/801664324/photo/hand-holding-a-box-of-black-deep-fried-stinky-tofu-with-red-chili.jpg?s=612x612&w=0&k=20&c=nEVyHdal36FxEhy5vBGuwPZhD0JZdJD0Ezxz6zeFLJw=",
       rating: 4.2,
       category: "Street Food",
     ),
     Food(
       name: "Scallion Pancake",
       des: "Crispy pancake with green onions",
-      price: 2.5,
-      img: "https://www.seriouseats.com/thmb/pSgKgm8cI4f8OotIu9xihcpkvWE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/31.scallion-pancakes-beauty-shot-5219b2b53f51496199fde8fc7582c92b.jpg",
+      price: 22.5,
+      img:
+          "https://www.seriouseats.com/thmb/pSgKgm8cI4f8OotIu9xihcpkvWE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/31.scallion-pancakes-beauty-shot-5219b2b53f51496199fde8fc7582c92b.jpg",
       rating: 4.4,
       category: "Street Food",
     ),
     Food(
       name: "Sweet Potato Balls",
       des: "Chewy fried sweet potato snack",
-      price: 2.0,
+      price: 72.0,
       img: "https://images.deliveryhero.io/image/fd-my/LH/lv7z-listing.jpg",
       rating: 4.3,
       category: "Street Food",
@@ -187,234 +380,343 @@ List<Food> getMenuItems() {
     Food(
       name: "Glutinous Rice Cake",
       des: "Sticky rice with sweet filling",
-      price: 2.5,
-      img: "https://girlcooksworld.com/wp-content/uploads/2019/04/IMG_3826-640x880.jpg",
+      price: 62.5,
+      img:
+          "https://girlcooksworld.com/wp-content/uploads/2019/04/IMG_3826-640x880.jpg",
       rating: 4.5,
       category: "Street Food",
     ),
     Food(
       name: "Crispy Fried Chicken",
       des: "Taiwan-style street fried chicken",
-      price: 4.0,
-      img: "https://www.foodandwine.com/thmb/NXUBQ0yUtxxf_jbUlhCMLXW9QD4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/FAW-recipes-crispy-chicken-wings-hero-02-6d627c282d3f4749a176e0ec34d2d6d7.jpg",
+      price: 74.0,
+      img:
+          "https://www.foodandwine.com/thmb/NXUBQ0yUtxxf_jbUlhCMLXW9QD4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/FAW-recipes-crispy-chicken-wings-hero-02-6d627c282d3f4749a176e0ec34d2d6d7.jpg",
       rating: 4.6,
       category: "Street Food",
     ),
-// ------------------- Chinese Drinks (15 items) -------------------
+    // ------------------- Chinese Drinks (15 items) -------------------
     Food(
       name: "Bubble Milk Tea",
       des: "Sweet tea with tapioca pearls",
-      price: 3.5,
-      img: "https://www.anediblemosaic.com/wp-content/uploads//2022/03/boba-milk-tea-recipe-featured-image.jpg",
+      price: 13.5,
+      img:
+          "https://www.anediblemosaic.com/wp-content/uploads//2022/03/boba-milk-tea-recipe-featured-image.jpg",
       rating: 4.7,
       category: "Drinks",
     ),
     Food(
       name: "Green Tea",
       des: "Fresh brewed green tea",
-      price: 2.5,
-      img: "https://img.lb.wbmdstatic.com/vim/live/webmd/consumer_assets/site_images/articles/health_tools/Life_with_j_pouch_slideshow/1800ss_getty_rf_green_tea.jpg",
+      price: 12.5,
+      img:
+          "https://img.lb.wbmdstatic.com/vim/live/webmd/consumer_assets/site_images/articles/health_tools/Life_with_j_pouch_slideshow/1800ss_getty_rf_green_tea.jpg",
       rating: 4.5,
       category: "Drinks",
     ),
     Food(
       name: "Oolong Tea",
       des: "Traditional Chinese tea",
-      price: 3.0,
-      img: "https://theclassybaker.com/wp-content/uploads/2022/06/peach-oolong-tea-22.jpg",
+      price: 13.0,
+      img:
+          "https://theclassybaker.com/wp-content/uploads/2022/06/peach-oolong-tea-22.jpg",
       rating: 4.6,
       category: "Drinks",
     ),
     Food(
       name: "Chrysanthemum Tea",
       des: "Floral herbal tea",
-      price: 2.5,
-      img: "https://cdn.shopify.com/s/files/1/0573/2037/4390/files/camille_67988_chrysanthemum_tea_--v_6.1_52414840-44c9-4220-b60f-7c930f3c6458_1000x.png?v=1740001906",
+      price: 12.5,
+      img:
+          "https://cdn.shopify.com/s/files/1/0573/2037/4390/files/camille_67988_chrysanthemum_tea_--v_6.1_52414840-44c9-4220-b60f-7c930f3c6458_1000x.png?v=1740001906",
       rating: 4.4,
       category: "Drinks",
     ),
     Food(
       name: "Soy Milk",
       des: "Sweet or unsweetened",
-      price: 2.0,
-      img: "https://nordicmylk.dk/cdn/shop/articles/Blog_Billeder-54_25efcea9-2b45-499e-bac4-a92e0ad9a48e.jpg?v=1756451170&width=2048",
+      price: 12.0,
+      img:
+          "https://nordicmylk.dk/cdn/shop/articles/Blog_Billeder-54_25efcea9-2b45-499e-bac4-a92e0ad9a48e.jpg?v=1756451170&width=2048",
       rating: 4.5,
       category: "Drinks",
     ),
     Food(
       name: "Jasmine Tea",
       des: "Aromatic jasmine infused tea",
-      price: 2.5,
-      img: "https://scontent.fpnh19-1.fna.fbcdn.net/v/t39.30808-6/472074946_1768995530621739_5161506741375409439_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=3WDO5jxGHvsQ7kNvwFTtCCs&_nc_oc=AdnkNA6KUxsTmrark6izMFUxNG81084HLMwH64W7H2_Y2jkTim5HG4qreLAJEuAKTTU&_nc_zt=23&_nc_ht=scontent.fpnh19-1.fna&_nc_gid=tF5RcQaM3xMW78knwZA64Q&oh=00_AfqvJ2_LpjzgVGbObl7cE3K-8yrJ5no18H_xUfNFBtJctQ&oe=697C974D",
+      price: 12.5,
+      img:
+          "https://i0.wp.com/blog.fusionteas.com/wp-content/uploads/2019/06/Jasmine-Green-Tea-Lemonade-Iced-Tea-Recipe.jpg?fit=1024%2C710&ssl=1",
       rating: 4.6,
       category: "Drinks",
     ),
     Food(
       name: "Hibiscus Tea",
       des: "Refreshing red floral tea",
-      price: 2.5,
-      img: "https://keviniscooking.com/wp-content/uploads/2023/05/Iced-Hibiscus-Tea-Agua-de-Jamaica-square.jpg",
+      price: 12.5,
+      img:
+          "https://keviniscooking.com/wp-content/uploads/2023/05/Iced-Hibiscus-Tea-Agua-de-Jamaica-square.jpg",
       rating: 4.4,
       category: "Drinks",
     ),
     Food(
       name: "Red Bean Smoothie",
       des: "Sweet red bean blended drink",
-      price: 3.5,
-      img: "https://www.tachungho.com/image/catalog/upload/recipes/54/1910311452043ec54.jpg?v=1661407117",
+      price: 13.5,
+      img:
+          "https://www.tachungho.com/image/catalog/upload/recipes/54/1910311452043ec54.jpg?v=1661407117",
       rating: 4.5,
       category: "Drinks",
     ),
     Food(
       name: "Plum Juice",
       des: "Sweet and tart plum drink",
-      price: 3.0,
-      img: "https://www.rebootwithjoe.com/wp-content/uploads/2012/03/purple-plus-juice.jpg",
+      price: 13.0,
+      img:
+          "https://www.rebootwithjoe.com/wp-content/uploads/2012/03/purple-plus-juice.jpg",
       rating: 4.4,
       category: "Drinks",
     ),
     Food(
       name: "Chengdu Herbal Tea",
       des: "Traditional herbal mix",
-      price: 3.0,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8hfz7f-VkAV1xosA6apMrF0vqvIH3wLe-xN-hUbDRkw&s",
+      price: 13.0,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8hfz7f-VkAV1xosA6apMrF0vqvIH3wLe-xN-hUbDRkw&s",
       rating: 4.3,
       category: "Drinks",
     ),
     Food(
       name: "Lychee Juice",
       des: "Sweet tropical lychee drink",
-      price: 3.0,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4rFJW29p4TWVKl72IbD92vZVo3-QhAvxVZQ&s",
+      price: 14.0,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4rFJW29p4TWVKl72IbD92vZVo3-QhAvxVZQ&s",
       rating: 4.5,
       category: "Drinks",
     ),
     Food(
       name: "Pear Juice",
       des: "Cooling pear drink",
-      price: 2.5,
-      img: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/pear-juice.jpg",
+      price: 12.5,
+      img:
+          "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/pear-juice.jpg",
       rating: 4.4,
       category: "Drinks",
     ),
     Food(
       name: "Winter Melon Tea",
       des: "Sweet traditional tea",
-      price: 3.0,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp7y0LseI09_uMWnjAP5qlh5cm4KidIZkE2w&s",
+      price: 15.0,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp7y0LseI09_uMWnjAP5qlh5cm4KidIZkE2w&s",
       rating: 4.5,
       category: "Drinks",
     ),
     Food(
       name: "Ginger Tea",
       des: "Spicy warming tea",
-      price: 2.5,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROgtnhaCBuPi7LdaEGA92AArh43zVWG4mEIg&s",
+      price: 16.5,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROgtnhaCBuPi7LdaEGA92AArh43zVWG4mEIg&s",
       rating: 4.3,
       category: "Drinks",
     ),
     Food(
       name: "Chinese Herbal Tea",
       des: "Healthy traditional herbs",
-      price: 3.0,
-      img: "https://img2.chinadaily.com.cn/images/201709/15/59bb5faca310d4d95c4bd79d.jpeg",
+      price: 17.0,
+      img:
+          "https://img2.chinadaily.com.cn/images/201709/15/59bb5faca310d4d95c4bd79d.jpeg",
       rating: 4.4,
       category: "Drinks",
     ),
+    //-------------coffee-----------------
+  Food(
+  name: "Classic Espresso",
+  des: "Rich and bold single shot of premium Arabica beans.",
+  price: 22.0, // ¥22
+  img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrjyHlkViXf1t9FlpAnmlozT9DZSvPbFi-Lg&s",
+  rating: 4.8,
+  category: "Coffee",
+  ),
+  Food(
+  name: "Velvet Caffe Latte",
+  des: "Smooth espresso balanced with silky steamed milk.",
+  price: 28.0, // ¥28
+  img: "https://i.pinimg.com/1200x/77/9c/bb/779cbb784bb0120c5e807e9e527af689.jpg",
+  rating: 4.7,
+  category: "Coffee",
+  ),
+  Food(
+  name: "Caramel Macchiato",
+  des: "Freshly steamed milk with vanilla-flavored syrup and caramel drizzle.",
+  price: 32.0, // ¥32
+  img: "https://www.allrecipes.com/thmb/bVyDsvtwqzhafianjrew4Ms-Yfg=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/258686-IcedCaramelMacchiato-ddmps-4x3-104704-2effb74f7d504b8aa5fbd52204d0e2e5.jpg",
+  rating: 4.9,
+  category: "Popular",
+  ),
+  Food(
+  name: "Iced Americano",
+  des: "Espresso shots topped with cold water and served over ice.",
+  price: 25.0, // ¥25
+  img: "https://mocktail.net/wp-content/uploads/2022/03/homemade-Iced-Americano-recipe_1ig-500x500.jpg",
+  rating: 4.6,
+  category: "Coffee",
+  ),
+  Food(
+  name: "Mocha Frappuccino",
+  des: "Coffee meets chocolate in this blended frozen delight.",
+  price: 35.0, // ¥35
+  img: "https://www.yummytummyaarthi.com/wp-content/uploads/2016/04/1-42.jpg",
+  rating: 4.5,
+  category: "Drinks",
+  ),
+  Food(
+  name: "Flat White",
+  des: "Thin layer of microfoam over a double shot of espresso.",
+  price: 30.0, // ¥30
+  img: "https://wrexhambean.com/cdn/shop/articles/what-is-a-flat-white-lets-find-out-467202.webp?v=1745354877&width=1100",
+  rating: 4.7,
+  category: "Coffee",
+  ),
+  Food(
+  name: "Spanish Latte",
+  des: "Sweetened condensed milk mixed with hot espresso and milk.",
+  price: 33.0, // ¥33
+  img: "https://www.brighteyedbaker.com/wp-content/uploads/2024/03/Iced-Spanish-Latte-Recipe.jpg",
+  rating: 4.8,
+  category: "Popular",
+  ),
+  Food(
+  name: "Cold Brew Coffee",
+  des: "Steeped for 12 hours for a super smooth, low-acid taste.",
+  price: 32.0, // ¥32
+  img: "https://www.realsimple.com/thmb/hUI9KIgtG-AtBZwvTRcPsov47Gg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/difference-between-coffee-preparation-GettyImages-1420655603-f1a9226d6c214242b944cbb6901aef57.jpg",
+  rating: 4.9,
+  category: "Coffee",
+  ),
+  Food(
+  name: "Hazelnut Cappuccino",
+  des: "Classic cappuccino with a nutty hazelnut syrup twist.",
+  price: 29.0, // ¥29
+  img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtdCwDEvCeT83VybDaZ4EG-fLMugXfWxAb-A&s",
+  rating: 4.6,
+  category: "Coffee",
+  ),
+  Food(
+  name: "Dirty Matcha Latte",
+  des: "A layer of matcha green tea topped with a shot of espresso.",
+  price: 36.0, // ¥36
+  img: "https://i0.wp.com/thebuttertable.com/wp-content/uploads/2025/04/Matcha-Latte-8.webp",
+  rating: 4.7,
+  category: "Drinks",
+  ),
 
-// ------------------- Desserts (15 items) -------------------
+    // ------------------- Desserts (15 items) -------------------
     Food(
       name: "Egg Tart",
       des: "Flaky pastry filled with creamy egg custard",
-      price: 2.5,
-      img: "https://assets.epicurious.com/photos/6239fdf9ebb0382416abaf03/3:2/w_6948,h_4632,c_limit/HongKongEggTarts_RECIPE_IG_031722_30182.jpg",
+      price: 29.5,
+      img:
+          "https://assets.epicurious.com/photos/6239fdf9ebb0382416abaf03/3:2/w_6948,h_4632,c_limit/HongKongEggTarts_RECIPE_IG_031722_30182.jpg",
       rating: 4.8,
       category: "Desserts",
     ),
     Food(
       name: "Mango Pudding",
       des: "Smooth mango dessert topped with fresh mango cubes",
-      price: 3.5,
-      img: "https://static01.nyt.com/images/2025/06/13/multimedia/CT-Mango-Pudding-pjgk/CT-Mango-Pudding-pjgk-videoSixteenByNineJumbo1600.jpg",
+      price: 33.5,
+      img:
+          "https://static01.nyt.com/images/2025/06/13/multimedia/CT-Mango-Pudding-pjgk/CT-Mango-Pudding-pjgk-videoSixteenByNineJumbo1600.jpg",
       rating: 4.7,
       category: "Desserts",
     ),
     Food(
       name: "Red Bean Bun",
       des: "Soft steamed bun filled with sweet red bean paste",
-      price: 2.0,
-      img: "https://zhangcatherine.com/wp-content/uploads/2022/03/red-bean-bun.jpg",
+      price: 62.0,
+      img:
+          "https://zhangcatherine.com/wp-content/uploads/2022/03/red-bean-bun.jpg",
       rating: 4.6,
       category: "Desserts",
     ),
     Food(
       name: "Sesame Balls",
       des: "Crispy fried balls with sweet red bean filling and sesame coating",
-      price: 3.0,
-      img: "https://takestwoeggs.com/wp-content/uploads/2022/02/Sesame-Balls-with-red-bean-paste-sq.jpg",
+      price: 43.0,
+      img:
+          "https://takestwoeggs.com/wp-content/uploads/2022/02/Sesame-Balls-with-red-bean-paste-sq.jpg",
       rating: 4.7,
       category: "Desserts",
     ),
     Food(
       name: "Mochi",
       des: "Soft sticky rice cake with sweet fillings",
-      price: 2.5,
-      img: "https://qeleg.com/cdn/shop/articles/20240411054015-peach-mochi.webp?v=1712814467",
+      price: 42.5,
+      img:
+          "https://qeleg.com/cdn/shop/articles/20240411054015-peach-mochi.webp?v=1712814467",
       rating: 4.5,
       category: "Desserts",
     ),
     Food(
       name: "Tangyuan",
       des: "Glutinous rice balls in sweet ginger syrup",
-      price: 3.5,
-      img: "https://healthynibblesandbits.com/wp-content/uploads/2025/02/Black-Sesame-Tang-Yuan-FF.jpg",
+      price: 53.5,
+      img:
+          "https://healthynibblesandbits.com/wp-content/uploads/2025/02/Black-Sesame-Tang-Yuan-FF.jpg",
       rating: 4.8,
       category: "Desserts",
     ),
     Food(
       name: "Almond Jelly",
       des: "Smooth almond-flavored jelly served with fruit",
-      price: 3.0,
-      img: "https://site.mrslinskitchen.com/recipes/wp-content/uploads/2020/09/almond-tofu-recipe-768x512.jpg",
+      price: 34.0,
+      img:
+          "https://site.mrslinskitchen.com/recipes/wp-content/uploads/2020/09/almond-tofu-recipe-768x512.jpg",
       rating: 4.6,
       category: "Desserts",
     ),
     Food(
       name: "Red Bean Soup",
       des: "Sweet red bean soup with chewy tapioca balls",
-      price: 3.0,
-      img: "https://feedgrump.com/wp-content/uploads/2023/06/red-bean-soup-feature-1.jpg",
+      price: 39.0,
+      img:
+          "https://feedgrump.com/wp-content/uploads/2023/06/red-bean-soup-feature-1.jpg",
       rating: 4.7,
       category: "Desserts",
     ),
     Food(
       name: "Sweet Osmanthus Jelly",
       des: "Fragrant floral jelly served chilled",
-      price: 3.5,
-      img: "https://a.storyblok.com/f/63296/970x630/e9a619a4bf/osmanthus-jelly-2.jpg",
+      price: 43.5,
+      img:
+          "https://a.storyblok.com/f/63296/970x630/e9a619a4bf/osmanthus-jelly-2.jpg",
       rating: 4.5,
       category: "Desserts",
     ),
     Food(
       name: "Pumpkin Cake",
       des: "Soft steamed pumpkin cake, lightly sweetened",
-      price: 2.5,
-      img: "https://sugarspunrun.com/wp-content/uploads/2022/10/Pumpkin-Cake-Recipe-1-of-1-2.jpg",
+      price: 22.5,
+      img:
+          "https://sugarspunrun.com/wp-content/uploads/2022/10/Pumpkin-Cake-Recipe-1-of-1-2.jpg",
       rating: 4.6,
       category: "Desserts",
     ),
     Food(
       name: "Mango Sago",
       des: "Mango cubes with sago pearls in creamy coconut milk",
-      price: 4.0,
-      img: "https://i0.wp.com/s.lightorangebean.com/media/20240914172148/mango-pomelo-sago-mango-dessert_done2.png?resize=500%2C375&quality=80&ssl=1",
+      price: 42.0,
+      img:
+          "https://i0.wp.com/s.lightorangebean.com/media/20240914172148/mango-pomelo-sago-mango-dessert_done2.png?resize=500%2C375&quality=80&ssl=1",
       rating: 4.7,
       category: "Desserts",
     ),
     Food(
       name: "Lotus Seed Paste Bun",
       des: "Steamed bun filled with smooth lotus seed paste",
-      price: 2.5,
+      price: 223.5,
       img: "https://i.ytimg.com/vi/tJelSIxeNOI/maxresdefault.jpg",
       rating: 4.6,
       category: "Desserts",
@@ -422,216 +724,250 @@ List<Food> getMenuItems() {
     Food(
       name: "Snow Skin Mooncake",
       des: "Soft mochi-like mooncake with sweet fillings",
-      price: 4.5,
-      img: "https://asianinspirations.com.au/wp-content/uploads/2018/07/R00585_Snowskin-Mooncake.jpg",
+      price: 48.5,
+      img:
+          "https://asianinspirations.com.au/wp-content/uploads/2018/07/R00585_Snowskin-Mooncake.jpg",
       rating: 4.8,
       category: "Desserts",
     ),
     Food(
       name: "Red Bean Pancake",
       des: "Pan-fried cake filled with sweet red bean paste",
-      price: 3.0,
-      img: "https://www.justonecookbook.com/wp-content/uploads/2022/08/Japanese-Dorayaki-3716.jpg",
+      price: 37.0,
+      img:
+          "https://www.justonecookbook.com/wp-content/uploads/2022/08/Japanese-Dorayaki-3716.jpg",
       rating: 4.7,
       category: "Desserts",
     ),
     Food(
       name: "Black Sesame Roll",
       des: "Soft roll filled with nutty black sesame paste",
-      price: 3.5,
+      price: 36.5,
       img: "https://i.ytimg.com/vi/ZPPYsjUcSe0/maxresdefault.jpg",
       rating: 4.6,
       category: "Desserts",
     ),
 
-  Food(
-  name: "Sweet and Sour Pork",
-  des: "Crispy pork stir-fried with sweet and tangy sauce and mixed vegetables.",
-  price: 6.50,
-  img: "https://asianinspirations.com.au/wp-content/uploads/2020/04/R00773-Tangsuyuk-Korean.jpg",
-  rating: 4.8,
-  category: "Food",
-  ),
-  Food(
-  name: "Kung Pao Chicken",
-  des: "Spicy stir-fried chicken with peanuts, chili, and a flavorful sauce.",
-  price: 7.00,
-  img: "https://www.seriouseats.com/thmb/AaMf6tliWc3jh0R-9KLiJG5fzZo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__2014__07__2021-02-12-Take-Out-Kung-Pao-Chicken-MHOM-11-c46f6c06713c45c5a287ddbf08779d04.jpg",
-  rating: 4.7,
-  category: "Food",
-  ),
-  Food(
-  name: "Chow Mein",
-  des: "Stir-fried noodles with chicken and fresh vegetables, savory and tasty.",
-  price: 5.50,
-  img: "https://www.alicaspepperpot.com/wp-content/uploads/2015/07/Chow-mein-13-735x491.jpg",
-  rating: 4.6,
-  category: "Food",
-  ),
-  Food(
-  name: "Shrimp Fried Rice",
-  des: "Fried rice with shrimp, eggs, and assorted fresh vegetables.",
-  price: 5.00,
-  img: "https://tiffycooks.com/wp-content/uploads/2024/03/Shrimp-Fried-Rice-Plated.jpg",
-  rating: 4.7,
-  category: "Food",
-  ),
-  Food(
-  name: "Dumplings",
-  des: "Steamed or pan-fried dumplings filled with pork and fresh vegetables.",
-  price: 4.50,
-  img: "https://cookingwithcocktailrings.com/wp-content/uploads/2021/02/Pork26ChiveCrispyDumplings-48.jpg",
-  rating: 4.8,
-  category: "Food",
-  ),
-  Food(
-  name: "Mapo Tofu",
-  des: "Soft tofu with minced beef in a spicy and savory sauce.",
-  price: 6.00,
-  img: "https://myvegetarianroots.com/wp-content/uploads/2020/02/DSC_0067-1.jpeg",
-  rating: 4.6,
-  category: "Food",
-  ),
-  Food(
-  name: "Peking Duck",
-  des: "Crispy roasted duck served with pancakes, scallions, and sweet sauce.",
-  price: 15.00,
-  img: "https://static01.nyt.com/images/2019/01/28/dining/kc-peking-duck/kc-peking-duck-videoSixteenByNineJumbo1600-v2.jpg",
-  rating: 4.9,
-  category: "Food",
-  ),
-  Food(
-  name: "Sweet Corn Soup",
-  des: "Creamy soup with sweet corn, chicken, and a touch of seasoning.",
-  price: 3.50,
-  img: "https://www.kitchensanctuary.com/wp-content/uploads/2023/06/Chicken-and-Sweetcorn-Soup-square-FS.jpg",
-  rating: 4.5,
-  category: "Food",
-  ),
-  Food(
-  name: "Spring Rolls",
-  des: "Crispy rolls filled with mixed vegetables and served with dipping sauce.",
-  price: 2.50,
-  img: "https://static01.nyt.com/images/2023/12/21/multimedia/AS-Spring-Rolls-bzjt/AS-Spring-Rolls-bzjt-mediumSquareAt3X.jpg",
-  rating: 4.7,
-  category: "Food",
-  ),
-  Food(
-  name: "Beef and Broccoli",
-  des: "Tender beef stir-fried with broccoli in a savory soy-based sauce.",
-  price: 7.50,
-  img: "https://www.kitchensanctuary.com/wp-content/uploads/2021/01/Beef-and-Broccoli-square-FS.jpg",
-  rating: 4.8,
-  category: "Food",
-  ),
+    Food(
+      name: "Sweet and Sour Pork",
+      des:
+          "Crispy pork stir-fried with sweet and tangy sauce and mixed vegetables.",
+      price: 61.50,
+      img:
+          "https://asianinspirations.com.au/wp-content/uploads/2020/04/R00773-Tangsuyuk-Korean.jpg",
+      rating: 4.8,
+      category: "Food",
+    ),
+    Food(
+      name: "Kung Pao Chicken",
+      des:
+          "Spicy stir-fried chicken with peanuts, chili, and a flavorful sauce.",
+      price: 79.00,
+      img:
+          "https://www.seriouseats.com/thmb/AaMf6tliWc3jh0R-9KLiJG5fzZo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__2014__07__2021-02-12-Take-Out-Kung-Pao-Chicken-MHOM-11-c46f6c06713c45c5a287ddbf08779d04.jpg",
+      rating: 4.7,
+      category: "Food",
+    ),
+    Food(
+      name: "Chow Mein",
+      des:
+          "Stir-fried noodles with chicken and fresh vegetables, savory and tasty.",
+      price: 56.50,
+      img:
+          "https://www.alicaspepperpot.com/wp-content/uploads/2015/07/Chow-mein-13-735x491.jpg",
+      rating: 4.6,
+      category: "Food",
+    ),
+    Food(
+      name: "Shrimp Fried Rice",
+      des: "Fried rice with shrimp, eggs, and assorted fresh vegetables.",
+      price: 58.00,
+      img:
+          "https://tiffycooks.com/wp-content/uploads/2024/03/Shrimp-Fried-Rice-Plated.jpg",
+      rating: 4.7,
+      category: "Food",
+    ),
+    Food(
+      name: "Dumplings",
+      des:
+          "Steamed or pan-fried dumplings filled with pork and fresh vegetables.",
+      price: 45.50,
+      img:
+          "https://cookingwithcocktailrings.com/wp-content/uploads/2021/02/Pork26ChiveCrispyDumplings-48.jpg",
+      rating: 4.8,
+      category: "Food",
+    ),
+    Food(
+      name: "Mapo Tofu",
+      des: "Soft tofu with minced beef in a spicy and savory sauce.",
+      price: 65.00,
+      img:
+          "https://myvegetarianroots.com/wp-content/uploads/2020/02/DSC_0067-1.jpeg",
+      rating: 4.6,
+      category: "Food",
+    ),
+    Food(
+      name: "Peking Duck",
+      des:
+          "Crispy roasted duck served with pancakes, scallions, and sweet sauce.",
+      price: 150.00,
+      img:
+          "https://static01.nyt.com/images/2019/01/28/dining/kc-peking-duck/kc-peking-duck-videoSixteenByNineJumbo1600-v2.jpg",
+      rating: 4.9,
+      category: "Food",
+    ),
+    Food(
+      name: "Sweet Corn Soup",
+      des: "Creamy soup with sweet corn, chicken, and a touch of seasoning.",
+      price: 38.50,
+      img:
+          "https://www.kitchensanctuary.com/wp-content/uploads/2023/06/Chicken-and-Sweetcorn-Soup-square-FS.jpg",
+      rating: 4.5,
+      category: "Food",
+    ),
+    Food(
+      name: "Spring Rolls",
+      des:
+          "Crispy rolls filled with mixed vegetables and served with dipping sauce.",
+      price: 29.50,
+      img:
+          "https://static01.nyt.com/images/2023/12/21/multimedia/AS-Spring-Rolls-bzjt/AS-Spring-Rolls-bzjt-mediumSquareAt3X.jpg",
+      rating: 4.7,
+      category: "Food",
+    ),
+    Food(
+      name: "Beef and Broccoli",
+      des: "Tender beef stir-fried with broccoli in a savory soy-based sauce.",
+      price: 79.50,
+      img:
+          "https://www.kitchensanctuary.com/wp-content/uploads/2021/01/Beef-and-Broccoli-square-FS.jpg",
+      rating: 4.8,
+      category: "Food",
+    ),
     Food(
       name: "Nanjing Salted Duck",
-      des: "Tender duck seasoned with traditional Nanjing spices, roasted to perfection.",
-      price: 12.50,
-      img: "https://img2.chinadaily.com.cn/images/201912/26/5e046429a310cf3e97adb48d.jpeg",
+      des:
+          "Tender duck seasoned with traditional Nanjing spices, roasted to perfection.",
+      price: 112.50,
+      img:
+          "https://img2.chinadaily.com.cn/images/201912/26/5e046429a310cf3e97adb48d.jpeg",
       rating: 4.9,
       category: "Food",
     ),
     Food(
       name: "Nanjing Duck Blood Soup",
       des: "A local delicacy with duck blood, tofu, and savory broth.",
-      price: 8.00,
-      img: "https://happyinmart.com.au/cdn/shop/files/images_316c9c44-3c55-4a0f-b062-6c513243f671.jpg?v=1739508542",
+      price: 88.00,
+      img:
+          "https://happyinmart.com.au/cdn/shop/files/images_316c9c44-3c55-4a0f-b062-6c513243f671.jpg?v=1739508542",
       rating: 4.7,
       category: "Food",
     ),
     Food(
       name: "Nanjing Pan-Fried Pork Dumplings",
       des: "Crispy on the outside, juicy pork inside, a street food favorite.",
-      price: 5.50,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiL7Isi2-9QXBVUYbryXYI23OCaoTkcs7lUw&s",
+      price: 55.50,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiL7Isi2-9QXBVUYbryXYI23OCaoTkcs7lUw&s",
       rating: 4.8,
       category: "Food",
     ),
     Food(
       name: "Nanjing Steamed Buns",
       des: "Soft fluffy buns filled with savory pork and traditional spices.",
-      price: 4.50,
-      img: "https://www.globaltimes.cn/Portals/0/attachment/2017/2017-03-24/cf954851-bc38-4b91-b4c7-5c750c01d907.jpg",
+      price: 46.50,
+      img:
+          "https://www.globaltimes.cn/Portals/0/attachment/2017/2017-03-24/cf954851-bc38-4b91-b4c7-5c750c01d907.jpg",
       rating: 4.6,
       category: "Food",
     ),
     Food(
       name: "Nanjing Sesame Pancakes",
       des: "Crispy sesame-coated pancake, lightly sweet and perfect with tea.",
-      price: 3.50,
-      img: "https://i0.wp.com/blog.themalamarket.com/wp-content/uploads/2024/10/Duckfat-Shaobing-Cut-and-Tray.jpg?resize=800%2C600&ssl=1",
+      price: 36.50,
+      img:
+          "https://i0.wp.com/blog.themalamarket.com/wp-content/uploads/2024/10/Duckfat-Shaobing-Cut-and-Tray.jpg?resize=800%2C600&ssl=1",
       rating: 4.5,
       category: "Food",
     ),
     Food(
       name: "Nanjing Stir-Fried Noodles",
       des: "Wheat noodles stir-fried with vegetables and a savory soy sauce.",
-      price: 6.00,
-      img: "https://i0.wp.com/twojadebowls.com/wp-content/uploads/2013/01/img_0387.jpg?ssl=1",
+      price: 69.00,
+      img:
+          "https://i0.wp.com/twojadebowls.com/wp-content/uploads/2013/01/img_0387.jpg?ssl=1",
       rating: 4.6,
       category: "Food",
     ),
     Food(
       name: "Nanjing Braised Pork Belly",
       des: "Rich, flavorful pork belly slowly braised in soy sauce and spices.",
-      price: 11.00,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh8cBkeIiEiCeS2YL0knWHA1yERA_I_ZoS2w&s",
+      price: 119.00,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh8cBkeIiEiCeS2YL0knWHA1yERA_I_ZoS2w&s",
       rating: 4.8,
       category: "Food",
     ),
     Food(
       name: "Nanjing Stir-Fried Duck with Mushrooms",
       des: "Tender duck pieces stir-fried with fresh mushrooms and vegetables.",
-      price: 10.50,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9HggDTqn-myWEuhb40DSymBVgEisIFWX2Hw&s",
+      price: 100.50,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9HggDTqn-myWEuhb40DSymBVgEisIFWX2Hw&s",
       rating: 4.7,
       category: "Food",
     ),
     Food(
       name: "Nanjing Soy Braised Chicken",
       des: "Juicy chicken cooked in a rich soy sauce and traditional spices.",
-      price: 9.00,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkTMlPn2f7ppzX7Al-8gnE7N79Xh5_dP3ShA&s",
+      price: 99.00,
+      img:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkTMlPn2f7ppzX7Al-8gnE7N79Xh5_dP3ShA&s",
       rating: 4.8,
       category: "Food",
     ),
     Food(
       name: "Nanjing Shrimp Dumplings",
       des: "Soft dumplings stuffed with fresh shrimp and delicate seasonings.",
-      price: 6.50,
-      img: "https://media.cnn.com/api/v1/images/stellar/prod/151019152849-egg-dumplingsda.jpg?q=w_1900,h_1096,x_0,y_0,c_fill/h_447",
+      price: 69.50,
+      img:
+          "https://media.cnn.com/api/v1/images/stellar/prod/151019152849-egg-dumplingsda.jpg?q=w_1900,h_1096,x_0,y_0,c_fill/h_447",
       rating: 4.7,
       category: "Food",
     ),
     Food(
       name: "Nanjing Sweet Glutinous Rice Balls",
-      des: "Chewy rice balls filled with sweet red bean paste, perfect dessert.",
-      price: 4.00,
-      img: "https://kabu-go.com.hk/wp-content/uploads/2025/05/tangyuan-recipe-sweet-glutinous-rice-balls-1747131893.jpg",
+      des:
+          "Chewy rice balls filled with sweet red bean paste, perfect dessert.",
+      price: 49.00,
+      img:
+          "https://kabu-go.com.hk/wp-content/uploads/2025/05/tangyuan-recipe-sweet-glutinous-rice-balls-1747131893.jpg",
       rating: 4.6,
       category: "Food",
     ),
     Food(
       name: "Nanjing Bamboo Shoots Stir Fry",
       des: "Fresh bamboo shoots stir-fried with pork and light soy sauce.",
-      price: 6.00,
-      img: "https://chichihehe.wordpress.com/wp-content/uploads/2015/03/dscf2839.jpg",
+      price: 69.00,
+      img:
+          "https://chichihehe.wordpress.com/wp-content/uploads/2015/03/dscf2839.jpg",
       rating: 4.5,
       category: "Food",
     ),
     Food(
       name: "Nanjing Hot and Sour Soup",
       des: "Traditional hot and sour soup with tofu, vegetables, and bamboo.",
-      price: 5.00,
-      img: "https://cdn.sanity.io/images/2r0kdewr/production/93be6f93c00d66b64d6b910c007d4e2ed884d223-6000x4500.jpg",
+      price: 55.00,
+      img:
+          "https://cdn.sanity.io/images/2r0kdewr/production/93be6f93c00d66b64d6b910c007d4e2ed884d223-6000x4500.jpg",
       rating: 4.7,
       category: "Food",
     ),
     Food(
       name: "Nanjing Green Vegetable Stir Fry",
-      des: "Fresh seasonal greens quickly stir-fried with garlic and light sauce.",
-      price: 4.50,
+      des:
+          "Fresh seasonal greens quickly stir-fried with garlic and light sauce.",
+      price: 111.50,
       img: "https://i.ytimg.com/vi/wyvVJq7k_E0/hqdefault.jpg",
       rating: 4.6,
       category: "Food",

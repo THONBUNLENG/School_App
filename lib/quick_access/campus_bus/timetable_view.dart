@@ -73,14 +73,11 @@ class _TimetableViewState extends State<TimetableView> with SingleTickerProvider
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-              ),
+
               Text("Bus Timetable".tr, style: const TextStyle(color: AppColor.lightGold, fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(width: 40), // Balance the back button
+              const SizedBox(width: 40),
             ],
           ),
           const SizedBox(height: 15),

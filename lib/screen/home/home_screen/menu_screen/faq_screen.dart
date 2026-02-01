@@ -78,7 +78,6 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
-        // 🔥 ប្រើ Gradient Identity របស់ NJU
         flexibleSpace: Container(
           decoration: const BoxDecoration(gradient: BrandGradient.luxury),
         ),
@@ -86,7 +85,7 @@ class _AIChatBotScreenState extends State<AIChatBotScreen> {
           'NANJING AI ASSISTANT',
           style: TextStyle(
             fontSize: 16,
-            color: AppColor.lightGold, // ពណ៌មាស
+            color: AppColor.lightGold,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.2,
           ),

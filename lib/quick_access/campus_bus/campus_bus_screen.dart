@@ -148,7 +148,6 @@ class _MainBusScreenState extends State<MainBusScreen> with TickerProviderStateM
     return Scaffold(
       body: Stack(
         children: [
-          // 🗺️ ផែនទី (Map Layer)
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
@@ -200,46 +199,91 @@ class _MainBusScreenState extends State<MainBusScreen> with TickerProviderStateM
       padding: const EdgeInsets.symmetric(horizontal: 5),
       height: 55,
       decoration: BoxDecoration(
-        color: isDark ? AppColor.surfaceColor : Colors.white,
+        color: isDark
+            ? AppColor.surfaceColor.withOpacity(0.9)
+            : Colors.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.black12,
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          )
+        ],
       ),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios_new,
-                color: isDark ? Colors.white : Colors.black87, size: 20),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: AppColor.accentGold,
+              size: 20,
+            ),
           ),
 
-          const VerticalDivider(indent: 15, endIndent: 15, thickness: 1, width: 10),
+          // 垂直 Divider
+          VerticalDivider(
+            indent: 15,
+            endIndent: 15,
+            thickness: 1,
+            width: 8,
+            color: isDark ? Colors.white10 : Colors.black12,
+          ),
 
           Expanded(
             child: TextField(
               controller: _searchController,
               onSubmitted: (_) => _onSearch(),
               onChanged: (val) => setState(() {}),
-              decoration: const InputDecoration(
+              style: TextStyle(
+                color: isDark ? Colors.white : AppColor.primaryColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              decoration: InputDecoration(
                 hintText: "Search a building or gate...",
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                hintStyle: TextStyle(
+                  color: isDark ? Colors.white30 : Colors.grey.shade400,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
+
           if (_searchController.text.isNotEmpty)
             IconButton(
               onPressed: () {
                 _searchController.clear();
                 setState(() {});
               },
-              icon: const Icon(Icons.close, color: Colors.grey, size: 20),
+              icon: Icon(
+                  Icons.close_rounded,
+                  color: isDark ? Colors.white54 : Colors.grey.shade400,
+                  size: 20
+              ),
             ),
 
-          const VerticalDivider(indent: 15, endIndent: 15, thickness: 1, width: 10),
+          VerticalDivider(
+            indent: 15,
+            endIndent: 15,
+            thickness: 1,
+            width: 8,
+            color: isDark ? Colors.white10 : Colors.black12,
+          ),
 
           IconButton(
             onPressed: _onSearch,
-            icon: const Icon(Icons.search, color: AppColor.accentGold),
+            icon: const Icon(
+                Icons.search_rounded,
+                color: AppColor.accentGold,
+                size: 24
+            ),
           ),
         ],
       ),

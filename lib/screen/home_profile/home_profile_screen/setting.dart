@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_app/config/app_color.dart';
+import 'package:school_app/screen/home_profile/home_profile_screen/personal_information.dart';
 import '../../../extension/change_notifier.dart';
 import '../../home/home_screen/change_language.dart';
 import '../../home/home_screen/menu_screen/logout.dart';
@@ -22,7 +23,6 @@ class _SettingsScreenState extends State<SettingApp> {
       backgroundColor: isDark ? AppColor.backgroundColor : const Color(0xFFFBFBFB),
       appBar: AppBar(
         centerTitle: true,
-        // 🔥 ប្រើ Gradient Identity របស់ NJU
         flexibleSpace: Container(
           decoration: const BoxDecoration(gradient: BrandGradient.luxury),
         ),
@@ -53,7 +53,10 @@ class _SettingsScreenState extends State<SettingApp> {
               icon: Icons.person_outline_rounded,
               title: "Personal Information",
               subTitle: "Manage your student profile details",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AppleIDSettings () ));
+              },
             ),
             _buildListTile(
               icon: Icons.translate_rounded,
